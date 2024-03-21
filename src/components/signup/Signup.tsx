@@ -55,7 +55,22 @@ export const SignUp = () => {
   };
 
   const handleSubmit = () => {
-    console.log(userDetails);
+    fetch("http://localhost:3001/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userDetails),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((d) => {
+        console.log(d);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   //   Navigate to login page
@@ -63,8 +78,12 @@ export const SignUp = () => {
     router.replace("/login");
   };
 
-//   button disabled condition
-  const isButtonDisabled = userDetails.firstName && userDetails.lastName && userDetails.email && userDetails.password
+  //   button disabled condition
+  const isButtonDisabled =
+    userDetails.firstName &&
+    userDetails.lastName &&
+    userDetails.email &&
+    userDetails.password;
 
   return (
     <Container maxWidth="sm">

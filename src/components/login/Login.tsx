@@ -44,7 +44,20 @@ export const Login = () => {
   };
 
   const handleSubmit = () => {
-    console.log(userDetails);
+    fetch("http://localhost:3001/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userDetails),
+    })
+      .then((data) => data.json())
+      .then((d) => {
+        console.log(d);
+      })
+      .catch((er) => {
+        console.log(er);
+      });
   };
 
   //   Navigate to signup page

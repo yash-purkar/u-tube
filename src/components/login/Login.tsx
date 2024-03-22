@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "@/clientHandlers/userHandlers";
 import { LoadingButton } from "@mui/lab";
+import axios from "axios";
 
 interface UserDetails {
   email: string;
@@ -62,6 +63,7 @@ export const Login = () => {
     setUserDetails((prev) => ({ ...prev, [name]: value }));
   };
 
+  axios.defaults.withCredentials = true;
   const handleSubmit = () => {
     mutate(userDetails);
   };
@@ -109,7 +111,7 @@ export const Login = () => {
           disabled={!isButtonDisabled || isPending}
           loading={isPending}
         >
-          Create
+          Login
         </LoadingButton>
         <Button
           onClick={handleNavigateToSignup}

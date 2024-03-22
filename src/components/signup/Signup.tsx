@@ -133,15 +133,15 @@ export const SignUp = () => {
         {isError && error && (
           <Alert severity="error">{error && error.message}</Alert>
         )}
-        <Button
+        <LoadingButton
           onClick={handleSubmit}
           className={classes.signup_button}
           variant="outlined"
           disabled={!isButtonDisabled || isPending}
-          // loading={isPending}
+          loading={isPending}
         >
           Create
-        </Button>
+        </LoadingButton>
         <Button onClick={handleNavigateToLogin}>
           Already have an Account?
         </Button>

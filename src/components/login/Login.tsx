@@ -1,10 +1,20 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import styles from "./login.module.css";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "@/clientHandlers/userHandlers";
+import { LoadingButton } from "@mui/lab";
 
 interface UserDetails {
   email: string;
@@ -37,6 +47,15 @@ export const Login = () => {
   const classes = useStyles();
   const router = useRouter();
 
+  // mutation for login user
+  const { mutate, data, error, isError, isPending } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: login,
+    onSuccess: (data, variabled, context) => {
+      router.replace("/");
+    },
+  });
+
   //   It handles the change of input fields.
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -44,20 +63,7 @@ export const Login = () => {
   };
 
   const handleSubmit = () => {
-    fetch("http://localhost:3001/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userDetails),
-    })
-      .then((data) => data.json())
-      .then((d) => {
-        console.log(d);
-      })
-      .catch((er) => {
-        console.log(er);
-      });
+    mutate(userDetails);
   };
 
   //   Navigate to signup page
@@ -93,14 +99,18 @@ export const Login = () => {
           name="password"
           required
         />
-        <Button
+        {isError && error && (
+          <Alert severity="error">{error && error.message}</Alert>
+        )}
+        <LoadingButton
           onClick={handleSubmit}
-          className={classes.login_button}
+          className={classes.signup_button}
           variant="outlined"
-          disabled={!isButtonDisabled}
+          disabled={!isButtonDisabled || isPending}
+          loading={isPending}
         >
-          Login
-        </Button>
+          Create
+        </LoadingButton>
         <Button
           onClick={handleNavigateToSignup}
         >{`Don't have an Account?`}</Button>

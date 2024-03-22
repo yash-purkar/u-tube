@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -12,6 +13,9 @@ import { makeStyles } from "@mui/styles";
 import styles from "./signup.module.css";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
+import { register } from "@/clientHandlers/userHandlers";
+import { useMutation } from "@tanstack/react-query";
+import { LoadingButton } from "@mui/lab";
 
 interface UserDetails {
   firstName: string;
@@ -48,34 +52,29 @@ export const SignUp = () => {
   const classes = useStyles();
   const router = useRouter();
 
+  // Using react query mutation to register user
+  const { mutate, isPending, isError, error, } = useMutation({
+    mutationKey: ["register"],
+    mutationFn: register,
+    onSuccess: (data,variabled,context) => {
+      router.replace('/login')
+    }
+  });
+
   //   It handles the change of input fields.
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUserDetails((prev) => ({ ...prev, [name]: value }));
   };
 
+  // It handles register click
   const handleSubmit = () => {
-    fetch("http://localhost:3001/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userDetails),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((d) => {
-        console.log(d);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    mutate({ ...userDetails });
   };
 
   //   Navigate to login page
   const handleNavigateToLogin = () => {
-    router.replace("/login");
+    router.push("/login");
   };
 
   //   button disabled condition
@@ -128,13 +127,18 @@ export const SignUp = () => {
           onChange={handleChange}
           value={userDetails.password}
           name="password"
+          autoComplete=""
           required
         />
+        {isError && error && (
+          <Alert severity="error">{error && error.message}</Alert>
+        )}
         <Button
           onClick={handleSubmit}
           className={classes.signup_button}
           variant="outlined"
-          disabled={!isButtonDisabled}
+          disabled={!isButtonDisabled || isPending}
+          // loading={isPending}
         >
           Create
         </Button>

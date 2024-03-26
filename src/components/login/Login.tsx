@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -12,10 +12,11 @@ import { makeStyles } from "@mui/styles";
 import styles from "./login.module.css";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { login } from "@/clientHandlers/userHandlers";
+import { QueryClientProvider, useMutation } from "@tanstack/react-query";
+import { checkAuth, login } from "@/clientHandlers/userHandlers";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 interface UserDetails {
   email: string;
@@ -75,6 +76,13 @@ export const Login = () => {
 
   //   button disabled condition
   const isButtonDisabled = userDetails.email && userDetails.password;
+
+  useEffect(() => {
+    // It redirects user to home page if user is logged in
+    checkAuth().then(data => {
+      data?.Success && router.replace('/')
+    });
+  }, []);
 
   return (
     <Container maxWidth="sm">

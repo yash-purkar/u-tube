@@ -55,3 +55,12 @@ export const login = async (params: LoginProps) => {
     throw new Error(err.response.data.error || "Failed to Login");
   }
 };
+
+export const checkAuth = async () => {
+  try {
+    const { data } = await axios.get("http://localhost:3001/checkAuth");
+    return data;
+  } catch (error) {
+    throw new Error("Something wen't wrong");
+  }
+};

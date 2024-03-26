@@ -4,6 +4,8 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const User = require("./models/user");
 const checkIsEmailValid = require("./serverHandlers/serverHandlers");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
@@ -13,7 +15,16 @@ const app = express();
 app.use(express.json());
 
 // Allows requests from anywhere
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
+// It parse incoming cookie data from HTTP request and make it accessable in req.cookies
+app.use(cookieParser());
 
 // connection to mongodb
 mongoose.connect(process.env.MONGODB_URI);
@@ -53,11 +64,35 @@ app.post("/login", async (req: any, res: any) => {
     email: body.email,
     password: body.password,
   });
+
   if (user) {
-    return res.status(201).send({ message: "Success", user });
+    const token = jwt.sign(
+      { email: body.email },
+      process.env.JSON_TOKEN_SECERET,
+      { expiresIn: "1d" }
+    );
+    res.cookie("token", token);
+
+    return res.status(201).json({ message: "Success", user });
   }
 
-  return res.status(404).send({ error: "Wrong Credentials🙁" });
+  return res.status(404).json({ error: "Wrong Credentials🙁" });
+});
+
+// Middleware to check token
+const checkAuth = (req: any, res: any, next: () => {}) => {
+  const token = req?.cookies?.token;
+
+  if (token) {
+    return next();
+  }
+
+  return res.status(200).send({Success:false})
+};
+
+// This endpoint checks is user Authenticated or not
+app.get("/checkAuth", checkAuth,(req: any, res: any) => {
+  res.status(200).send({ Success: true });
 });
 
 // Running server on particular port

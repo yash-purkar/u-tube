@@ -2,12 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 interface InitialState {
-  isLoggedIn: boolean;
+  isLoggedIn: boolean | null;
   status: string;
 }
 
 const initialState: InitialState = {
-  isLoggedIn: false,
+  isLoggedIn: null,
   status: "",
 };
 
@@ -30,7 +30,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setIsLoggedIn: (state, action) => {
-      console.log("Action dispatch");
       state.isLoggedIn = action.payload;
     },
   },

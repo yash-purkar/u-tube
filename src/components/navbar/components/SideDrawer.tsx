@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Divider,
@@ -16,6 +16,9 @@ import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import HistoryIcon from "@mui/icons-material/History";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
+import { setIsLoggedIn } from "@/app/lib/redux/slices/authSlice";
 
 interface DrawerItem {
   name: string;
@@ -55,17 +58,40 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const isLoggedIn = true;
+  const router = useRouter();
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
   const toggleDrawer = () => {
     setOpen((prev) => !prev);
   };
   // List to show in drawer
+
+  // It handles redirection
+  const handleRedirection = (url: string) => {
+    router.push(url);
+  };
+
+  // It handles login and logout;
+  const handleLoginLogoutClick = () => {
+    if (isLoggedIn) {
+      // It will delete the cookie bcz given time is already expired so it will be deleted.
+      document.cookie =
+        "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      dispatch(setIsLoggedIn(false));
+    } else {
+      router.push("/login");
+    }
+  };
+
   const drawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
       <List>
         {sideDrawerListItems.map((item: DrawerItem) => (
-          <ListItem key={item.name}>
+          <ListItem
+            key={item.name}
+            onClick={() => handleRedirection(item.redirectionUrl)}
+          >
             <ListItemButton>
               <ListItemIcon>
                 <item.Icon />
@@ -79,7 +105,7 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
       {/* Items after divider line */}
       <List>
         <ListItem>
-          <ListItemButton>
+          <ListItemButton onClick={handleLoginLogoutClick}>
             <ListItemIcon>
               {isLoggedIn ? <LogoutIcon /> : <LoginIcon />}
             </ListItemIcon>

@@ -13,10 +13,11 @@ import styles from "./login.module.css";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
 import { QueryClientProvider, useMutation } from "@tanstack/react-query";
-import { checkAuth, login } from "@/clientHandlers/userHandlers";
+import { login } from "@/clientHandlers/userHandlers";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
+import { setIsLoggedIn } from "@/app/lib/redux/slices/authSlice";
 
 interface UserDetails {
   email: string;
@@ -48,13 +49,15 @@ export const Login = () => {
   });
   const classes = useStyles();
   const router = useRouter();
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
   // mutation for login user
   const { mutate, data, error, isError, isPending } = useMutation({
     mutationKey: ["login"],
     mutationFn: login,
-    onSuccess: (data, variabled, context) => {
-      router.replace("/");
+    onSuccess: (data, variable, context) => {
+      dispatch(setIsLoggedIn(true));
     },
   });
 
@@ -77,12 +80,10 @@ export const Login = () => {
   //   button disabled condition
   const isButtonDisabled = userDetails.email && userDetails.password;
 
+  // It navigates to the home page if user is logged in.
   useEffect(() => {
-    // It redirects user to home page if user is logged in
-    checkAuth().then(data => {
-      data?.Success && router.replace('/')
-    });
-  }, []);
+    isLoggedIn && router.replace("/");
+  }, [isLoggedIn]);
 
   return (
     <Container maxWidth="sm">

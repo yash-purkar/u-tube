@@ -56,11 +56,3 @@ export const login = async (params: LoginProps) => {
   }
 };
 
-export const checkAuth = async () => {
-  try {
-    const { data } = await axios.get("http://localhost:3001/checkAuth");
-    return data;
-  } catch (error) {
-    throw new Error("Something wen't wrong");
-  }
-};

@@ -5,6 +5,7 @@ import {
   Divider,
   IconButton,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -57,13 +58,15 @@ export const Navbar: React.FC = () => {
           </Typography>
         </div>
 
-        <div>
+        <div className={'cursor_pointer'}>
+          <Tooltip title={"Profile"}>
           <Avatar
             alt="Y"
             className={classes.profile_icon}
             src="url"
             sx={{ width: "30px", height: "30px" }}
           />
+          </Tooltip>
         </div>
       </Toolbar>
 

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar/Navbar";
-import { ReactQueryProvider } from "./ReactQueryProvider";
+import { ReactQueryProvider } from "./providers/ReactQueryProvider";
+import { ReduxStoreProvider } from "./providers/ReduxStoreProvider";
+import { CheckAuthProvider } from "./providers/CheckAuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +19,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
-        <body className={inter.className}>
-          <ReactQueryProvider>
-            <Navbar />
-            {children}
-          </ReactQueryProvider>
-        </body>
-      </html>
+    <html lang="en">
+      <body className={inter.className}>
+        <ReduxStoreProvider>
+          <CheckAuthProvider>
+            <ReactQueryProvider>
+              <Navbar />
+              {children}
+            </ReactQueryProvider>
+          </CheckAuthProvider>
+        </ReduxStoreProvider>
+      </body>
+    </html>
   );
 }

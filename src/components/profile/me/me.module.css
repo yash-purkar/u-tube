@@ -1,0 +1,14 @@
+.user_extra_info{
+    margin: 0.8rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #808080;
+}
+
+@media (min-width:720px) {
+    .user_extra_info{
+        flex-direction: row;
+    }
+}

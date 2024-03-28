@@ -6,6 +6,7 @@ interface UserSchemaInterface {
   email: string;
   password: string;
   username: string;
+  subscribers: number;
 }
 
 const UserSchema: any = new Schema({
@@ -29,6 +30,10 @@ const UserSchema: any = new Schema({
   username: {
     type: String,
     required: true,
+  },
+  subscribers: {
+    type: Number,
+    default: 0,
   },
 });
 

@@ -9,6 +9,7 @@ interface InitialState {
     lastName: string;
     email: string;
     username: string;
+    subscribers:number
   } | null;
 }
 

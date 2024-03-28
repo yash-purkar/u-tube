@@ -18,7 +18,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
-import { setIsLoggedIn } from "@/app/lib/redux/slices/authSlice";
+import { setIsLoggedIn} from "@/app/lib/redux/slices/authSlice";
 
 interface DrawerItem {
   name: string;

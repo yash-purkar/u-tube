@@ -4,11 +4,18 @@ import axios from "axios";
 interface InitialState {
   isLoggedIn: boolean | null;
   status: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+  } | null;
 }
 
 const initialState: InitialState = {
   isLoggedIn: null,
   status: "",
+  user: null,
 };
 
 // Creating an async thunk to check isLoggedIn initally on app load.
@@ -17,7 +24,9 @@ export const checkIsLoggedIn = createAsyncThunk(
   "auth/checkAuth",
   async function () {
     try {
-      const { data } = await axios.get("http://localhost:3001/checkAuth");
+      const { data } = await axios.get("http://localhost:3001/checkAuth", {
+        withCredentials: true,
+      });
       return data;
     } catch (error) {
       throw new Error("Something wen't wrong");
@@ -33,6 +42,7 @@ const authSlice = createSlice({
       state.isLoggedIn = action.payload;
     },
   },
+
   // To handles async operations
   extraReducers: (builder) => {
     builder.addCase(checkIsLoggedIn.pending, (state) => {
@@ -42,11 +52,13 @@ const authSlice = createSlice({
     builder.addCase(checkIsLoggedIn.fulfilled, (state, action) => {
       state.status = "success";
       state.isLoggedIn = action?.payload?.Success;
+      state.user = action?.payload?.user;
     });
 
     builder.addCase(checkIsLoggedIn.rejected, (state, action) => {
       state.status = "rejected";
       state.isLoggedIn = false;
+      state.user = null;
     });
   },
 });

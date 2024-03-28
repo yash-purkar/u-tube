@@ -9,19 +9,19 @@ export const CheckAuthProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { isLoggedIn } = useAppSelector((state) => state.auth);
+  const { isLoggedIn, status } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   // It checks is userLoggedInOrNot
   useEffect(() => {
     dispatch(checkIsLoggedIn());
-  }, []);
+  }, [dispatch]);
 
   //   If user is not logged in redirect to login page.
   useEffect(() => {
-    !isLoggedIn && router.replace("/login");
-  }, [isLoggedIn]);
+    status === "success" && isLoggedIn === false && router.replace("/login");
+  }, [isLoggedIn, router, status]);
 
   return <>{children}</>;
 };

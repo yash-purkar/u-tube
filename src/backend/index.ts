@@ -33,7 +33,10 @@ app.post("/register", async (req: any, res: any) => {
   const body = req.body;
   // finding user in db.
   const user = await User.findOne({ email: body.email });
-  const newUser = new User({ ...body });
+  const newUser = new User({
+    ...body,
+    username: `@${body.firstName.concat(body.lastName).toLowerCase()}`,
+  });
 
   if (!checkIsEmailValid(body.email)) {
     return res.status(400).send({ error: "Invalid EmailID🙁" });
@@ -84,15 +87,21 @@ const checkAuth = (req: any, res: any, next: () => {}) => {
   const token = req?.cookies?.token;
 
   if (token) {
+    // decoding token
+    const decoded = jwt.decode(token);
+    // setting email in request to find the user in callback of /checkAuth endpoint.
+    req.userEmail = decoded?.email;
     return next();
   }
 
-  return res.status(200).send({Success:false})
+  return res.status(200).send({ Success: false });
 };
 
 // This endpoint checks is user Authenticated or not
-app.get("/checkAuth", checkAuth,(req: any, res: any) => {
-  res.status(200).send({ Success: true });
+app.get("/checkAuth", checkAuth, async (req: any, res: any) => {
+  const user = await User.findOne({ email: req?.userEmail });
+
+  res.status(200).send({ Success: true, user });
 });
 
 // Running server on particular port

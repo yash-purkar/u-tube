@@ -1,13 +1,14 @@
 // import {Schema} from "mongoose";
-const {Schema,models,model} = require('mongoose')
+const { Schema, models, model } = require("mongoose");
 interface UserSchemaInterface {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  username: string;
 }
 
-const UserSchema:any = new Schema({
+const UserSchema: any = new Schema({
   firstName: {
     type: String,
     required: true,
@@ -21,6 +22,11 @@ const UserSchema:any = new Schema({
     required: true,
   },
   password: {
+    type: String,
+    required: true,
+    select: false, // If we fetch the user data the password field won't come in response.
+  },
+  username: {
     type: String,
     required: true,
   },

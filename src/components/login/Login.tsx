@@ -83,7 +83,7 @@ export const Login = () => {
   // It navigates to the home page if user is logged in.
   useEffect(() => {
     isLoggedIn && router.replace("/");
-  }, [isLoggedIn]);
+  }, [isLoggedIn, router]);
 
   return (
     <Container maxWidth="sm">

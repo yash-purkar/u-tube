@@ -6,6 +6,7 @@ const User = require("./models/user");
 const checkIsEmailValid = require("./serverHandlers/serverHandlers");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const Filter = require("./models/filter");
 
 dotenv.config();
 
@@ -102,6 +103,13 @@ app.get("/checkAuth", checkAuth, async (req: any, res: any) => {
   const user = await User.findOne({ email: req?.userEmail });
 
   res.status(200).send({ Success: true, user });
+});
+
+app.post("/filter/add", async (req: Request, res: any) => {
+  const body = req.body;
+  const newFilter = new Filter(body);
+  await newFilter.save();
+  return res.status(200).send({ message: "Added" });
 });
 
 // Running server on particular port

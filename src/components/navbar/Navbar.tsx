@@ -1,7 +1,9 @@
 "use client";
 import React from "react";
 import {
+  AppBar,
   Avatar,
+  Container,
   Divider,
   IconButton,
   Toolbar,
@@ -12,8 +14,14 @@ import { makeStyles } from "@mui/styles";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MenuIcon from "@mui/icons-material/Menu";
 import { SideDrawer } from "./components/SideDrawer";
+import { useRouter } from "next/navigation";
+import Filters from "./components/Filters";
 
 const useStyles: () => any = makeStyles({
+  appbar: {
+    background: "#fff",
+    boxShadow: "none",
+  },
   toolbar: {
     display: "flex",
     justifyContent: "space-between",
@@ -39,8 +47,14 @@ const useStyles: () => any = makeStyles({
 
 export const Navbar: React.FC = () => {
   const classes = useStyles();
+  const router = useRouter();
+
+  const handleMyProfile = () => {
+    router.push("/profile/me");
+  };
   return (
-    <>
+    <Container maxWidth="sm">
+      <AppBar position="fixed" className={classes.appbar}>
       <Toolbar className={classes.toolbar}>
         <div className={classes.brand_header}>
           <SideDrawer>
@@ -53,24 +67,27 @@ export const Navbar: React.FC = () => {
             <YouTubeIcon className={classes.brand_icon} />
           </IconButton>
 
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h6" className={classes.title} color={'#000'}>
             UTube
           </Typography>
         </div>
 
-        <div className={'cursor_pointer'}>
+        <div className={"cursor_pointer"}>
           <Tooltip title={"Profile"}>
-          <Avatar
-            alt="Y"
-            className={classes.profile_icon}
-            src="url"
-            sx={{ width: "30px", height: "30px" }}
-          />
+            <Avatar
+              alt="Y"
+              className={classes.profile_icon}
+              src="url"
+              sx={{ width: "30px", height: "30px" }}
+              onClick={handleMyProfile}
+            />
           </Tooltip>
         </div>
       </Toolbar>
-
+      
       <Divider />
-    </>
+      <Filters />
+    </AppBar>
+    </Container>
   );
 };

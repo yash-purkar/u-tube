@@ -1,4 +1,3 @@
-// import {Schema} from "mongoose";
 const { Schema, models, model } = require("mongoose");
 interface UserSchemaInterface {
   firstName: string;

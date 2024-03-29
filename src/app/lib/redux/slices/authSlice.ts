@@ -9,7 +9,7 @@ interface InitialState {
     lastName: string;
     email: string;
     username: string;
-    subscribers:number
+    subscribers: number;
   } | null;
 }
 
@@ -41,6 +41,9 @@ const authSlice = createSlice({
   reducers: {
     setIsLoggedIn: (state, action) => {
       state.isLoggedIn = action.payload;
+      if (!action.payload) {
+        state.user = null;
+      }
     },
   },
 

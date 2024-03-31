@@ -1,51 +1,60 @@
-import { Avatar, Box } from "@mui/material";
-import Image from "next/image";
 import React from "react";
-import remove_this_image_later from "../../../public/assets/delete_later.jpg";
-import styles from "./singleVideo.module.css";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
+import videoImg from "../../../public/assets/delete_later.jpg";
 import { makeStyles } from "@mui/styles";
+import styles from "./singleVideo.module.css";
 
 const useStyles: () => any = makeStyles({
-  video_card: {
-    margin: "3rem 0 1rem",
-    maxWidth: "18rem",
-    "@media (min-width:1250px)": {
-      maxWidth: "20rem",
-    },
+  card: {
+    // display:'flex'
   },
-  video_info: {
+  cart_content: {
+    padding: "0.5rem 0",
     display: "flex",
-    gap: "1rem",
+    gap: "0.5rem",
+  },
+  username: {
+    color:'gray',
+    letterSpacing:'0.8px',
+    margin:'0.2rem 0'
   },
 });
-
-const SingleVideo: React.FC = () => {
+export const SingleVideo = () => {
   const classes = useStyles();
   return (
-    <Box className={classes.video_card} component={"div"}>
-      <Box>
-        <Image
-          src={remove_this_image_later}
-          alt="img"
-          className={styles.video_thumbnail}
-        />
-      </Box>
-      <Box className={classes.video_info} component={"div"}>
-        <Avatar></Avatar>
+    <Card className={classes.card} sx={{ maxWidth: 345, boxShadow: "none" }}>
+      <CardMedia
+        component="img"
+        alt="green iguana"
+        height={170}
+        image={videoImg.src}
+        sx={{ borderRadius: "1rem" }}
+      />
+      <CardContent className={classes.cart_content}>
+        <Avatar>Y</Avatar>
         <Box>
-          <h4 className={styles.video_title}>
-            Sooraj dooba hain full video song | arjit sing ....
-          </h4>
-          <p>code with harry</p>
-          <div className={styles.video_extra_info}>
-            <p>230M Views</p>
+          <Typography variant="body2" sx={{fontSize:'1.1rem',fontWeight:'bold'}}>
+            Video title will be shown here....
+          </Typography>
+          <Typography variant="body2" className={classes.username}>
+            @yashpurkar
+          </Typography>
+          <div className={styles.user_extra_info}>
+            <p>70K Views</p>
             <span>.</span>
-            <p>10 years ago</p>
+            <p>2 years ago</p>
           </div>
         </Box>
-      </Box>
-    </Box>
+      </CardContent>
+    </Card>
   );
 };
-
-export default SingleVideo;

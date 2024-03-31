@@ -1,5 +1,6 @@
-const { Schema, models, model } = require("mongoose");
-interface UserSchemaInterface {
+import { models, model, Schema, Document } from "mongoose";
+
+interface UserSchemaInterface extends Document {
   firstName: string;
   lastName: string;
   email: string;
@@ -8,7 +9,7 @@ interface UserSchemaInterface {
   subscribers: number;
 }
 
-const UserSchema: any = new Schema({
+const UserSchema = new Schema<UserSchemaInterface>({
   firstName: {
     type: String,
     required: true,

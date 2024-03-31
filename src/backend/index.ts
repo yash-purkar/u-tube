@@ -112,6 +112,11 @@ app.post("/filter/add", async (req: Request, res: any) => {
   return res.status(200).send({ message: "Added" });
 });
 
+app.get("/filters", async (req: any, res: any) => {
+  const filters = await Filter.find();
+  return res.status(200).send({ Success: true, filters: filters ?? [] });
+});
+
 // Running server on particular port
 app.listen(process.env.APP_PORT, () => {
   console.log(`SERVER STARTED ON PORT ${process.env.APP_PORT}`);

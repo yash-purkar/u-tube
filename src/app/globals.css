@@ -5,6 +5,22 @@
   letter-spacing: 1px;
 }
 
-.cursor_pointer{
+.cursor_pointer {
   cursor: pointer;
+}
+
+.display_flex {
+  display: flex;
+}
+
+.align_center {
+  align-items: center;
+}
+
+.justify_center {
+  justify-content: center;
+}
+
+.gap_05 {
+  gap: 0.5rem;
 }

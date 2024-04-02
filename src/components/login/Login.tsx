@@ -58,7 +58,7 @@ export const Login = () => {
     mutationFn: login,
     onSuccess: (data, variable, context) => {
       dispatch(setIsLoggedIn(true));
-    },
+    }
   });
 
   //   It handles the change of input fields.

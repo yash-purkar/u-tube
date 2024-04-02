@@ -7,6 +7,7 @@ const checkIsEmailValid = require("./serverHandlers/serverHandlers");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const Filter = require("./models/filter");
+import bcrypt from "bcryptjs";
 
 dotenv.config();
 
@@ -34,6 +35,12 @@ app.post("/register", async (req: any, res: any) => {
   const body = req.body;
   // finding user in db.
   const user = await User.findOne({ email: body.email });
+
+  // If user email is already there throw an error
+  if (user) {
+    return res.status(409).send({ error: "User already exist" });
+  }
+
   const newUser = new User({
     ...body,
     username: `@${body.firstName.concat(body.lastName).toLowerCase()}`,
@@ -50,11 +57,6 @@ app.post("/register", async (req: any, res: any) => {
       .send({ error: "Password must be greater than 6 characters." });
   }
 
-  // If user email is already there throw an error
-  if (user) {
-    return res.status(409).send({ error: "User already exist" });
-  }
-
   // saving user in db
   const addedUser = await newUser.save();
 
@@ -66,21 +68,31 @@ app.post("/login", async (req: any, res: any) => {
 
   const user = await User.findOne({
     email: body.email,
-    password: body.password,
-  });
+  }).select("+password");
 
   if (user) {
+    // Checks password is correct or not
+    const isPasswordCorrect = await bcrypt.compare(
+      body.password,
+      user?.password
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(404).json({ error: "Wrong Password🙁" });
+    }
+
+    // If password is correct generate token and add user_id in it
     const token = jwt.sign(
-      { email: body.email },
+      { user_id: user?._id },
       process.env.JSON_TOKEN_SECERET,
       { expiresIn: "1d" }
     );
     res.cookie("token", token);
 
-    return res.status(201).json({ message: "Success", user });
+    return res.status(201).json({ message: "Success" });
   }
 
-  return res.status(404).json({ error: "Wrong Credentials🙁" });
+  return res.status(404).json({ error: "User not found🙁" });
 });
 
 // Middleware to check token

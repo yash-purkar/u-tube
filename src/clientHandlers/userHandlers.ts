@@ -24,6 +24,7 @@ export const register = async (params: RegisterProps) => {
         lastName,
         email,
         password,
+        username: `@${firstName.toLocaleLowerCase()}${lastName.toLocaleLowerCase()}`,
       },
       {
         headers: {
@@ -55,4 +56,3 @@ export const login = async (params: LoginProps) => {
     throw new Error(err.response.data.error || "Failed to Login");
   }
 };
-

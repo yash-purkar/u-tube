@@ -6,9 +6,12 @@ const User = require("./models/user");
 const cookieParser = require("cookie-parser");
 const Filter = require("./models/filter");
 import authRoutes from "./routes/auth";
-import filtersRoutes from './routes/filters'
-
+import filtersRoutes from "./routes/filters";
+import videosRoutes from "./routes/videos";
+import { seeder } from "./seeder/seeder";
 dotenv.config();
+//use this to seed data
+// seeder()
 
 const app = express();
 
@@ -31,7 +34,8 @@ app.use(cookieParser());
 mongoose.connect(process.env.MONGODB_URI);
 
 app.use("/api/auth", authRoutes);
-app.use("/api/filters",filtersRoutes);
+app.use("/api/filters", filtersRoutes);
+app.use("/api/videos", videosRoutes);
 
 // Running server on particular port
 app.listen(process.env.APP_PORT, () => {

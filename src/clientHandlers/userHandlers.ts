@@ -18,7 +18,7 @@ export const register = async (params: RegisterProps) => {
 
   try {
     const { data } = await axios.post(
-      "http://localhost:3001/register",
+      "http://localhost:3001/api/auth/register",
       {
         firstName,
         lastName,
@@ -43,7 +43,7 @@ export const login = async (params: LoginProps) => {
   const { email, password } = params;
   try {
     const { data } = await axios.post(
-      "http://localhost:3001/login",
+      "http://localhost:3001/api/auth/login",
       { email, password },
       {
         headers: {

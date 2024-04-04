@@ -6,6 +6,8 @@ import { AppBar, Container, Grid } from "@mui/material";
 import Filters from "./Filters";
 import { makeStyles } from "@mui/styles";
 import { SingleVideo } from "../singleVideo/SingleVideo";
+import { useQuery } from "@tanstack/react-query";
+import { getAllVideos } from "@/clientHandlers/handlers";
 
 const useStyles: () => any = makeStyles({
   videos_container: {
@@ -33,6 +35,10 @@ const useStyles: () => any = makeStyles({
 });
 
 export const HomeComp = () => {
+  const {data,isSuccess,error,isError,isLoading} = useQuery({
+    queryKey: ["videos"],
+    queryFn: getAllVideos,
+  });
   const classes = useStyles();
   return (
     <div>
@@ -43,32 +49,14 @@ export const HomeComp = () => {
         className={classes.videos_container}
         container
         spacing={4}
-        justifyContent={"center"}
+        justifyContent={"start"}
       >
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo />
-        </Grid>
+      {
+        data?.videos?.map((video:any) =>   <Grid key={video?._id} item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
+          <SingleVideo video={video}/>
+        </Grid>)
+      }
+
       </Grid>
     </div>
   );

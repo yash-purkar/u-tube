@@ -1,4 +1,4 @@
-import { models, model, Schema, Document } from "mongoose";
+import { models, model, Schema, Document, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 
 interface UserSchemaInterface extends Document {
@@ -8,6 +8,10 @@ interface UserSchemaInterface extends Document {
   password: string;
   username: string;
   subscribers: number;
+  videos: Types.ObjectId[];
+  liked_videos: Types.ObjectId[];
+  watch_later_videos: Types.ObjectId[];
+  history: Types.ObjectId[];
   // comparePasswordCustomMethod: (entered_password_by_user: string) => Promise<boolean>
 }
 
@@ -36,6 +40,22 @@ const UserSchema = new Schema<UserSchemaInterface>({
   subscribers: {
     type: Number,
     default: 0,
+  },
+  videos: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+  },
+  liked_videos: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+  },
+  watch_later_videos: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+  },
+  history: {
+    type: [Schema.Types.ObjectId],
+    default: [],
   },
 });
 

@@ -10,7 +10,7 @@ interface VideoSchema extends Document {
   category: string;
   likes: number;
   dislikes: number;
-  comments: Types.ObjectId[]
+  comments: Types.ObjectId[];
 }
 
 const videoSchema = new Schema<VideoSchema>(
@@ -51,10 +51,15 @@ const videoSchema = new Schema<VideoSchema>(
       type: Number,
       default: 0,
     },
-    comments: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Comment'
-    }]
+    comments: {
+      type: [
+        {
+          type: Types.ObjectId,
+          ref: "Comment",
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

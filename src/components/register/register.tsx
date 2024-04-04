@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import styles from "./signup.module.css";
+import styles from "./register.module.css";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
 import { register } from "@/clientHandlers/userHandlers";
@@ -42,7 +42,7 @@ const useStyles: () => any = makeStyles({
   },
 });
 
-export const SignUp = () => {
+export const Register = () => {
   const [userDetails, setUserDetails] = useState<UserDetails>({
     firstName: "",
     lastName: "",

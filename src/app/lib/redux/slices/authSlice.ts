@@ -25,7 +25,7 @@ export const checkIsLoggedIn = createAsyncThunk(
   "auth/checkAuth",
   async function () {
     try {
-      const { data } = await axios.get("http://localhost:3001/checkAuth", {
+      const { data } = await axios.get("http://localhost:3001/api/auth/checkAuth", {
         withCredentials: true,
       });
       return data;

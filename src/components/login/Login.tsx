@@ -12,7 +12,7 @@ import { makeStyles } from "@mui/styles";
 import styles from "./login.module.css";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
-import { QueryClientProvider, useMutation } from "@tanstack/react-query";
+import {useMutation } from "@tanstack/react-query";
 import { login } from "@/clientHandlers/userHandlers";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
@@ -74,7 +74,7 @@ export const Login = () => {
 
   //   Navigate to signup page
   const handleNavigateToSignup = () => {
-    router.replace("/signup");
+    router.replace("/register");
   };
 
   //   button disabled condition

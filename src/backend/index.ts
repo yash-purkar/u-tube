@@ -7,8 +7,9 @@ const cookieParser = require("cookie-parser");
 const Filter = require("./models/filter");
 import authRoutes from "./routes/auth";
 import filtersRoutes from './routes/filters'
-
+import { seeder } from "./seeder/seeder";
 dotenv.config();
+// seeder()
 
 const app = express();
 

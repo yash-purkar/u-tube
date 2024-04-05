@@ -12,7 +12,7 @@ import { getAllVideos } from "@/clientHandlers/handlers";
 const useStyles: () => any = makeStyles({
   videos_container: {
     width: "90%",
-    margin: "4rem 0",
+    margin: "auto",
     "@media(min-width:1169px)": {
       margin: "2rem auto",
     },
@@ -29,13 +29,13 @@ const useStyles: () => any = makeStyles({
   },
   grid_item: {
     "@media(max-width:720px)": {
-      padding: "0rem !important",
+      paddingLeft: "0rem !important",
     },
   },
 });
 
 export const HomeComp = () => {
-  const {data,isSuccess,error,isError,isLoading} = useQuery({
+  const { data, isSuccess, error, isError, isLoading } = useQuery({
     queryKey: ["videos"],
     queryFn: getAllVideos,
   });
@@ -49,14 +49,23 @@ export const HomeComp = () => {
         className={classes.videos_container}
         container
         spacing={4}
-        justifyContent={"start"}
+        justifyContent={"center"}
+        wrap="wrap"
       >
-      {
-        data?.videos?.map((video:any) =>   <Grid key={video?._id} item xs={12} sm={6} lg={4} xl={3} className={classes.grid_item}>
-          <SingleVideo video={video}/>
-        </Grid>)
-      }
-
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((video: any) => (
+          <Grid
+            alignSelf={"center"}
+            key={data?.videos[0]?._id}
+            item
+            // xs={12}
+            // md={6}
+            // lg={4}
+            // xl={3}
+            className={classes.grid_item}
+          >
+            <SingleVideo video={data?.videos[0]} />
+          </Grid>
+        ))}
       </Grid>
     </div>
   );

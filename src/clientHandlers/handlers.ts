@@ -19,3 +19,41 @@ export const getAllVideos = async() => {
     throw new err
   }
 }
+
+
+// It gives uploaded time
+export const getUploadedDate = (uploadedDate:Date) => {
+  const currentDate = new Date();
+  let uploaded;
+
+  const yearDiff = currentDate?.getFullYear() - uploadedDate?.getFullYear();
+  const monthDiff = currentDate?.getMonth() - uploadedDate?.getMonth();
+  const daysDiff = currentDate?.getDay() - uploadedDate?.getDay();
+
+  if (yearDiff > 0) {
+    if (yearDiff === 1) {
+      uploaded = "1 year ago";
+      return;
+    }
+    uploaded = `${yearDiff} years ago`;
+    return uploaded;
+  }
+  if (monthDiff > 0) {
+    if (monthDiff === 1) {
+      uploaded = "1 month ago";
+      return uploaded;
+    }
+    uploaded = `${monthDiff} months ago`;
+    return;
+  }
+  if (daysDiff > 0) {
+    if (daysDiff === 1) {
+      uploaded = "1 day ago";
+      return uploaded;
+    }
+    uploaded = `${daysDiff} days ago`;
+    return uploaded;
+  }
+  uploaded = "Posted Today";
+  return uploaded;
+};

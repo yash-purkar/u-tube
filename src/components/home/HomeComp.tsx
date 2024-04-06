@@ -13,8 +13,12 @@ const useStyles: () => any = makeStyles({
   videos_container: {
     width: "90%",
     margin: "auto",
+    marginTop: '5rem',
+    '@media(min-width:720px)': {
+      marginTop: '7rem'
+    },
     "@media(min-width:1169px)": {
-      margin: "2rem auto",
+      margin: "5rem auto",
     },
   },
   filters_app_bar: {
@@ -28,8 +32,9 @@ const useStyles: () => any = makeStyles({
     },
   },
   grid_item: {
+    paddingTop: '0rem !important',
     "@media(max-width:720px)": {
-      paddingLeft: "0rem !important",
+      // paddingLeft: "0rem !important",
     },
   },
 });
@@ -52,18 +57,14 @@ export const HomeComp = () => {
         justifyContent={"center"}
         wrap="wrap"
       >
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((video: any) => (
+        {data?.videos?.map((video: any) => (
           <Grid
             alignSelf={"center"}
-            key={data?.videos[0]?._id}
+            key={video?._id}
             item
-            // xs={12}
-            // md={6}
-            // lg={4}
-            // xl={3}
             className={classes.grid_item}
           >
-            <SingleVideo video={data?.videos[0]} />
+            <SingleVideo video={video} />
           </Grid>
         ))}
       </Grid>

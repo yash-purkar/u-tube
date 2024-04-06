@@ -11,11 +11,12 @@ import UserVideos from "../userVideos/UserVideos";
 const useStyles: () => any = makeStyles((theme:any)=>({
   inner_container: {
     padding:'2rem',
-    margin: '2rem 0',
+    margin: '3rem 0rem 0rem',
     display: "flex",
     flexDirection: 'column',
     alignItems: "center",
     gap: "1rem",
+    boxShadow:'none',
     '@media (min-width: 720px)': {
       flexDirection:'row'
     }

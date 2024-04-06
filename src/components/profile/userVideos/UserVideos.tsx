@@ -5,7 +5,7 @@ import { Grid } from "@mui/material";
 const UserVideos = () => {
   return (
     <div>
-      <h2 style={{margin:"2rem 0"}}>Videos</h2>
+      <h2 style={{margin:"1rem 0"}}>Videos</h2>
       <Grid
         justifyContent={"center"}
         container

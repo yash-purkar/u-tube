@@ -13,9 +13,12 @@ import videoImg from "../../../public/assets/delete_later.jpg";
 import { makeStyles } from "@mui/styles";
 import styles from "./singleVideo.module.css";
 import { getUploadedDate } from "@/clientHandlers/handlers";
+import { Video } from "@/app/types";
 
 const useStyles: () => any = makeStyles({
   card: {
+    minHeight: '300px',
+    paddingTop: '0rem',
     "@media(min-width:1024px)": {
       width: "18.75rem",
     },
@@ -32,7 +35,7 @@ const useStyles: () => any = makeStyles({
   },
 });
 
-export const SingleVideo = ({ video }: { video: any }) => {
+export const SingleVideo = ({ video }: { video: Video }) => {
   const classes = useStyles();
   const uploaded = getUploadedDate(new Date(video?.createdAt));
 
@@ -46,13 +49,13 @@ export const SingleVideo = ({ video }: { video: any }) => {
         sx={{ borderRadius: "1rem", width: "100%" }}
       />
       <CardContent className={classes.cart_content}>
-        <Avatar>Y</Avatar>
+        <Avatar>{video?.user?.firstName?.split("")[0]}</Avatar>
         <Box>
           <Typography
             variant="body2"
             sx={{ fontSize: "1.05rem", fontWeight: "bold" }}
           >
-            {video?.title}
+            {video?.title?.slice(0,31)}{video?.title?.length > 31 && "..."}
           </Typography>
           <Typography variant="body2" className={classes.username}>
             {video?.user?.username}

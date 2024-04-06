@@ -1,16 +1,11 @@
+import { User } from "@/app/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 interface InitialState {
   isLoggedIn: boolean | null;
   status: string;
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    username: string;
-    subscribers: number;
-  } | null;
+  user: User | null;
 }
 
 const initialState: InitialState = {

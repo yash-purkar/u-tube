@@ -1,7 +1,10 @@
+import { Request, Response } from "express";
+import { AddFilterRequest } from "../types";
+
 const Filter = require("../models/filter");
 
 // Add new filter controller
-export const addFilter = async (req: any, res: any) => {
+export const addFilter = async (req: AddFilterRequest, res: Response) => {
   try {
     const body = req.body;
     const newFilter = new Filter(body);
@@ -17,7 +20,7 @@ export const addFilter = async (req: any, res: any) => {
 };
 
 // Get all filters endpoint
-export const getAllFilters = async (req: any, res: any) => {
+export const getAllFilters = async (req: Request, res: Response) => {
   try {
     const filters = await Filter.find();
     return res.status(200).send({ Success: true, filters: filters ?? [] });

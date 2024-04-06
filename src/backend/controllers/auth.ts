@@ -2,14 +2,16 @@ const User = require("../models/user");
 const checkIsEmailValid = require("../serverHandlers/serverHandlers");
 const jwt = require("jsonwebtoken");
 import bcrypt from "bcryptjs";
+import {  Response } from "express";
+import { UserLoginRequest, UserRegisterRequest } from "../types";
 
 // Register user controller
-export const register = async (req: any, res: any) => {
+export const register = async (req: UserRegisterRequest, res: Response) => {
   try {
-    const body = req.body;
+    const body = req.body as UserRegisterRequest;
 
     //searching user in DB
-    const user = await User.findOne({ email: body.email });
+    const user = await User.findOne({ email: body?.email });
 
     // If user's email is already exist throw an error.
 
@@ -45,7 +47,7 @@ export const register = async (req: any, res: any) => {
 };
 
 // Login user controller
-export const login = async (req: any, res: any) => {
+export const login = async (req: UserLoginRequest, res: any) => {
   try {
     const body = req.body;
 

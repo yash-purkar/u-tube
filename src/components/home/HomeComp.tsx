@@ -8,6 +8,7 @@ import { makeStyles } from "@mui/styles";
 import { SingleVideo } from "../singleVideo/SingleVideo";
 import { useQuery } from "@tanstack/react-query";
 import { getAllVideos } from "@/clientHandlers/handlers";
+import { useRouter } from "next/navigation";
 
 const useStyles: () => any = makeStyles({
   videos_container: {
@@ -39,30 +40,31 @@ const useStyles: () => any = makeStyles({
 });
 
 export const HomeComp = () => {
-  const [filterName, setFilterName] = useState<string>("all");
+  const [filterName, setFilterName] = useState<string>("All");
+  const router = useRouter();
 
   const { data, isSuccess, error, isError, isLoading, refetch } = useQuery({
     queryKey: ["videos"],
-    queryFn: async (key, filter = filterName) => {
-      return getAllVideos(filter);
+    queryFn: async () => {
+      return getAllVideos(filterName);
     },
   });
   const classes = useStyles();
 
   // It will call the videos api again with the query filter
   const handleFilterClick = async (value: string) => {
-    if (value !== "all") {
+    if (value !== "All") {
       // If click on selected filter again then all filter should be selected
       if (value === filterName) {
-        setFilterName("all");
+        setFilterName("All");
       } else {
         setFilterName(value);
       }
-    } else if (filterName === "all" && value === "all") {
+    } else if (filterName === "All" && value === "All") {
       // If selected filter is all and again click on it we don't want to fetch the data again
       return;
     } else {
-      setFilterName("all");
+      setFilterName("All");
     }
   };
 
@@ -85,16 +87,22 @@ export const HomeComp = () => {
         justifyContent={"center"}
         wrap="wrap"
       >
-        {data?.videos?.map((video: any) => (
-          <Grid
-            alignSelf={"center"}
-            key={video?._id}
-            item
-            className={classes.grid_item}
-          >
-            <SingleVideo video={video} />
-          </Grid>
-        ))}
+        {isLoading ? (
+          <>Loading...</>
+        ) : (
+          <>
+            {data?.videos?.map((video: any) => (
+              <Grid
+                alignSelf={"center"}
+                key={video?._id}
+                item
+                className={classes.grid_item}
+              >
+                <SingleVideo video={video} />
+              </Grid>
+            ))}
+          </>
+        )}
       </Grid>
     </div>
   );

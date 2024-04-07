@@ -65,10 +65,10 @@ const Filters: React.FC<FiltersProps> = ({
               key={chip?.slug}
               label={chip?.name}
               className={`${classes.chip} ${
-                selectedFilter === chip.slug && classes.selected_filter
+                selectedFilter === chip?.name && classes.selected_filter
               }`}
               onClick={() => {
-                handleFilterClick(chip?.slug);
+                handleFilterClick(chip?.name);
               }}
             />
           ))}

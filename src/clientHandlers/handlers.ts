@@ -16,7 +16,7 @@ export const getFilters = async () => {
 export const getAllVideos = async (filterName: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/videos/all_videos?filterName=${filterName}`
+      `http://localhost:3001/api/videos/all_videos?filter=${filterName}`
     );
     return response.data;
   } catch (err: any) {

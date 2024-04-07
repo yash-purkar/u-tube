@@ -86,7 +86,7 @@ export const Login = () => {
   }, [isLoggedIn, router]);
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{marginTop:"6rem"}}>
       <Box component={"form"} className={classes.login_container}>
         <div className={styles.login_header}>
           <YouTubeIcon className={classes.brand_icon} />

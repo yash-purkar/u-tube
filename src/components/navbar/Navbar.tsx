@@ -60,15 +60,7 @@ const useStyles: () => any = makeStyles({
     '@media(min-width:720px)': {
       display: 'none'
     }
-  },
-  filters_app_bar: {
-    width: "100%",
-    background: "#fff",
-    boxShadow: "none",
-    "@media(min-width:720px)": {
-      display: "none",
-    },
-  },
+  }
 });
 
 export const Navbar: React.FC = () => {
@@ -125,14 +117,6 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
         </Toolbar>
-
-        <AppBar
-          position={"fixed"}
-          className={classes.filters_app_bar}
-          sx={{ top: showMbSearchbar ? "6rem" : "3.05rem" }}
-        >
-          <Filters />
-        </AppBar>
         {showMbSearchbar && (
           <TextField size="small" sx={{ margin: "0 1rem" }} InputProps={{sx:{borderRadius:'1rem'}}}/>
         )}

@@ -9,6 +9,11 @@ interface Chip {
   slug: string;
 }
 
+interface FiltersProps {
+  handleFilterClick: (value: string) => void;
+  selectedFilter: string;
+}
+
 const useStyles: () => any = makeStyles({
   filters_container: {
     margin: "1rem",
@@ -19,15 +24,28 @@ const useStyles: () => any = makeStyles({
   chip: {
     cursor: "pointer",
   },
+  selected_filter: {
+    backgroundColor: "#000",
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#000",
+      color: "#fff",
+    },
+  },
 });
 
-const Filters = () => {
+const Filters: React.FC<FiltersProps> = ({
+  handleFilterClick,
+  selectedFilter,
+}) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["filters"],
     queryFn: getFilters,
+    refetchOnWindowFocus:false
   });
 
   const classes = useStyles();
+
   return (
     <Box
       alignSelf={"flex-start"}
@@ -46,7 +64,12 @@ const Filters = () => {
             <Chip
               key={chip?.slug}
               label={chip?.name}
-              className={classes.chip}
+              className={`${classes.chip} ${
+                selectedFilter === chip.slug && classes.selected_filter
+              }`}
+              onClick={() => {
+                handleFilterClick(chip?.slug);
+              }}
             />
           ))}
       </Stack>

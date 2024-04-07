@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { VideoCard } from "../profile/userVideos/videoCard/VideoCard";
 import { AppBar, Container, Grid } from "@mui/material";
 import Filters from "./Filters";
@@ -13,26 +13,25 @@ const useStyles: () => any = makeStyles({
   videos_container: {
     width: "90%",
     margin: "auto",
-    marginTop: '5rem',
-    '@media(min-width:720px)': {
-      marginTop: '7rem'
+    marginTop: "5rem",
+    "@media(min-width:720px)": {
+      marginTop: "7rem",
     },
     "@media(min-width:1169px)": {
       margin: "5rem auto",
     },
   },
   filters_app_bar: {
-    display: "none",
     width: "100%",
-    top: "4rem",
+    top: "3.5rem",
     background: "#fff",
     boxShadow: "none",
     "@media(min-width:720px)": {
-      display: "block",
+      top: "4rem",
     },
   },
   grid_item: {
-    paddingTop: '0rem !important',
+    paddingTop: "0rem !important",
     "@media(max-width:720px)": {
       // paddingLeft: "0rem !important",
     },
@@ -40,15 +39,44 @@ const useStyles: () => any = makeStyles({
 });
 
 export const HomeComp = () => {
-  const { data, isSuccess, error, isError, isLoading } = useQuery({
+  const [filterName, setFilterName] = useState<string>("all");
+
+  const { data, isSuccess, error, isError, isLoading, refetch } = useQuery({
     queryKey: ["videos"],
-    queryFn: getAllVideos,
+    queryFn: async (key, filter = filterName) => {
+      return getAllVideos(filter);
+    },
   });
   const classes = useStyles();
+
+  // It will call the videos api again with the query filter
+  const handleFilterClick = async (value: string) => {
+    if (value !== "all") {
+      // If click on selected filter again then all filter should be selected
+      if (value === filterName) {
+        setFilterName("all");
+      } else {
+        setFilterName(value);
+      }
+    } else if (filterName === "all" && value === "all") {
+      // If selected filter is all and again click on it we don't want to fetch the data again
+      return;
+    } else {
+      setFilterName("all");
+    }
+  };
+
+  useEffect(() => {
+    refetch();
+  }, [filterName, refetch]);
+
   return (
     <div>
       <AppBar position={"fixed"} className={classes.filters_app_bar}>
-        <Filters />
+        <Filters
+          selectedFilter={filterName}
+          handleFilterClick={handleFilterClick}
+        />
       </AppBar>
       <Grid
         className={classes.videos_container}

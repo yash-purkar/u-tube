@@ -18,3 +18,9 @@ export interface AddFilterRequest extends Request {
   name: string;
   slug: string;
 }
+
+// User types
+export interface AddUserSearchHistory extends Request {
+  user_id: string;
+  video_id: string;
+}

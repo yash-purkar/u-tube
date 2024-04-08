@@ -56,3 +56,21 @@ export const login = async (params: LoginProps) => {
     throw new Error(err.response.data.error || "Failed to Login");
   }
 };
+
+// It handles user search history
+export const addUserSearchHistory = async (
+  video_id: string,
+  user_id: string
+) => {
+  try {
+    const { data } = await axios.post(
+      "http://localhost:3001/api/user/search_history",
+      { user_id, video_id }
+    );
+    return data;
+  } catch (err: any) {
+    throw new Error(
+      err?.response?.data?.error || "Failed to add search history"
+    );
+  }
+};

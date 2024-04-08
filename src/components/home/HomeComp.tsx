@@ -9,6 +9,9 @@ import { SingleVideo } from "../singleVideo/SingleVideo";
 import { useQuery } from "@tanstack/react-query";
 import { getAllVideos } from "@/clientHandlers/handlers";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
+import { setVideos } from "@/app/lib/redux/slices/videoSlice";
+import { Video } from "@/app/types";
 
 const useStyles: () => any = makeStyles({
   videos_container: {
@@ -26,6 +29,7 @@ const useStyles: () => any = makeStyles({
     width: "100%",
     top: "3.5rem",
     background: "#fff",
+    zIndex: "1",
     boxShadow: "none",
     "@media(min-width:720px)": {
       top: "4rem",
@@ -42,6 +46,8 @@ const useStyles: () => any = makeStyles({
 export const HomeComp = () => {
   const [filterName, setFilterName] = useState<string>("All");
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { searchQuery } = useAppSelector((state) => state.video);
 
   const { data, isSuccess, error, isError, isLoading, refetch } = useQuery({
     queryKey: ["videos"],
@@ -68,9 +74,22 @@ export const HomeComp = () => {
     }
   };
 
+  // Refetches data on click on filter
   useEffect(() => {
     refetch();
   }, [filterName, refetch]);
+
+  // Set the data in store once it change, bcz we want to show the suggestions in search bar
+  useEffect(() => {
+    dispatch(setVideos(data?.videos));
+  }, [data, dispatch]);
+
+  // If search query is there filter the data based on that.
+  const filteredData = searchQuery
+    ? data?.videos?.filter((vid: Video) =>
+        vid?.title?.toLowerCase().includes(searchQuery?.toLowerCase())
+      )
+    : data?.videos;
 
   return (
     <div>
@@ -91,7 +110,7 @@ export const HomeComp = () => {
           <>Loading...</>
         ) : (
           <>
-            {data?.videos?.map((video: any) => (
+            {filteredData?.map((video: any) => (
               <Grid
                 alignSelf={"center"}
                 key={video?._id}

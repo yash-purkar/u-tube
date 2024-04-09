@@ -143,7 +143,6 @@ export const Navbar: React.FC = () => {
   // It handles search value change
   const handleSearchValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
-    setShowsuggestions(e.target.value.length > 0 ? true : false);
     if (!e.target.value) {
       dispatch(setSearchQuery(null));
     }
@@ -160,6 +159,7 @@ export const Navbar: React.FC = () => {
 
   // It handles search value dispatch and call api to add search history if already not in search history
   const handleSearchResultClick = (clickedValue: string, video_id: string) => {
+    setSearchValue(clickedValue);
     dispatch(setSearchQuery(clickedValue));
     if (!user?.search_history?.includes(video_id)) {
       mutate(video_id);
@@ -181,7 +181,7 @@ export const Navbar: React.FC = () => {
   // filtering videos which is not in history to show after top suggestions.
   const suggestionsVideosNotInHistory = filteredVideos?.filter(
     (vid) => !user?.search_history?.includes(vid?._id)
-  );
+  );  
 
   // final suggestions
   const finalSuggestionsVideoArray = [
@@ -230,6 +230,7 @@ export const Navbar: React.FC = () => {
                     ?.map((video: Video, i) => (
                       <ListItem
                         key={i}
+                        onMouseDown={(e) => e.preventDefault()}
                         className={classes.suggestion_item}
                         onClick={() =>
                           handleSearchResultClick(video?.title, video?._id)

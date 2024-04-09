@@ -12,6 +12,7 @@ interface UserSchemaInterface extends Document {
   liked_videos: Types.ObjectId[];
   watch_later_videos: Types.ObjectId[];
   history: Types.ObjectId[];
+  search_history: Types.ObjectId[];
   // comparePasswordCustomMethod: (entered_password_by_user: string) => Promise<boolean>
 }
 
@@ -54,6 +55,10 @@ const UserSchema = new Schema<UserSchemaInterface>({
     default: [],
   },
   history: {
+    type: [Schema.Types.ObjectId],
+    default: [],
+  },
+  search_history: {
     type: [Schema.Types.ObjectId],
     default: [],
   },

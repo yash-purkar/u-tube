@@ -2,6 +2,7 @@ import { User } from "@/app/types";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// We need to store the user here as well only for 1st time then we'll store this in userSlice
 interface InitialState {
   isLoggedIn: boolean | null;
   status: string;

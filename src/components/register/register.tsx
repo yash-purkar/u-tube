@@ -85,7 +85,7 @@ export const Register = () => {
     userDetails.password;
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{marginTop:"6rem"}}>
       <Box component={"form"} className={classes.signup_container}>
         <div className={styles.signup_header}>
           <YouTubeIcon className={classes.brand_icon} />

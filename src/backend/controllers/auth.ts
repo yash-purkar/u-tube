@@ -2,7 +2,7 @@ const User = require("../models/user");
 const checkIsEmailValid = require("../serverHandlers/serverHandlers");
 const jwt = require("jsonwebtoken");
 import bcrypt from "bcryptjs";
-import {  Response } from "express";
+import { Response } from "express";
 import { UserLoginRequest, UserRegisterRequest } from "../types";
 
 // Register user controller

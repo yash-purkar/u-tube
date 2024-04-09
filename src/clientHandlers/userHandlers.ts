@@ -59,8 +59,8 @@ export const login = async (params: LoginProps) => {
 
 // It handles user search history
 export const addUserSearchHistory = async (
-  video_id: string,
-  user_id: string
+  user_id: string,
+  video_id: string
 ) => {
   try {
     const { data } = await axios.post(
@@ -71,6 +71,26 @@ export const addUserSearchHistory = async (
   } catch (err: any) {
     throw new Error(
       err?.response?.data?.error || "Failed to add search history"
+    );
+  }
+};
+
+// It removes search history
+export const removeUserSearchHistory = async (
+  user_id: string,
+  video_id: string
+) => {
+  try {
+    const { data } = await axios.delete(
+      `http://localhost:3001/api/user/search_history?user_id=${user_id}&video_id=${video_id}`,
+      {
+        withCredentials: true,
+      }
+    );
+    return data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.error || "Failed to remove search history"
     );
   }
 };

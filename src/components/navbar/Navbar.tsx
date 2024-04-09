@@ -31,8 +31,12 @@ import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { Video } from "@/app/types";
 import { setSearchQuery } from "@/app/lib/redux/slices/videoSlice";
 import { useMutation } from "@tanstack/react-query";
-import { addUserSearchHistory } from "@/clientHandlers/userHandlers";
+import {
+  addUserSearchHistory,
+  removeUserSearchHistory,
+} from "@/clientHandlers/userHandlers";
 import HistoryIcon from "@mui/icons-material/History";
+import { setUserSearchHistory } from "@/app/lib/redux/slices/userSlice";
 
 const useStyles: () => any = makeStyles({
   appbar: {
@@ -106,14 +110,28 @@ export const Navbar: React.FC = () => {
   const classes = useStyles();
   const router = useRouter();
   const { videos } = useAppSelector((state) => state.video);
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.user);
   const [searchValue, setSearchValue] = useState<string>("");
   const dispatch = useAppDispatch();
   const [showSuggestions, setShowsuggestions] = useState<boolean>(false);
-  const { mutate, data: searchHistory } = useMutation({
+
+  const { mutate } = useMutation({
     mutationKey: ["SearchHistory"],
     mutationFn: (video_id: string) => {
-      return addUserSearchHistory(video_id, user?._id as string);
+      return addUserSearchHistory(user?._id as string, video_id);
+    },
+    onSuccess: (data) => {
+      dispatch(setUserSearchHistory(data?.history));
+    },
+  });
+
+  const { mutate: removeHistory } = useMutation({
+    mutationKey: ["RemoveSearchHistory"],
+    mutationFn: (video_id: string) => {
+      return removeUserSearchHistory(user?._id as string, video_id);
+    },
+    onSuccess: (data) => {
+      dispatch(setUserSearchHistory(data?.history));
     },
   });
 
@@ -126,6 +144,9 @@ export const Navbar: React.FC = () => {
   const handleSearchValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
     setShowsuggestions(e.target.value.length > 0 ? true : false);
+    if (!e.target.value) {
+      dispatch(setSearchQuery(null));
+    }
   };
 
   // It removes the video search history
@@ -134,31 +155,32 @@ export const Navbar: React.FC = () => {
     video_id: string
   ) => {
     e.stopPropagation();
+    removeHistory(video_id);
   };
 
-  // Because on render the data in mutation will not have the search history, so first time we'll have to take from user directly.
-  let search_history: string[];
-  if (!searchHistory?.history) {
-    search_history = user?.search_history ?? [];
-  } else {
-    search_history = searchHistory?.history;
-  }
+  // It handles search value dispatch and call api to add search history if already not in search history
+  const handleSearchResultClick = (clickedValue: string, video_id: string) => {
+    dispatch(setSearchQuery(clickedValue));
+    if (!user?.search_history?.includes(video_id)) {
+      mutate(video_id);
+    }
+    setShowsuggestions(false);
+  };
 
   // Titles to show in suggestion
-  const filteredVideos: Video[] = searchValue
-    ? videos?.filter((vid: Video) =>
-        vid?.title?.toLowerCase().includes(searchValue?.toLowerCase())
-      )
-    : [];
+  const filteredVideos: Video[] =
+    videos?.filter((vid: Video) =>
+      vid?.title?.toLowerCase().includes(searchValue?.toLowerCase())
+    ) ?? [];
 
   // getting top suggestions based on previous history
   const topSuggestionsVideosBasedOnHistory = filteredVideos?.filter((vid) =>
-    search_history?.some((search_vid_id) => vid?._id === search_vid_id)
+    user?.search_history?.includes(vid?._id)
   );
 
   // filtering videos which is not in history to show after top suggestions.
-  const suggestionsVideosNotInHistory = filteredVideos?.filter((vid) =>
-    search_history?.some((search_vid_id) => vid?._id !== search_vid_id)
+  const suggestionsVideosNotInHistory = filteredVideos?.filter(
+    (vid) => !user?.search_history?.includes(vid?._id)
   );
 
   // final suggestions
@@ -166,15 +188,6 @@ export const Navbar: React.FC = () => {
     ...topSuggestionsVideosBasedOnHistory,
     ...suggestionsVideosNotInHistory,
   ];
-
-  // It handles search value dispatch and call api to add search history if already not in search history
-  const handleSearchResultClick = (clickedValue: string, video_id: string) => {
-    dispatch(setSearchQuery(clickedValue));
-    if (!search_history?.includes(video_id)) {
-      mutate(video_id);
-    }
-    setShowsuggestions(false);
-  };
 
   return (
     <Container maxWidth="sm">
@@ -198,49 +211,54 @@ export const Navbar: React.FC = () => {
 
           <Box className={classes.searchbar_container}>
             <TextField
+              type="search"
               size="small"
               className={classes.searchbar}
               placeholder="Search for videos"
               InputProps={{ sx: { borderRadius: "1rem" } }}
               onChange={handleSearchValueChange}
               value={searchValue}
+              onFocus={() => setShowsuggestions(true)}
+              onBlur={() => setShowsuggestions(false)}
             />
 
             {showSuggestions && finalSuggestionsVideoArray?.length !== 0 && (
               <Box className={classes.suggestions_container}>
                 <List className={classes.suggestions_list}>
-                  {finalSuggestionsVideoArray?.map((video: Video, i) => (
-                    <ListItem
-                      key={i}
-                      className={classes.suggestion_item}
-                      onClick={() =>
-                        handleSearchResultClick(video?.title, video?._id)
-                      }
-                    >
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
-                        {search_history?.includes(video?._id) ? (
-                          <HistoryIcon />
-                        ) : (
-                          <SearchIcon fontSize="medium" />
+                  {finalSuggestionsVideoArray
+                    ?.slice(0, 10)
+                    ?.map((video: Video, i) => (
+                      <ListItem
+                        key={i}
+                        className={classes.suggestion_item}
+                        onClick={() =>
+                          handleSearchResultClick(video?.title, video?._id)
+                        }
+                      >
+                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                          {user?.search_history?.includes(video?._id) ? (
+                            <HistoryIcon />
+                          ) : (
+                            <SearchIcon fontSize="medium" />
+                          )}
+                          <Typography sx={{ color: "#000" }} variant="body2">
+                            {video?.title?.slice(0, 30)}
+                            {video?.title?.length > 31 && "..."}
+                          </Typography>
+                        </div>
+                        {user?.search_history?.includes(video?._id) && (
+                          <Button
+                            size="small"
+                            sx={{ textAlign: "right" }}
+                            onClick={(e: any) =>
+                              handleHistoryRemoveClick(e, video?._id)
+                            }
+                          >
+                            Remove
+                          </Button>
                         )}
-                        <Typography sx={{ color: "#000" }} variant="body2">
-                          {video?.title?.slice(0, 30)}
-                          {video?.title?.length > 31 && "..."}
-                        </Typography>
-                      </div>
-                      {search_history?.includes(video?._id) && (
-                        <Button
-                          size="small"
-                          sx={{ textAlign: "right" }}
-                          onClick={(e: any) =>
-                            handleHistoryRemoveClick(e, video?._id)
-                          }
-                        >
-                          Remove
-                        </Button>
-                      )}
-                    </ListItem>
-                  ))}
+                      </ListItem>
+                    ))}
                 </List>
               </Box>
             )}

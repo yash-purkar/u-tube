@@ -36,10 +36,7 @@ const useStyles: () => any = makeStyles({
     },
   },
   grid_item: {
-    paddingTop: "0rem !important",
-    "@media(max-width:720px)": {
-      // paddingLeft: "0rem !important",
-    },
+    paddingTop: "0rem !important"
   },
 });
 

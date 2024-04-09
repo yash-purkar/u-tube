@@ -1,10 +1,26 @@
 import express from "express";
-import { addUserSearchHistory } from "../controllers/user";
-import { AddUserSearchHistory } from "../types";
+import {
+  addUserSearchHistory,
+  removeUserSearchHistory,
+} from "../controllers/user";
+import {
+  AddUserSearchHistoryRequest,
+  UserSearchHistoryRemoveRequest,
+} from "../types";
 const router = express.Router();
 
-router.post("/search_history", async (req, res) =>
-  addUserSearchHistory(req as AddUserSearchHistory, res)
+// It handles user search history
+router.post(
+  "/search_history",
+  async (req, res) =>
+    await addUserSearchHistory(req as AddUserSearchHistoryRequest, res)
+);
+
+// It deletes user search history one by one
+router.delete(
+  "/search_history",
+  async (req, res) =>
+    await removeUserSearchHistory(req as UserSearchHistoryRemoveRequest, res)
 );
 
 export default router;

@@ -20,7 +20,12 @@ export interface AddFilterRequest extends Request {
 }
 
 // User types
-export interface AddUserSearchHistory extends Request {
+export interface AddUserSearchHistoryRequest extends Request {
+  user_id: string;
+  video_id: string;
+}
+
+export interface UserSearchHistoryRemoveRequest extends Request {
   user_id: string;
   video_id: string;
 }

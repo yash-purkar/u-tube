@@ -75,12 +75,14 @@ export const login = async (req: UserLoginRequest, res: any) => {
       );
       res.cookie("token", token);
 
-      return res.status(201).json({ message: "Success" });
+      return res.status(201).json({ Success: true, user });
     }
     //   Else return message user not found
-    return res.status(404).json({ error: "User not found🙁" });
+    return res.status(404).json({ Success: false, error: "User not found🙁" });
   } catch (error) {
-    return res.status(500).send({ message: "Internal Server Error" });
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
   }
 };
 

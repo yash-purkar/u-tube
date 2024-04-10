@@ -181,7 +181,7 @@ export const Navbar: React.FC = () => {
   // filtering videos which is not in history to show after top suggestions.
   const suggestionsVideosNotInHistory = filteredVideos?.filter(
     (vid) => !user?.search_history?.includes(vid?._id)
-  );  
+  );
 
   // final suggestions
   const finalSuggestionsVideoArray = [

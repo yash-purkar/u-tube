@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { VideoDetailsRequest } from "../types";
 
 const Video = require("../models/video");
 
@@ -33,5 +34,21 @@ export const getAllVideos = async (req: Request, res: Response) => {
     return res
       .status(500)
       .send({ Success: false, message: "Internal Server Error" });
+  }
+};
+
+// Get single video details
+export const getVideoDetails = async (
+  req: VideoDetailsRequest,
+  res: Response
+) => {
+  try {
+    const query = req.query;
+
+    const video = await Video.findById(query?.vid_id);
+    if (video) return res.status(200).send({ Success: true, video });
+    return res.status(404).send({ Success: false, message: "Video not found" });
+  } catch (error) {
+    res.status(500).send({ Success: false, message: "Internal Server Error" });
   }
 };

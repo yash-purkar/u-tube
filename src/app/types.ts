@@ -5,7 +5,7 @@ export interface User {
   email: string;
   password: string;
   username: string;
-  subscribers: number;
+  subscribers: string[];
   videos: Video[];
   liked_videos: Video[];
   watch_later_videos: Video[];
@@ -22,8 +22,8 @@ export interface Video {
   embeded_url: string;
   views: number;
   category: string;
-  likes: number;
-  dislikes: number;
+  likes: string[];
+  dislikes: string[];
   comments: Comment[];
   createdAt: Date;
 }

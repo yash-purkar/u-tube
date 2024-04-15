@@ -1,10 +1,21 @@
 import React, { useState } from "react";
-import { Avatar, Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import SortIcon from "@mui/icons-material/Sort";
 import CloseIcon from "@mui/icons-material/Close";
+
+interface VideoCommentsProps {
+  comments: any[];
+}
 
 const useStyles = makeStyles({
   comments_header: {
@@ -25,6 +36,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     borderRadius: "1rem",
+    zIndex: 2
   },
   sort_option: {
     padding: "1rem",
@@ -48,7 +60,7 @@ const useStyles = makeStyles({
   },
 });
 
-const VideoComments = () => {
+const VideoComments: React.FC<VideoCommentsProps> = ({comments}) => {
   const classes = useStyles();
   const [showSortBy, setShowSortBy] = useState<boolean>(false);
 
@@ -58,7 +70,7 @@ const VideoComments = () => {
         {/* comments header section */}
         <Box className={classes.comments_header}>
           <Typography variant="h6" fontWeight={"bold"}>
-            243 Comments
+            {comments?.length} Comments
           </Typography>
           <div
             style={{

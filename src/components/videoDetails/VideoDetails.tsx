@@ -22,6 +22,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import img from "../../../public/assets/delete_later.jpg";
 import { SideVideos } from "./SideVideos";
 import VideoComments from "./VideoComments";
+import { getUploadedDate } from "@/clientHandlers/handlers";
 
 interface VideoDetailsProps {
   video: Video;
@@ -111,6 +112,8 @@ const useStyles = makeStyles({
 const VideoDetails: React.FC<VideoDetailsProps> = ({ video }) => {
   const classes = useStyles();
 
+  const uploaded = getUploadedDate(new Date(video?.createdAt));
+
   return (
     <Container
       component={"div"}
@@ -139,8 +142,11 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video }) => {
               <Box className={classes.vid_user_info}>
                 <Avatar />
                 <div>
-                  <Typography fontWeight={"bold"}>Yash Purkar</Typography>
-                  258k subscribers
+                  <Typography fontWeight={"bold"}>
+                    {video?.user?.firstName} {video?.user?.lastName}
+                  </Typography>
+                  {video?.user?.subscribers?.length} subscriber
+                  {video?.user?.subscribers?.length !== 1 && "s"}
                 </div>
                 <Chip
                   clickable
@@ -154,8 +160,15 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video }) => {
                 />
               </Box>
               <Box className={classes.vid_actions}>
-                <Chip clickable icon={<ThumbUpOffAltIcon />} label="Like" />
-                <Chip clickable icon={<ThumbDownOffAltIcon />} />
+                <Chip
+                  clickable
+                  icon={<ThumbUpOffAltIcon />}
+                  label={video?.likes?.length}
+                />
+                <Chip
+                  clickable
+                  icon={<ThumbDownOffAltIcon />}
+                />
                 <Chip
                   clickable
                   icon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
@@ -167,19 +180,16 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video }) => {
             {/* Description */}
             <Box className={classes.description}>
               <div style={{ display: "flex", gap: "1rem" }}>
-                <Typography fontWeight="bold">5083 Views</Typography>
-                <Typography fontWeight="bold">2 Hours ago</Typography>
+                <Typography fontWeight="bold">{video?.views} Views</Typography>
+                <Typography fontWeight="bold">{uploaded}</Typography>
               </div>
               <Typography marginTop={"1rem"}>
-                Welcome to chai aur code, a coding/programming dedicated channel
-                in Hindi language. Now you can learn best of programming
-                concepts with industry standard practical guide in Hindi
-                language.
+                {video?.description}
               </Typography>
             </Box>
 
             {/* Comments section */}
-            <VideoComments />
+            <VideoComments  comments={video?.comments}/>
           </Box>
         </Grid>
         {/* Side videos */}

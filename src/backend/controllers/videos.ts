@@ -45,7 +45,7 @@ export const getVideoDetails = async (
   try {
     const query = req.query;
 
-    const video = await Video.findById(query?.vid_id);
+    const video = await Video.findById(query?.vid_id).populate("user");
     if (video) return res.status(200).send({ Success: true, video });
     return res.status(404).send({ Success: false, message: "Video not found" });
   } catch (error) {

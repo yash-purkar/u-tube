@@ -7,7 +7,7 @@ interface UserSchemaInterface extends Document {
   email: string;
   password: string;
   username: string;
-  subscribers: number;
+  subscribers: Types.ObjectId[];
   videos: Types.ObjectId[];
   liked_videos: Types.ObjectId[];
   watch_later_videos: Types.ObjectId[];
@@ -39,8 +39,8 @@ const UserSchema = new Schema<UserSchemaInterface>({
     required: true,
   },
   subscribers: {
-    type: Number,
-    default: 0,
+    type: [Schema.Types.ObjectId],
+    default: [],
   },
   videos: {
     type: [Schema.Types.ObjectId],

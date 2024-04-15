@@ -12,12 +12,13 @@ import { makeStyles } from "@mui/styles";
 import styles from "./login.module.css";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import { useRouter } from "next/navigation";
-import {useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { login } from "@/clientHandlers/userHandlers";
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { setIsLoggedIn } from "@/app/lib/redux/slices/authSlice";
+import { setUser } from "@/app/lib/redux/slices/userSlice";
 
 interface UserDetails {
   email: string;
@@ -57,8 +58,11 @@ export const Login = () => {
     mutationKey: ["login"],
     mutationFn: login,
     onSuccess: (data, variable, context) => {
-      dispatch(setIsLoggedIn(true));
-    }
+      if (data?.Success) {
+        dispatch(setIsLoggedIn(true));
+        dispatch(setUser(data?.user));
+      }
+    },
   });
 
   //   It handles the change of input fields.
@@ -86,7 +90,7 @@ export const Login = () => {
   }, [isLoggedIn, router]);
 
   return (
-    <Container maxWidth="sm" sx={{marginTop:"6rem"}}>
+    <Container maxWidth="sm" sx={{ marginTop: "6rem" }}>
       <Box component={"form"} className={classes.login_container}>
         <div className={styles.login_header}>
           <YouTubeIcon className={classes.brand_icon} />

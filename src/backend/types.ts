@@ -29,3 +29,8 @@ export interface UserSearchHistoryRemoveRequest extends Request {
   user_id: string;
   video_id: string;
 }
+
+// Videos types
+export interface VideoDetailsRequest extends Request {
+  vid_id: string;
+}

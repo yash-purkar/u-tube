@@ -8,8 +8,8 @@ interface VideoSchema extends Document {
   embeded_url: string;
   views: number;
   category: string;
-  likes: number;
-  dislikes: number;
+  likes: Types.ObjectId[];
+  dislikes: Types.ObjectId[];
   comments: Types.ObjectId[];
 }
 
@@ -45,17 +45,19 @@ const videoSchema = new Schema<VideoSchema>(
       type: String,
     },
     likes: {
-      type: Number,
-      default: 0,
+      type: [Schema.Types.ObjectId],
+      default: [],
+      ref: "User",
     },
     dislikes: {
-      type: Number,
-      default: 0,
+      type: [Schema.Types.ObjectId],
+      default: [],
+      ref: "User",
     },
     comments: {
       type: [
         {
-          type: Types.ObjectId,
+          type: Schema.Types.ObjectId,
           ref: "Comment",
         },
       ],

@@ -27,7 +27,7 @@ const useStyles: () => any = makeStyles((theme:any)=>({
 }));
 
 export const Me = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.user);
   const classes = useStyles();
 
   return (

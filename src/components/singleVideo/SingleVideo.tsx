@@ -9,16 +9,16 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import videoImg from "../../../public/assets/delete_later.jpg";
 import { makeStyles } from "@mui/styles";
 import styles from "./singleVideo.module.css";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { Video } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 const useStyles: () => any = makeStyles({
   card: {
-    minHeight: '300px',
-    paddingTop: '0rem',
+    minHeight: "300px",
+    paddingTop: "0rem",
     "@media(min-width:1024px)": {
       width: "18.75rem",
     },
@@ -37,7 +37,13 @@ const useStyles: () => any = makeStyles({
 
 export const SingleVideo = ({ video }: { video: Video }) => {
   const classes = useStyles();
+  // getting uploaded video data basis on createdAt
   const uploaded = getUploadedDate(new Date(video?.createdAt));
+  const router = useRouter();
+
+  const redirectToVidDetailsPage = () => {
+    router.push(`/watch?vid=${video?._id}`);
+  };
 
   return (
     <Card className={classes.card} sx={{ maxWidth: 345, boxShadow: "none" }}>
@@ -47,6 +53,7 @@ export const SingleVideo = ({ video }: { video: Video }) => {
         height={170}
         image={video?.thumbnail_url}
         sx={{ borderRadius: "1rem", width: "100%" }}
+        onClick={redirectToVidDetailsPage}
       />
       <CardContent className={classes.cart_content}>
         <Avatar>{video?.user?.firstName?.split("")[0]}</Avatar>
@@ -55,7 +62,8 @@ export const SingleVideo = ({ video }: { video: Video }) => {
             variant="body2"
             sx={{ fontSize: "1.05rem", fontWeight: "bold" }}
           >
-            {video?.title?.slice(0,31)}{video?.title?.length > 31 && "..."}
+            {video?.title?.slice(0, 31)}
+            {video?.title?.length > 31 && "..."}
           </Typography>
           <Typography variant="body2" className={classes.username}>
             {video?.user?.username}

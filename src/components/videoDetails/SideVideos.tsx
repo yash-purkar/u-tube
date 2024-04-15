@@ -19,6 +19,8 @@ const useStyles = makeStyles({
   side_videos_main_container: {
     height: "90vh",
     overflow: "auto",
+    marginTop: "3rem",
+    paddingTop: "0 !important",
   },
   side_videos_container: {
     display: "flex",
@@ -33,7 +35,6 @@ const useStyles = makeStyles({
   video_thumbnail: {
     width: "29rem",
     borderRadius: "1rem",
-    border: "1px solid red",
   },
 });
 

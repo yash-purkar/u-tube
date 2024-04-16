@@ -23,6 +23,7 @@ import img from "../../../public/assets/delete_later.jpg";
 import { SideVideos } from "./SideVideos";
 import VideoComments from "./VideoComments";
 import { getUploadedDate } from "@/clientHandlers/handlers";
+import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 
 interface VideoDetailsProps {
   video: Video;
@@ -115,8 +116,9 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
 
   const uploaded = getUploadedDate(new Date(video?.createdAt));
 
-  console.log("Comments",comments)
   return (
+    <SnackbarProvider>
+
     <Container
       component={"div"}
       className={classes.video_details_container}
@@ -194,9 +196,11 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
           videoTitle={video.title}
           videoDescription={video.description}
           videoAuthor={video?.user?.username}
-        />
+          />
       </Grid>
+      <SnackbarProvider />
     </Container>
+          </SnackbarProvider>
   );
 };
 

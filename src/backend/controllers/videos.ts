@@ -48,9 +48,9 @@ export const getVideoDetails = async (
 
     const video = await Video.findById(query?.vid_id).populate("user");
 
-    const videoComments = await Comment.find({ video: video?._id }).populate(
-      "user"
-    );
+    const videoComments = await Comment.find({ video: video?._id })
+      .sort({ _id: -1 })
+      .populate("user");
 
     if (video)
       return res

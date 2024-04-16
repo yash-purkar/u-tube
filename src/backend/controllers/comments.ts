@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AddCommentRequest } from "../types";
 const Comment = require("../models/comment");
+const User = require("../models/user");
 
 export const addComment = async (req: AddCommentRequest, res: Response) => {
   try {
@@ -16,7 +17,7 @@ export const addComment = async (req: AddCommentRequest, res: Response) => {
     await newComment.save();
 
     // sending updated comments
-    const comments = await Comment.find({ video });
+    const comments = await Comment.find({ video }).sort({_id:-1}).populate('user');
 
     return res
       .status(200)

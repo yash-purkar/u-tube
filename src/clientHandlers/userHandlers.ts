@@ -104,7 +104,8 @@ export const addNewComment = async (
   try {
     const response = await axios.post(
       "http://localhost:3001/api/comment/add_comment",
-      { user: userId, video: videoId, content }
+      { user: userId, video: videoId, content },
+      { withCredentials: true }
     );
 
     return response.data;

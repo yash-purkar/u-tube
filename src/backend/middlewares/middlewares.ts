@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-export const checkAuth = async (req: any, res: any,next:() => any) => {
+export const checkAuth = async (req: any, res: any, next: () => any) => {
   try {
     const token = req?.cookies?.token;
 
@@ -8,12 +8,13 @@ export const checkAuth = async (req: any, res: any,next:() => any) => {
       //decoding token
       const decodedToken = jwt.decode(token);
 
-      //   setting user_id in request to find the user in callback of /checkAuth endpoint.
+      //   setting user_id in request to find the user in callback of /checkAuth endpoint or anywhere else.
       req.user_id = decodedToken?.user_id;
       next();
-    }
-    else {
-      return res.status(200).send({ Success: false });
+    } else {
+      return res
+        .status(200)
+        .send({ Success: false, message: "Please login first." });
     }
   } catch (error) {
     return res.status(500).send({ error: "Internal Server Error" });

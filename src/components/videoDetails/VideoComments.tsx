@@ -16,6 +16,7 @@ import { Comment } from "@/app/types";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { addNewComment } from "@/clientHandlers/userHandlers";
+import { SnackbarProvider, useSnackbar } from "notistack";
 
 interface VideoCommentsProps {
   comments: Comment[];
@@ -84,16 +85,23 @@ const VideoComments: React.FC<VideoCommentsProps> = ({
   const [showSortBy, setShowSortBy] = useState<boolean>(false);
   const [commentText, setCommentText] = useState("");
   const [videoComments, setVideoComments] = useState(comments);
+  const { enqueueSnackbar } = useSnackbar();
 
-  // Query to add new comment.
+  // mutation to add new comment.
   const { mutate: addCommentMutation } = useMutation({
     mutationKey: ["AddComment"],
     mutationFn: async () => {
       return addNewComment(videoId, commentText, userId);
     },
     onSuccess: (data) => {
-      setCommentText("");
-      setVideoComments(data?.comments);
+      if (data?.Success) {
+        setCommentText("");
+        setVideoComments(data?.comments);
+      }
+      enqueueSnackbar(data?.message as string, {
+        variant: data?.Success ? "success" : "warning",
+        autoHideDuration:1500
+      });
     },
   });
 
@@ -110,7 +118,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({
         {/* comments header section */}
         <Box className={classes.comments_header}>
           <Typography variant="h6" fontWeight={"bold"}>
-            {comments?.length} Comments
+            {videoComments?.length} Comments
           </Typography>
           <div
             style={{

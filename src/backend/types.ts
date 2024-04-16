@@ -40,4 +40,5 @@ export interface AddCommentRequest extends Request {
   user: string;
   video: string;
   content: string;
+  user_id: string;
 }

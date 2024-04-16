@@ -85,35 +85,22 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAppSelector((state) => state.user);
 
-  // mutation to add new comment.
-  const { mutate: addCommentMutation } = useMutation({
-    mutationKey: ["AddComment"],
-    mutationFn: async () => {
-      return addNewComment(videoId, commentText, user?._id as string);
-    },
-    onSuccess: (data) => {
-      if (data?.Success) {
-        setCommentText("");
-        setVideoComments(data?.comments);
-        enqueueSnackbar(data?.message as string, {
-          variant: "success",
-          autoHideDuration: 3000,
-        });
-      }
-    },
-    onError: (error: any) => {
-      enqueueSnackbar(error?.response?.data?.message as string, {
-        variant: "warning",
-        autoHideDuration: 1500,
-      });
-    },
-  });
+  const { mutate: commentMutation } = useMutation({
+    mutationKey: ["comment"],
+    mutationFn: async ({
+      action,
+      data,
+    }: {
+      action: "ADD" | "DELETE";
+      data?: { commentId?: string };
+    }) => {
+      switch (action) {
+        case "ADD":
+          return addNewComment(videoId, commentText, user?._id as string);
 
-  // mutation to delete comment.
-  const { mutate: deleteCommentMutation } = useMutation({
-    mutationKey: ["AddComment"],
-    mutationFn: async (commentId: string) => {
-      return deleteComment(commentId);
+        case "DELETE":
+          return deleteComment(data?.commentId as string);
+      }
     },
     onSuccess: (data) => {
       if (data?.Success) {
@@ -136,13 +123,13 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
   // It handles add comment
   const handleAddComment = () => {
     if (commentText.length) {
-      addCommentMutation();
+      commentMutation({ action: "ADD" });
     }
   };
 
   // It handles delete comment
   const handleDeleteComment = (commentId: string) => {
-    deleteCommentMutation(commentId);
+    commentMutation({ action: "DELETE", data: { commentId } });
   };
 
   return (

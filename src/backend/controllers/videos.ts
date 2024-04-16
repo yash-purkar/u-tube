@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { VideoDetailsRequest } from "../types";
 
 const Video = require("../models/video");
+const Comment = require("../models/comment");
 
 export const getAllVideos = async (req: Request, res: Response) => {
   try {
@@ -46,9 +47,21 @@ export const getVideoDetails = async (
     const query = req.query;
 
     const video = await Video.findById(query?.vid_id).populate("user");
-    if (video) return res.status(200).send({ Success: true, video });
+
+    const videoComments = await Comment.find({ video: video?._id }).populate(
+      "user"
+    );
+
+    if (video)
+      return res
+        .status(200)
+        .send({ Success: true, video, comments: videoComments });
+
     return res.status(404).send({ Success: false, message: "Video not found" });
   } catch (error) {
     res.status(500).send({ Success: false, message: "Internal Server Error" });
   }
 };
+/*
+We have created seperate collection for comments, and we are storing all comments there with userId and video, and while fetching the videoDetails we are sending the comments of that video.
+*/

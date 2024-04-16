@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Video } from "@/app/types";
+import { Comment, User, Video } from "@/app/types";
 import {
   Avatar,
   Box,
@@ -26,6 +26,7 @@ import { getUploadedDate } from "@/clientHandlers/handlers";
 
 interface VideoDetailsProps {
   video: Video;
+  comments: Comment[];
 }
 
 const useStyles = makeStyles({
@@ -109,11 +110,12 @@ const useStyles = makeStyles({
   },
 });
 
-const VideoDetails: React.FC<VideoDetailsProps> = ({ video }) => {
+const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
   const classes = useStyles();
 
   const uploaded = getUploadedDate(new Date(video?.createdAt));
 
+  console.log("Comments",comments)
   return (
     <Container
       component={"div"}
@@ -165,10 +167,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video }) => {
                   icon={<ThumbUpOffAltIcon />}
                   label={video?.likes?.length}
                 />
-                <Chip
-                  clickable
-                  icon={<ThumbDownOffAltIcon />}
-                />
+                <Chip clickable icon={<ThumbDownOffAltIcon />} />
                 <Chip
                   clickable
                   icon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
@@ -183,13 +182,11 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video }) => {
                 <Typography fontWeight="bold">{video?.views} Views</Typography>
                 <Typography fontWeight="bold">{uploaded}</Typography>
               </div>
-              <Typography marginTop={"1rem"}>
-                {video?.description}
-              </Typography>
+              <Typography marginTop={"1rem"}>{video?.description}</Typography>
             </Box>
 
             {/* Comments section */}
-            <VideoComments  comments={video?.comments}/>
+            <VideoComments comments={comments} videoId={video?._id} userId={video?.user?._id} />
           </Box>
         </Grid>
         {/* Side videos */}

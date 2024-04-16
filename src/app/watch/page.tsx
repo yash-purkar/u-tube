@@ -1,6 +1,6 @@
 import VideoDetails from "@/components/videoDetails/VideoDetails";
 import axios from "axios";
-import { Video } from "../types";
+import { Comment, Video } from "../types";
 
 // We can not use getServerSideProps in app directory so next js documentation suggests this alternative in app dir. To take the query params we directly get it in 2nd param of page.
 // It will work same as getServerSideProps
@@ -25,12 +25,17 @@ const VideoDetailsPage = async ({
   params: any;
   searchParams: { vid_id: string };
 }) => {
-  const videoDetails: { Success: boolean; video: Video } =
+  const videoDetails: { Success: boolean; video: Video; comments: Comment[] } =
     await getVideoDetails(searchParams?.vid_id);
 
   if (!videoDetails?.Success) return <p>Failed to get video details</p>;
 
-  return <VideoDetails video={videoDetails?.video} />;
+  return (
+    <VideoDetails
+      video={videoDetails?.video}
+      comments={videoDetails?.comments}
+    />
+  );
 };
 
 export default VideoDetailsPage;

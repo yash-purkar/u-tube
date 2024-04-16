@@ -34,3 +34,10 @@ export interface UserSearchHistoryRemoveRequest extends Request {
 export interface VideoDetailsRequest extends Request {
   vid_id: string;
 }
+
+// comment types
+export interface AddCommentRequest extends Request {
+  user: string;
+  video: string;
+  content: string;
+}

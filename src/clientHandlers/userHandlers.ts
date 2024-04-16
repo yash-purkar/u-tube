@@ -94,3 +94,37 @@ export const removeUserSearchHistory = async (
     );
   }
 };
+
+// Add Comment handler
+export const addNewComment = async (
+  videoId: string,
+  content: string,
+  userId: string
+) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/comment/add_comment",
+      { user: userId, video: videoId, content }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.error || "Failed to add new comment"
+    );
+  }
+};
+
+// get all comments of a particular video
+export const getComments = async (videoId: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/comment/get_comments/${videoId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.error || "Failed to add new comment"
+    );
+  }
+};

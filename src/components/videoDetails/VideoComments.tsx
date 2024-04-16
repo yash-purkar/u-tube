@@ -12,9 +12,15 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import SortIcon from "@mui/icons-material/Sort";
 import CloseIcon from "@mui/icons-material/Close";
+import { Comment } from "@/app/types";
+import { getUploadedDate } from "@/clientHandlers/handlers";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { addNewComment } from "@/clientHandlers/userHandlers";
 
 interface VideoCommentsProps {
-  comments: any[];
+  comments: Comment[];
+  videoId: string;
+  userId: string;
 }
 
 const useStyles = makeStyles({
@@ -36,7 +42,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     borderRadius: "1rem",
-    zIndex: 2
+    zIndex: 2,
   },
   sort_option: {
     padding: "1rem",
@@ -58,11 +64,45 @@ const useStyles = makeStyles({
     fontSize: "0.8rem",
     marginBottom: "1.5rem",
   },
+  deleted_comment_user_name: {
+    userSelect: "none",
+    fontWeight: "bold",
+    color: "gray",
+  },
+  deleted_comment_text: {
+    color: "gray",
+    fontStyle: "italic",
+  },
 });
 
-const VideoComments: React.FC<VideoCommentsProps> = ({comments}) => {
+const VideoComments: React.FC<VideoCommentsProps> = ({
+  comments,
+  videoId,
+  userId,
+}) => {
   const classes = useStyles();
   const [showSortBy, setShowSortBy] = useState<boolean>(false);
+  const [commentText, setCommentText] = useState("");
+  const [videoComments, setVideoComments] = useState(comments);
+
+  // Query to add new comment.
+  const { mutate: addCommentMutation } = useMutation({
+    mutationKey: ["AddComment"],
+    mutationFn: async () => {
+      return addNewComment(videoId, commentText, userId);
+    },
+    onSuccess: (data) => {
+      setCommentText("");
+      setVideoComments(data?.comments);
+    },
+  });
+
+  // It handles add comment
+  const handleAddComment = () => {
+    if (commentText.length) {
+      addCommentMutation();
+    }
+  };
 
   return (
     <>
@@ -105,73 +145,72 @@ const VideoComments: React.FC<VideoCommentsProps> = ({comments}) => {
             id="standard-basic"
             label="Add a comment"
             variant="standard"
+            onChange={(e) => setCommentText(e.target.value)}
+            value={commentText}
             fullWidth
           />
-          <Button variant="contained">Add</Button>
+          <Button onClick={handleAddComment} variant="contained">
+            Add
+          </Button>
         </Box>
 
         {/* Comments Mapping */}
         <Box className={classes.comments_container}>
-          <Box className={classes.single_Comment}>
-            <Avatar />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
-              <p>
-                <span style={{ fontWeight: "bold" }}>@Akshay Saini</span>{" "}
-                <small>8 hours ago</small>
-              </p>
-              <p>Great Video. Liked it👍🏻❤</p>
-              <div>
-                <ThumbUpOffAltIcon sx={{ marginRight: "0.6rem" }} />
-                <ThumbDownOffAltIcon />
-              </div>
-            </div>
-          </Box>
-          <Box className={classes.single_Comment}>
-            <Avatar />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
-              <p>
-                <span style={{ fontWeight: "bold" }}>@Akshay Saini</span>{" "}
-                <small>8 hours ago</small>
-              </p>
-              <p>Great Video. Liked it👍🏻❤</p>
-              <div>
-                <ThumbUpOffAltIcon sx={{ marginRight: "0.6rem" }} />
-                <ThumbDownOffAltIcon />
-              </div>
-            </div>
-          </Box>
-          <Box className={classes.single_Comment}>
-            <Avatar />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-              }}
-            >
-              <p>
-                <span style={{ fontWeight: "bold" }}>@Akshay Saini</span>{" "}
-                <small>8 hours ago</small>
-              </p>
-              <p>Great Video. Liked it👍🏻❤</p>
-              <div>
-                <ThumbUpOffAltIcon sx={{ marginRight: "0.6rem" }} />
-                <ThumbDownOffAltIcon />
-              </div>
-            </div>
-          </Box>
+          {videoComments?.map((comment: Comment) => {
+            const commentAddedOn = getUploadedDate(
+              new Date(comment?.createdAt)
+            );
+            return (
+              <Box key={comment?._id} className={classes.single_Comment}>
+                <Avatar />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <p>
+                    <span
+                      style={{
+                        filter: `blur(${
+                          comment.is_deleted_by_creator ? "3px" : "0"
+                        })`,
+                      }}
+                      className={classes.deleted_comment_user_name}
+                    >
+                      {comment?.user?.username}
+                    </span>{" "}
+                    <small>{commentAddedOn}</small>
+                  </p>
+                  {comment.is_deleted_by_creator ? (
+                    <p className={classes.deleted_comment_text}>
+                      This comment is deleted by creator
+                    </p>
+                  ) : (
+                    <p>{comment.content}</p>
+                  )}
+                  <div>
+                    <ThumbUpOffAltIcon
+                      sx={{
+                        marginRight: "0.6rem",
+                        cursor: comment.is_deleted_by_creator
+                          ? "not-allowed"
+                          : "pointer",
+                      }}
+                    />
+                    <ThumbDownOffAltIcon
+                      sx={{
+                        cursor: comment.is_deleted_by_creator
+                          ? "not-allowed"
+                          : "pointer",
+                      }}
+                    />
+                  </div>
+                </div>
+              </Box>
+            );
+          })}
         </Box>
       </Box>
     </>
@@ -179,3 +218,5 @@ const VideoComments: React.FC<VideoCommentsProps> = ({comments}) => {
 };
 
 export default VideoComments;
+
+// We will set the updated comments in the videoComments because we only want to update the comments so we don't need to fetch the whole videoDetails again.

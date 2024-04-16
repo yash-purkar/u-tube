@@ -28,4 +28,10 @@ export interface Video {
   createdAt: Date;
 }
 
-interface Comment {}
+export interface Comment {
+  _id: string;
+  user: User;
+  content: string;
+  createdAt: Date;
+  is_deleted_by_creator: boolean;
+}

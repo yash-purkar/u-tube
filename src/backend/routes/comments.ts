@@ -2,11 +2,13 @@ import express from "express";
 import {
   addComment,
   deleteComment,
+  dislikeComment,
   likeComment,
 } from "../controllers/comments";
 import {
   AddCommentRequest,
   DeleteCommentRequest,
+  DislikeCommentRequest,
   LikeCommentRequest,
 } from "../types";
 import { checkAuth } from "../middlewares/middlewares";
@@ -26,6 +28,11 @@ router.delete("/delete_comment", checkAuth, async (req, res) => {
 // like comment
 router.post("/like_comment", checkAuth, async (req, res) => {
   await likeComment(req as LikeCommentRequest, res);
+});
+
+// dislike comment
+router.post("/dislike_comment", checkAuth, async (req, res) => {
+  await dislikeComment(req as DislikeCommentRequest, res);
 });
 
 export default router;

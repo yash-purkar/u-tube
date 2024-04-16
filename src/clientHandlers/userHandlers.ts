@@ -139,3 +139,22 @@ export const deleteComment = async (comment_id: string) => {
     throw err;
   }
 };
+
+// like comment
+export const likeComment = async (
+  comment_id: string,
+  user_id: string,
+  video_id: string
+) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/comment/like_comment",
+      { comment_id, user_id, video_id },
+      { withCredentials: true }
+    );
+
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};

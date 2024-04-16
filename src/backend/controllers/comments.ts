@@ -1,5 +1,9 @@
 import { Response } from "express";
-import { AddCommentRequest, DeleteCommentRequest } from "../types";
+import {
+  AddCommentRequest,
+  DeleteCommentRequest,
+  LikeCommentRequest,
+} from "../types";
 const Comment = require("../models/comment");
 const User = require("../models/user");
 
@@ -26,7 +30,9 @@ export const addComment = async (req: AddCommentRequest, res: Response) => {
       .status(200)
       .send({ Success: true, message: "Comment Added Successfully", comments });
   } catch (error) {
-    return res.status(500).send({ message: "Internal Server Error" });
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
   }
 };
 /*
@@ -34,7 +40,6 @@ We have created seperate collection for comments, and we are storing all comment
 */
 
 // It deletes the comment
-
 export const deleteComment = async (
   req: DeleteCommentRequest,
   res: Response
@@ -54,6 +59,39 @@ export const deleteComment = async (
       comments,
     });
   } catch (error) {
-    return res.status(500).send({ message: "Internal Server Error" });
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
+  }
+};
+
+// It likes the comment
+export const likeComment = async (req: LikeCommentRequest, res: Response) => {
+  try {
+    const body = req.body;
+
+    // Finding the comment
+    const comment = await Comment.findById(body?.comment_id);
+
+    // if comment is there add like in it
+    if (comment) {
+      comment.likes = [...comment.likes, body?.user_id];
+
+      // save comment
+      await comment.save();
+
+      // get comments again to send updated comments
+      const comments = await Comment.find({ video: body.video_id });
+
+      return res.status(200).send({ Success: true, comments });
+    }
+
+    return res
+      .status(404)
+      .send({ Success: false, message: "Comment not found" });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
   }
 };

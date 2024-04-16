@@ -43,5 +43,11 @@ export interface AddCommentRequest extends Request {
   user_id: string;
 }
 export interface DeleteCommentRequest extends Request {
-  comment_id:string;
+  comment_id: string;
+}
+
+export interface LikeCommentRequest extends Request {
+  user_id: string;
+  comment_id: string;
+  video_id: string;
 }

@@ -15,10 +15,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Comment } from "@/app/types";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addNewComment, deleteComment } from "@/clientHandlers/userHandlers";
+import {
+  addNewComment,
+  deleteComment,
+  likeComment,
+} from "@/clientHandlers/userHandlers";
 import { useSnackbar } from "notistack";
 import { useAppSelector } from "@/app/lib/redux/hooks";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 interface VideoCommentsProps {
   comments: Comment[];
@@ -91,7 +96,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
       action,
       data,
     }: {
-      action: "ADD" | "DELETE";
+      action: "ADD" | "DELETE" | "LIKE";
       data?: { commentId?: string };
     }) => {
       switch (action) {
@@ -100,6 +105,13 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
 
         case "DELETE":
           return deleteComment(data?.commentId as string);
+
+        case "LIKE":
+          return likeComment(
+            data?.commentId as string,
+            user?._id as string,
+            videoId
+          );
       }
     },
     onSuccess: (data) => {
@@ -132,6 +144,10 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
     commentMutation({ action: "DELETE", data: { commentId } });
   };
 
+  // It handles like comment
+  const handleLikeComment = (commentId: string) => {
+    commentMutation({ action: "LIKE", data: { commentId } });
+  };
   return (
     <>
       <Box>
@@ -229,21 +245,36 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
                     <p>{comment.content}</p>
                   )}
                   <div>
-                    <ThumbUpOffAltIcon
+                    <IconButton
+                      onClick={() => handleLikeComment(comment?._id)}
+                      size="small"
                       sx={{
+                        padding: "0",
+                        margin: "0",
                         marginRight: "0.6rem",
-                        cursor: comment.is_deleted_by_creator
-                          ? "not-allowed"
-                          : "pointer",
                       }}
-                    />
-                    <ThumbDownOffAltIcon
-                      sx={{
-                        cursor: comment.is_deleted_by_creator
-                          ? "not-allowed"
-                          : "pointer",
-                      }}
-                    />
+                      disabled={comment?.is_deleted_by_creator}
+                    >
+                      {comment?.likes?.includes(user?._id as string) &&
+                      !comment?.is_deleted_by_creator  ? (
+                        <ThumbUpIcon />
+                      ) : (
+                        <ThumbUpOffAltIcon />
+                      )} 
+                      <small style={{margin:'0.5rem'}}>{comment?.likes?.length}</small>
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      sx={{ padding: "0", margin: "0", marginRight: "0.6rem" }}
+                    >
+                      <ThumbDownOffAltIcon
+                        sx={{
+                          cursor: comment.is_deleted_by_creator
+                            ? "not-allowed"
+                            : "pointer",
+                        }}
+                      />
+                    </IconButton>
                   </div>
                 </div>
               </Box>

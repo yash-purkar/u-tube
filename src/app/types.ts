@@ -34,4 +34,6 @@ export interface Comment {
   content: string;
   createdAt: Date;
   is_deleted_by_creator: boolean;
+  likes: string[];
+  dislikes: string[];
 }

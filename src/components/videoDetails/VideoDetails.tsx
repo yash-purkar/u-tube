@@ -188,7 +188,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
             </Box>
 
             {/* Comments section */}
-            <VideoComments comments={comments} videoId={video?._id} userId={video?.user?._id} />
+            <VideoComments comments={comments} videoId={video?._id}/>
           </Box>
         </Grid>
         {/* Side videos */}

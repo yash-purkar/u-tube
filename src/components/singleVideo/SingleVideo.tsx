@@ -42,7 +42,7 @@ export const SingleVideo = ({ video }: { video: Video }) => {
   const router = useRouter();
 
   const redirectToVidDetailsPage = () => {
-    router.push(`/watch?vid=${video?._id}`);
+    router.push(`/watch?vid_id=${video?._id}`);
   };
 
   return (

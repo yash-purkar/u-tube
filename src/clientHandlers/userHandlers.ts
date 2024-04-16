@@ -110,9 +110,7 @@ export const addNewComment = async (
 
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.error || "Failed to add new comment"
-    );
+    throw error;
   }
 };
 
@@ -124,8 +122,6 @@ export const getComments = async (videoId: string) => {
     );
     return response.data;
   } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.error || "Failed to add new comment"
-    );
+    console.log(error);
   }
 };

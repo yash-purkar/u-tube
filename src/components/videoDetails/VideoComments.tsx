@@ -16,12 +16,13 @@ import { Comment } from "@/app/types";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { addNewComment } from "@/clientHandlers/userHandlers";
-import { SnackbarProvider, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
+import { useAppSelector } from "@/app/lib/redux/hooks";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface VideoCommentsProps {
   comments: Comment[];
   videoId: string;
-  userId: string;
 }
 
 const useStyles = makeStyles({
@@ -76,22 +77,19 @@ const useStyles = makeStyles({
   },
 });
 
-const VideoComments: React.FC<VideoCommentsProps> = ({
-  comments,
-  videoId,
-  userId,
-}) => {
+const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
   const classes = useStyles();
   const [showSortBy, setShowSortBy] = useState<boolean>(false);
   const [commentText, setCommentText] = useState("");
   const [videoComments, setVideoComments] = useState(comments);
   const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAppSelector((state) => state.user);
 
   // mutation to add new comment.
   const { mutate: addCommentMutation } = useMutation({
     mutationKey: ["AddComment"],
     mutationFn: async () => {
-      return addNewComment(videoId, commentText, userId);
+      return addNewComment(videoId, commentText, user?._id as string);
     },
     onSuccess: (data) => {
       if (data?.Success) {
@@ -99,8 +97,14 @@ const VideoComments: React.FC<VideoCommentsProps> = ({
         setVideoComments(data?.comments);
       }
       enqueueSnackbar(data?.message as string, {
-        variant: data?.Success ? "success" : "warning",
-        autoHideDuration:1500
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+    },
+    onError: (error: any) => {
+      enqueueSnackbar(error?.response?.data?.message as string, {
+        variant: "warning",
+        autoHideDuration: 1500,
       });
     },
   });
@@ -190,6 +194,15 @@ const VideoComments: React.FC<VideoCommentsProps> = ({
                       {comment?.user?.username}
                     </span>{" "}
                     <small>{commentAddedOn}</small>
+                    {comment?.user?._id === user?._id &&
+                      !comment.is_deleted_by_creator && (
+                        <IconButton
+                          size="small"
+                          sx={{ padding: "0", margin: "0" }}
+                        >
+                          <DeleteIcon sx={{ fontSize: "1.3rem" }} />
+                        </IconButton>
+                      )}
                   </p>
                   {comment.is_deleted_by_creator ? (
                     <p className={classes.deleted_comment_text}>

@@ -42,3 +42,6 @@ export interface AddCommentRequest extends Request {
   content: string;
   user_id: string;
 }
+export interface DeleteCommentRequest extends Request {
+  comment_id:string;
+}

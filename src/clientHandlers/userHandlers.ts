@@ -125,3 +125,17 @@ export const getComments = async (videoId: string) => {
     console.log(error);
   }
 };
+
+// delete comment
+export const deleteComment = async (comment_id: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3001/api/comment/delete_comment?comment_id=${comment_id}`,
+      { withCredentials: true }
+    );
+
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};

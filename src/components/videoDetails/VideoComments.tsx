@@ -15,7 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Comment } from "@/app/types";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addNewComment } from "@/clientHandlers/userHandlers";
+import { addNewComment, deleteComment } from "@/clientHandlers/userHandlers";
 import { useSnackbar } from "notistack";
 import { useAppSelector } from "@/app/lib/redux/hooks";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -95,11 +95,35 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
       if (data?.Success) {
         setCommentText("");
         setVideoComments(data?.comments);
+        enqueueSnackbar(data?.message as string, {
+          variant: "success",
+          autoHideDuration: 3000,
+        });
       }
-      enqueueSnackbar(data?.message as string, {
-        variant: "success",
-        autoHideDuration: 3000,
+    },
+    onError: (error: any) => {
+      enqueueSnackbar(error?.response?.data?.message as string, {
+        variant: "warning",
+        autoHideDuration: 1500,
       });
+    },
+  });
+
+  // mutation to delete comment.
+  const { mutate: deleteCommentMutation } = useMutation({
+    mutationKey: ["AddComment"],
+    mutationFn: async (commentId: string) => {
+      return deleteComment(commentId);
+    },
+    onSuccess: (data) => {
+      if (data?.Success) {
+        setCommentText("");
+        setVideoComments(data?.comments);
+        enqueueSnackbar(data?.message as string, {
+          variant: "success",
+          autoHideDuration: 3000,
+        });
+      }
     },
     onError: (error: any) => {
       enqueueSnackbar(error?.response?.data?.message as string, {
@@ -114,6 +138,11 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
     if (commentText.length) {
       addCommentMutation();
     }
+  };
+
+  // It handles delete comment
+  const handleDeleteComment = (commentId: string) => {
+    deleteCommentMutation(commentId);
   };
 
   return (
@@ -199,6 +228,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
                         <IconButton
                           size="small"
                           sx={{ padding: "0", margin: "0" }}
+                          onClick={() => handleDeleteComment(comment?._id)}
                         >
                           <DeleteIcon sx={{ fontSize: "1.3rem" }} />
                         </IconButton>

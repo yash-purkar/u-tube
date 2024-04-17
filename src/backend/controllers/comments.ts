@@ -79,21 +79,21 @@ export const likeComment = async (req: LikeCommentRequest, res: Response) => {
     if (comment) {
       // If comment is already liked, remove the like
       if (comment?.likes?.includes(body?.user_id)) {
-        const filteredComments = comment?.likes?.filter(
+        const filteredCommentLikes = comment?.likes?.filter(
           (userId: mongoose.Types.ObjectId) => !userId?.equals(body?.user_id)
         );
 
-        comment.likes = filteredComments;
+        comment.likes = filteredCommentLikes;
       } else {
         // else add the like
         comment.likes = [...comment.likes, body?.user_id];
 
         //And remove from the dislikes if it is there
         if (comment?.dislikes?.includes(body?.user_id)) {
-          const filteredComments = comment?.dislikes?.filter(
+          const filteredCommentDislikes = comment?.dislikes?.filter(
             (userId: mongoose.Types.ObjectId) => !userId?.equals(body?.user_id)
           );
-          comment.dislikes = filteredComments;
+          comment.dislikes = filteredCommentDislikes;
         }
       }
 
@@ -133,21 +133,21 @@ export const dislikeComment = async (
     if (comment) {
       // If already dislike remove from dislike
       if (comment?.dislikes?.includes(body?.user_id)) {
-        const filteredComments = comment?.dislike?.filter(
+        const filteredCommentDislikes = comment?.dislike?.filter(
           (userId: mongoose.Types.ObjectId) => !userId.equals(body?.user_id)
         );
 
-        comment.dislikes = filteredComments;
+        comment.dislikes = filteredCommentDislikes;
       } else {
         // else add it in dislikes
         comment.dislikes = [...comment.dislikes, body?.user_id];
 
         //And remove from the likes if there
         if (comment?.likes?.includes(body?.user_id)) {
-          const filteredComments = comment.likes.filter(
+          const filteredCommentLikes = comment.likes.filter(
             (userId: mongoose.Types.ObjectId) => !userId.equals(body?.user_id)
           );
-          comment.likes = filteredComments;
+          comment.likes = filteredCommentLikes;
         }
       }
 

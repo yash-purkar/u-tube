@@ -56,3 +56,12 @@ export interface DislikeCommentRequest extends Request {
   comment_id: string;
   video_id: string;
 }
+
+export interface LikeVideoRequest extends Request {
+  video_id: string;
+  user_id: string;
+}
+export interface DislikeVideoRequest extends Request {
+  video_id: string;
+  user_id: string;
+}

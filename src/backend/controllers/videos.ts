@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { VideoDetailsRequest } from "../types";
+import {
+  DislikeVideoRequest,
+  LikeVideoRequest,
+  VideoDetailsRequest,
+} from "../types";
+import mongoose from "mongoose";
 
 const Video = require("../models/video");
 const Comment = require("../models/comment");
@@ -65,3 +70,85 @@ export const getVideoDetails = async (
 /*
 We have created seperate collection for comments, and we are storing all comments there with userId and video, and while fetching the videoDetails we are sending the comments of that video.
 */
+
+// It handles like video
+export const likeVideo = async (req: LikeVideoRequest, res: Response) => {
+  try {
+    const body = req.body;
+
+    // Finding video
+    const video = await Video.findById(body?.video_id);
+
+    if (video) {
+      // If video is already liked
+      if (video?.likes?.includes(body?.user_id)) {
+        const filteredVideoLikes = video?.likes?.filter(
+          (userId: mongoose.Types.ObjectId) => !userId.equals(body?.user_id)
+        );
+
+        video.likes = filteredVideoLikes;
+      } else {
+        video.likes = [...video.likes, body?.user_id];
+
+        // If video is disliked remove that dislike
+        if (video?.dislikes?.includes(body?.user_id)) {
+          const filteredVideoDislikes = video?.dislikes?.filter(
+            (userId: mongoose.Types.ObjectId) => !userId.equals(body?.user_id)
+          );
+
+          video.dislikes = filteredVideoDislikes;
+        }
+      }
+
+      await video.save();
+
+      return res.status(200).send({ Success: true, video });
+    } else {
+      return res
+        .status(404)
+        .send({ Success: false, message: "Video not found" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
+  }
+};
+
+// It handles dislike video
+export const dislikeVideo = async (req: DislikeVideoRequest, res: Response) => {
+  try {
+    const body = req.body;
+
+    const video = await Video.findById(body?.video_id);
+
+    if (video) {
+      //If already dislike remove dislike
+      if (video?.dislikes?.includes(body?.user_id)) {
+        const filteredDislikes = video?.dislikes?.filter(
+          (userId: mongoose.Types.ObjectId) => !userId.equals(body?.user_id)
+        );
+
+        video.dislikes = filteredDislikes;
+      } else {
+        // else add dislike
+        video.dislikes = [...video?.dislikes, body?.user_id];
+
+        // And remove it from like
+        const filteredVideoLikes = video?.likes?.filter(
+          (userId: mongoose.Types.ObjectId) => !userId.equals(body?.user_id)
+        );
+
+        video.likes = filteredVideoLikes;
+      }
+
+      await video.save();
+
+      return res.status(200).send({ Success: true, video });
+    } else {
+      return res
+        .status(404)
+        .send({ Success: false, message: "Video not found" });
+    }
+  } catch (error) {}
+};

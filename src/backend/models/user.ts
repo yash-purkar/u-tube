@@ -28,6 +28,7 @@ const UserSchema = new Schema<UserSchemaInterface>({
   email: {
     type: String,
     required: true,
+    select: false,
   },
   password: {
     type: String,
@@ -41,26 +42,32 @@ const UserSchema = new Schema<UserSchemaInterface>({
   subscribers: {
     type: [Schema.Types.ObjectId],
     default: [],
+    select: false,
   },
   videos: {
     type: [Schema.Types.ObjectId],
     default: [],
+    select: false,
   },
   liked_videos: {
     type: [Schema.Types.ObjectId],
     default: [],
+    select: false,
   },
   watch_later_videos: {
     type: [Schema.Types.ObjectId],
     default: [],
+    select: false,
   },
   history: {
     type: [Schema.Types.ObjectId],
     default: [],
+    select: false,
   },
   search_history: {
     type: [Schema.Types.ObjectId],
     default: [],
+    select: false,
   },
 });
 

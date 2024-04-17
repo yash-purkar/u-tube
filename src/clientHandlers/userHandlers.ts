@@ -176,3 +176,38 @@ export const dislikeComment = async (
     throw err;
   }
 };
+
+// like video
+export const likeVideo = async (video_id: string, user_id: string) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/videos/like",
+      {
+        video_id,
+        user_id,
+      },
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// dislike video
+export const dislikeVideo = async (video_id: string, user_id: string) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/videos/dislike",
+      {
+        video_id,
+        user_id,
+      },
+      { withCredentials: true }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

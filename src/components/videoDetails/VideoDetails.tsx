@@ -10,6 +10,7 @@ import {
   Grid,
   IconButton,
   Paper,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -23,7 +24,12 @@ import img from "../../../public/assets/delete_later.jpg";
 import { SideVideos } from "./SideVideos";
 import VideoComments from "./VideoComments";
 import { getUploadedDate } from "@/clientHandlers/handlers";
-import { SnackbarProvider, enqueueSnackbar } from 'notistack';
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { useMutation } from "@tanstack/react-query";
+import { dislikeVideo, likeVideo } from "@/clientHandlers/userHandlers";
+import { useAppSelector } from "@/app/lib/redux/hooks";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 interface VideoDetailsProps {
   video: Video;
@@ -114,93 +120,163 @@ const useStyles = makeStyles({
 const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
   const classes = useStyles();
 
-  const uploaded = getUploadedDate(new Date(video?.createdAt));
+  const { user } = useAppSelector((state) => state.user);
+  const [videoToBeShown, setVideoToBeShown] = useState(video); // bcz we need to update it after actions e.g like video
+  const uploaded = getUploadedDate(new Date(videoToBeShown?.createdAt));
+
+  const { mutate: videoMutation } = useMutation({
+    mutationKey: ["videoActions"],
+    mutationFn: async ({
+      action,
+      data,
+    }: {
+      action: "LIKE" | "DISLIKE";
+      data: { videoId: string };
+    }) => {
+      switch (action) {
+        case "LIKE":
+          return likeVideo(data.videoId, user?._id as string);
+        case "DISLIKE":
+          return dislikeVideo(data.videoId, user?._id as string);
+      }
+    },
+    onSuccess: (data) => {
+      if (data?.Success) {
+        setVideoToBeShown(data?.video);
+      }
+    },
+    onError: (error: any) => {
+      enqueueSnackbar(error?.response?.data?.message as string, {
+        variant: "warning",
+        autoHideDuration: 1500,
+      });
+    },
+  });
+
+  // It handles like video
+  const handleVideoLike = () => {
+    videoMutation({ action: "LIKE", data: { videoId: videoToBeShown?._id } });
+  };
+
+  // It handles dislike video
+  const handleVideoDislike = () => {
+    videoMutation({
+      action: "DISLIKE",
+      data: { videoId: videoToBeShown?._id },
+    });
+  };
 
   return (
     <SnackbarProvider>
+      <Container
+        component={"div"}
+        className={classes.video_details_container}
+        maxWidth={false}
+        fixed={false}
+      >
+        <Grid container spacing={5}>
+          <Grid item xs={12} lg={8}>
+            <Box>
+              <iframe
+                className={classes.iFrame}
+                src={videoToBeShown?.embeded_url}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
 
-    <Container
-      component={"div"}
-      className={classes.video_details_container}
-      maxWidth={false}
-      fixed={false}
-    >
-      <Grid container spacing={5}>
-        <Grid item xs={12} lg={8}>
-          <Box>
-            <iframe
-              className={classes.iFrame}
-              src={video?.embeded_url}
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
+              <Typography variant="h6" fontWeight={"bold"}>
+                {videoToBeShown?.title || "No Title"}
+              </Typography>
 
-            <Typography variant="h6" fontWeight={"bold"}>
-              {video?.title || "No Title"}
-            </Typography>
+              {/* User info and some actions */}
+              <Box className={classes.vid_extra_info}>
+                <Box className={classes.vid_user_info}>
+                  <Avatar />
+                  <div>
+                    <Typography fontWeight={"bold"}>
+                      {videoToBeShown?.user?.firstName}{" "}
+                      {videoToBeShown?.user?.lastName}
+                    </Typography>
+                    {videoToBeShown?.user?.subscribers?.length} subscriber
+                    {videoToBeShown?.user?.subscribers?.length !== 1 && "s"}
+                  </div>
+                  <Chip
+                    clickable
+                    label={"Subscribe"}
+                    sx={{
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      fontWeight: "bold",
+                      "&:hover": { backgroundColor: "#2e2929" },
+                    }}
+                  />
+                </Box>
+                <Box className={classes.vid_actions}>
+                  <Stack direction={"row"} spacing={2}>
+                    <Chip
+                      clickable
+                      icon={
+                        videoToBeShown?.likes?.includes(user?._id as string) ? (
+                          <ThumbUpIcon />
+                        ) : (
+                          <ThumbUpOffAltIcon />
+                        )
+                      }
+                      label={videoToBeShown?.likes?.length}
+                      onClick={handleVideoLike}
+                    />
+                    <Chip
+                      onClick={handleVideoDislike}
+                      clickable
+                      icon={
+                        videoToBeShown?.dislikes?.includes(user?._id as string) ? (
+                          <ThumbDownIcon />
+                        ) : (
+                          <ThumbDownOffAltIcon />
+                        )
+                      }
+                    />
+                    <Chip
+                      clickable
+                      icon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
+                      label={"Share"}
+                    />
+                  </Stack>
+                </Box>
+              </Box>
 
-            {/* User info and some actions */}
-            <Box className={classes.vid_extra_info}>
-              <Box className={classes.vid_user_info}>
-                <Avatar />
-                <div>
-                  <Typography fontWeight={"bold"}>
-                    {video?.user?.firstName} {video?.user?.lastName}
+              {/* Description */}
+              <Box className={classes.description}>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                  <Typography fontWeight="bold">
+                    {videoToBeShown?.views} Views
                   </Typography>
-                  {video?.user?.subscribers?.length} subscriber
-                  {video?.user?.subscribers?.length !== 1 && "s"}
+                  <Typography fontWeight="bold">{uploaded}</Typography>
                 </div>
-                <Chip
-                  clickable
-                  label={"Subscribe"}
-                  sx={{
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    fontWeight: "bold",
-                    "&:hover": { backgroundColor: "#2e2929" },
-                  }}
-                />
+                <Typography marginTop={"1rem"}>
+                  {videoToBeShown?.description}
+                </Typography>
               </Box>
-              <Box className={classes.vid_actions}>
-                <Chip
-                  clickable
-                  icon={<ThumbUpOffAltIcon />}
-                  label={video?.likes?.length}
-                />
-                <Chip clickable icon={<ThumbDownOffAltIcon />} />
-                <Chip
-                  clickable
-                  icon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
-                  label={"Share"}
-                />
-              </Box>
-            </Box>
 
-            {/* Description */}
-            <Box className={classes.description}>
-              <div style={{ display: "flex", gap: "1rem" }}>
-                <Typography fontWeight="bold">{video?.views} Views</Typography>
-                <Typography fontWeight="bold">{uploaded}</Typography>
-              </div>
-              <Typography marginTop={"1rem"}>{video?.description}</Typography>
+              {/* Comments section */}
+              <VideoComments
+                comments={comments}
+                videoId={videoToBeShown?._id}
+              />
             </Box>
-
-            {/* Comments section */}
-            <VideoComments comments={comments} videoId={video?._id}/>
-          </Box>
-        </Grid>
-        {/* Side videos */}
-        <SideVideos
-          videoTitle={video.title}
-          videoDescription={video.description}
-          videoAuthor={video?.user?.username}
+          </Grid>
+          {/* Side videos */}
+          <SideVideos
+            videoTitle={videoToBeShown?.title}
+            videoDescription={videoToBeShown?.description}
+            videoAuthor={videoToBeShown?.user?.username}
           />
-      </Grid>
-      <SnackbarProvider />
-    </Container>
-          </SnackbarProvider>
+        </Grid>
+        <SnackbarProvider />
+      </Container>
+    </SnackbarProvider>
   );
 };
 

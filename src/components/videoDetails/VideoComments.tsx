@@ -61,7 +61,7 @@ const useStyles = makeStyles({
       cursor: "pointer",
     },
   },
-  active_sort_order: {
+  selected_sort_order: {
     backgroundColor: "lightgray !important",
   },
   comments_container: {
@@ -86,7 +86,8 @@ const useStyles = makeStyles({
 
 const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
   const classes = useStyles();
-  const [showSortBy, setShowSortBy] = useState<boolean>(false);
+  const [showSortModal, setShowSortModal] = useState<boolean>(false);
+  const [sortOrder, setSortOrder] = useState<"top" | "newest">("newest");
   const [commentText, setCommentText] = useState("");
   const [videoComments, setVideoComments] = useState(comments);
   const { enqueueSnackbar } = useSnackbar();
@@ -162,6 +163,19 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
   const handleDislikeComment = (commentId: string) => {
     commentMutation({ action: "DISLIKE", data: { commentId } });
   };
+
+  // It handles sort selection
+  const handleSortOptionClick = (option: "newest" | "top") => {
+    setSortOrder(option);
+    setShowSortModal(false);
+  };
+
+  // Comments based on the sort order
+  const sortedComments =
+    sortOrder === "newest"
+      ? videoComments
+      : [...videoComments].sort((a, b) => (a.likes < b.likes ? 1 : -1));
+
   return (
     <>
       <Box>
@@ -181,17 +195,27 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
           >
             <IconButton
               onClick={() => {
-                setShowSortBy((prev) => !prev);
+                setShowSortModal((prev) => !prev);
               }}
             >
-              {showSortBy ? <CloseIcon /> : <SortIcon />}
+              {showSortModal ? <CloseIcon /> : <SortIcon />}
             </IconButton>
             <p>Sort by</p>
             {/* small dialouge box for sort order*/}
-            {showSortBy && (
+            {showSortModal && (
               <Box className={classes.sort_box}>
-                <p className={classes.sort_option}>Top Comments</p>
-                <p className={classes.sort_option}>Newest First</p>
+                <p
+                  className={`${classes.sort_option} ${sortOrder === 'newest' && classes.selected_sort_order}`}
+                  onClick={() => handleSortOptionClick("newest")}
+                >
+                  Newest First
+                </p>
+                <p
+                  className={`${classes.sort_option} ${sortOrder === 'top' && classes.selected_sort_order}`}
+                  onClick={() => handleSortOptionClick("top")}
+                >
+                  Top Comments
+                </p>
               </Box>
             )}
           </div>
@@ -214,7 +238,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
 
         {/* Comments Mapping */}
         <Box className={classes.comments_container}>
-          {videoComments?.map((comment: Comment) => {
+          {sortedComments?.map((comment: Comment) => {
             const commentAddedOn = getUploadedDate(
               new Date(comment?.createdAt)
             );

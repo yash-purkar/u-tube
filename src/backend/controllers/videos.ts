@@ -51,7 +51,13 @@ export const getVideoDetails = async (
   try {
     const query = req.query;
 
-    const video = await Video.findById(query?.vid_id).populate("user");
+    // finding video
+    const video = await Video.findById(query?.vid_id).populate({
+      path: "user",
+      select: "username firstName lastName subscribers",
+    });
+
+    // exclude _id and select subscribers and username
 
     const videoComments = await Comment.find({ video: video?._id })
       .sort({ _id: -1 })
@@ -77,7 +83,11 @@ export const likeVideo = async (req: LikeVideoRequest, res: Response) => {
     const body = req.body;
 
     // Finding video
-    const video = await Video.findById(body?.video_id);
+    const video = await Video.findById(body?.video_id).populate({
+      path: "user",
+      select: "-_id subscribers firstName lastName username",
+    });
+    // Populate user and exclude _id and include subscribers
 
     if (video) {
       // If video is already liked
@@ -120,7 +130,11 @@ export const dislikeVideo = async (req: DislikeVideoRequest, res: Response) => {
   try {
     const body = req.body;
 
-    const video = await Video.findById(body?.video_id);
+    const video = await Video.findById(body?.video_id).populate({
+      path: "user",
+      select: "-_id subscribers firstName lastName username",
+    });
+    // Populate user and exclude _id and include subscribers
 
     if (video) {
       //If already dislike remove dislike
@@ -150,5 +164,9 @@ export const dislikeVideo = async (req: DislikeVideoRequest, res: Response) => {
         .status(404)
         .send({ Success: false, message: "Video not found" });
     }
-  } catch (error) {}
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
+  }
 };

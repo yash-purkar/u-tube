@@ -65,3 +65,9 @@ export interface DislikeVideoRequest extends Request {
   video_id: string;
   user_id: string;
 }
+
+// subscribe
+export interface SubscribeAndUnsubscribeVideoRequest extends Request {
+  subscribe_to: string;
+  subscriber: string;
+}

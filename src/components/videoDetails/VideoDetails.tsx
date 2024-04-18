@@ -26,7 +26,11 @@ import VideoComments from "./VideoComments";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { useMutation } from "@tanstack/react-query";
-import { dislikeVideo, likeVideo } from "@/clientHandlers/userHandlers";
+import {
+  dislikeVideo,
+  likeVideo,
+  subscribeAndUnsubscribeVideo,
+} from "@/clientHandlers/userHandlers";
 import { useAppSelector } from "@/app/lib/redux/hooks";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
@@ -115,6 +119,16 @@ const useStyles = makeStyles({
     backgroundColor: "#f2f2f2",
     padding: "1rem",
   },
+  subscribe_button: {
+    backgroundColor: "#000",
+    color: "#fff",
+    "&:hover": { backgroundColor: "#2e2929" },
+  },
+  unsubscribe_button: {
+    backgroundColor: "#fff",
+    color: "#000",
+    border: "1px solid #000",
+  },
 });
 
 const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
@@ -130,7 +144,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
       action,
       data,
     }: {
-      action: "LIKE" | "DISLIKE";
+      action: "LIKE" | "DISLIKE" | "SUBSCRIBE_OR_UNSUBSCRIBE";
       data: { videoId: string };
     }) => {
       switch (action) {
@@ -138,6 +152,12 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
           return likeVideo(data.videoId, user?._id as string);
         case "DISLIKE":
           return dislikeVideo(data.videoId, user?._id as string);
+        case "SUBSCRIBE_OR_UNSUBSCRIBE":
+          return subscribeAndUnsubscribeVideo(
+            user?.username as string,
+            video?.user?.username,
+            video?._id as string
+          );
       }
     },
     onSuccess: (data) => {
@@ -162,6 +182,14 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
   const handleVideoDislike = () => {
     videoMutation({
       action: "DISLIKE",
+      data: { videoId: videoToBeShown?._id },
+    });
+  };
+
+  // It handles subscribe or unsubscribe
+  const subscribeOrUnsubscribe = () => {
+    videoMutation({
+      action: "SUBSCRIBE_OR_UNSUBSCRIBE",
       data: { videoId: videoToBeShown?._id },
     });
   };
@@ -202,16 +230,28 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
                     {videoToBeShown?.user?.subscribers?.length} subscriber
                     {videoToBeShown?.user?.subscribers?.length !== 1 && "s"}
                   </div>
-                  <Chip
-                    clickable
-                    label={"Subscribe"}
-                    sx={{
-                      backgroundColor: "#000",
-                      color: "#fff",
-                      fontWeight: "bold",
-                      "&:hover": { backgroundColor: "#2e2929" },
-                    }}
-                  />
+                  {video?.user?.username !== user?.username && (
+                    <Stack>
+                      <Chip
+                        onClick={subscribeOrUnsubscribe}
+                        clickable
+                        label={
+                          videoToBeShown?.user?.subscribers?.includes(
+                            user?.username as string
+                          )
+                            ? "Unsubscribe"
+                            : "Subscribe"
+                        }
+                        className={
+                          videoToBeShown?.user?.subscribers?.includes(
+                            user?.username as string
+                          )
+                            ? classes.unsubscribe_button
+                            : classes.subscribe_button
+                        }
+                      />
+                    </Stack>
+                  )}
                 </Box>
                 <Box className={classes.vid_actions}>
                   <Stack direction={"row"} spacing={2}>
@@ -231,7 +271,9 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
                       onClick={handleVideoDislike}
                       clickable
                       icon={
-                        videoToBeShown?.dislikes?.includes(user?._id as string) ? (
+                        videoToBeShown?.dislikes?.includes(
+                          user?._id as string
+                        ) ? (
                           <ThumbDownIcon />
                         ) : (
                           <ThumbDownOffAltIcon />

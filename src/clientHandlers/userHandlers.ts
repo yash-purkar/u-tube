@@ -211,3 +211,26 @@ export const dislikeVideo = async (video_id: string, user_id: string) => {
     throw error;
   }
 };
+
+// subscribe and unsubscribe video
+export const subscribeAndUnsubscribeVideo = async (
+  subscriber: string,
+  subscribe_to: string,
+  video_id: string
+) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/user/subscribe_or_unsubscribe",
+      {
+        subscriber,
+        subscribe_to,
+        video_id,
+      },
+      { withCredentials: true }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

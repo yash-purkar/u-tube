@@ -34,6 +34,7 @@ import {
 import { useAppSelector } from "@/app/lib/redux/hooks";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { useRouter } from "next/router";
 
 interface VideoDetailsProps {
   video: Video;
@@ -194,6 +195,15 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
     });
   };
 
+  // It handles share click
+  const handleShareClick = () => {
+    navigator.clipboard.writeText(window.location.href);
+    enqueueSnackbar("Copied To Clipboard", {
+      variant: "success",
+      autoHideDuration: 1500,
+    });
+  };
+
   return (
     <SnackbarProvider>
       <Container
@@ -281,6 +291,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
                       }
                     />
                     <Chip
+                      onClick={handleShareClick}
                       clickable
                       icon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
                       label={"Share"}

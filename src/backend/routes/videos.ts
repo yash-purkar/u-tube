@@ -4,6 +4,7 @@ import {
   getAllVideos,
   getVideoDetails,
   likeVideo,
+  videosByUserId,
 } from "../controllers/videos";
 import {
   DislikeVideoRequest,
@@ -31,3 +32,8 @@ router.post("/dislike", checkAuth, async (req, res) => {
   await dislikeVideo(req as DislikeVideoRequest, res);
 });
 export default router;
+
+// Video by user id
+router.get("/videos_by_user", async (req, res) => {
+  await videosByUserId(req, res);
+});

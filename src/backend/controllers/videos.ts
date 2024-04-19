@@ -170,3 +170,32 @@ export const dislikeVideo = async (req: DislikeVideoRequest, res: Response) => {
       .send({ Success: false, message: "Internal Server Error" });
   }
 };
+
+// Videos by user id
+export const videosByUserId = async (req: Request, res: any) => {
+  try {
+    const { limit, currentPage, user_id } = req.query;
+
+    const userVideos = await Video.find({ user: user_id });
+
+    // start from here
+    const start = Number(currentPage) * Number(limit) - Number(limit);
+
+    // goes upto
+    const end = Number(currentPage) * Number(limit);
+
+    const videosToSend = userVideos?.slice(start, end);
+
+    return res
+      .status(200)
+      .send({
+        Success: true,
+        videos: videosToSend,
+        totalVideos: userVideos?.length,
+      });
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
+  }
+};

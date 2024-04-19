@@ -4,7 +4,7 @@ import {
   SubscribeAndUnsubscribeVideoRequest,
   UserSearchHistoryRemoveRequest,
 } from "../types";
-import { Response } from "express";
+import { Request, Response } from "express";
 const User = require("../models/user");
 const Video = require("../models/video");
 
@@ -105,7 +105,7 @@ export const handleSubscribeAndUnSubscribe = async (
       // We need to send the video back to the to show updated details
       const video = await Video.findById(body?.video_id).populate({
         path: "user",
-        select: "firstName lastName subscribers"
+        select: "firstName lastName subscribers",
       });
 
       return res.status(200).send({ Success: true, video });
@@ -119,5 +119,22 @@ export const handleSubscribeAndUnSubscribe = async (
     return res
       .status(500)
       .send({ Success: false, message: "Internal Server Error" });
+  }
+};
+
+// User by id
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    const params = req.params;
+
+    const user = await User.findOne({username:params?.username}).select("subscribers firstName lastName username");
+
+    if(user) {
+     return res.status(200).send({Success:true,user});
+    } else {
+      return res.status(404).send({Success:false,message:"User not found."})
+    }
+  } catch (error) {
+    return res.status(500).send({Success:false, message:"Internal server error"})
   }
 };

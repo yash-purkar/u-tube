@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addUserSearchHistory,
+  getUserById,
   handleSubscribeAndUnSubscribe,
   removeUserSearchHistory,
 } from "../controllers/user";
@@ -33,4 +34,10 @@ router.post("/subscribe_or_unsubscribe", checkAuth, async (req, res) => {
     res
   );
 });
+
+// User by username
+router.get("/user_by_id/:username", async (req, res) => {
+  await getUserById(req, res);
+});
+
 export default router;

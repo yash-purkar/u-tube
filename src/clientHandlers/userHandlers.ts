@@ -234,3 +234,15 @@ export const subscribeAndUnsubscribeVideo = async (
     throw error;
   }
 };
+
+// It fetched videos by user id
+export const videosByUser = async (user_id: string, currentPage: number) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/videos/videos_by_user?limit=${3}&currentPage=${currentPage}&user_id=${user_id}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

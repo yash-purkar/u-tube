@@ -82,7 +82,6 @@ export const handleSubscribeAndUnSubscribe = async (
     const subscribe_to_this_user = await User.findOne({
       username: body?.subscribe_to,
     }).select("subscribers");
-    console.log(subscribe_to_this_user);
     // If user is there
     if (subscribe_to_this_user) {
       // If already subscribe then unsubscribe

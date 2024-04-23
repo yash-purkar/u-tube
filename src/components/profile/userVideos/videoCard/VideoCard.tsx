@@ -7,9 +7,9 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import videoImg from "../../../../../public/assets/delete_later.jpg";
 import { makeStyles } from "@mui/styles";
 import { Video } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 interface VideoCardProps {
   video: Video;
@@ -27,7 +27,13 @@ const useStyles: () => any = makeStyles({
 });
 
 export const VideoCard: FC<VideoCardProps> = ({ video }) => {
+  const router = useRouter();
   const classes = useStyles();
+
+  const handleWatchNow = (video_id: string): void => {
+    router.push(`/watch?vid_id=${video_id}`);
+  };
+
   return (
     <Card className={classes.card} sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -37,7 +43,7 @@ export const VideoCard: FC<VideoCardProps> = ({ video }) => {
         width={"100%"}
         image={video?.thumbnail_url}
       />
-      <CardContent sx={{paddingBottom:'0rem'}}>
+      <CardContent sx={{ paddingBottom: "0rem" }}>
         <Typography
           gutterBottom
           variant="h5"
@@ -47,11 +53,14 @@ export const VideoCard: FC<VideoCardProps> = ({ video }) => {
           {video?.title?.slice(0, 30)} {video?.title?.length > 30 && "..."}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {video?.description.slice(0,80)} {video?.description?.length > 80 && '...'}
+          {video?.description.slice(0, 80)}{" "}
+          {video?.description?.length > 80 && "..."}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Watch Now</Button>
+        <Button onClick={() => handleWatchNow(video?._id)} size="small">
+          Watch Now
+        </Button>
       </CardActions>
     </Card>
   );

@@ -37,6 +37,7 @@ import {
 } from "@/clientHandlers/userHandlers";
 import HistoryIcon from "@mui/icons-material/History";
 import { setUserSearchHistory } from "@/app/lib/redux/slices/userSlice";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 const useStyles: () => any = makeStyles({
   appbar: {
@@ -111,6 +112,7 @@ export const Navbar: React.FC = () => {
   const router = useRouter();
   const { videos } = useAppSelector((state) => state.video);
   const { user } = useAppSelector((state) => state.user);
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
   const [searchValue, setSearchValue] = useState<string>("");
   const dispatch = useAppDispatch();
   const [showSuggestions, setShowsuggestions] = useState<boolean>(false);
@@ -136,9 +138,16 @@ export const Navbar: React.FC = () => {
   });
 
   const handleMyProfile = useCallback(() => {
-    router.push("/profile/me");
+    if (isLoggedIn) {
+      router.push(`/profile?user=${user?.username}`);
+    } else {
+      enqueueSnackbar("Please login first", {
+        variant: "warning",
+        autoHideDuration: 1500,
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoggedIn,user?.username]);
 
   // It handles search value change
   const handleSearchValueChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -190,97 +199,99 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <Container maxWidth="sm">
-      <AppBar position="fixed" className={classes.appbar}>
-        <Toolbar className={classes.toolbar}>
-          <div className={classes.brand_header}>
-            <SideDrawer>
-              <IconButton>
-                <MenuIcon />
+    <SnackbarProvider>
+      <Container maxWidth="sm">
+        <AppBar position="fixed" className={classes.appbar}>
+          <Toolbar className={classes.toolbar}>
+            <div className={classes.brand_header}>
+              <SideDrawer>
+                <IconButton>
+                  <MenuIcon />
+                </IconButton>
+              </SideDrawer>
+
+              <IconButton className={classes.brand_button}>
+                <YouTubeIcon className={classes.brand_icon} />
               </IconButton>
-            </SideDrawer>
 
-            <IconButton className={classes.brand_button}>
-              <YouTubeIcon className={classes.brand_icon} />
-            </IconButton>
-
-            <Typography variant="h6" className={classes.title} color={"#000"}>
-              UTube
-            </Typography>
-          </div>
-
-          <Box className={classes.searchbar_container}>
-            <TextField
-              type="search"
-              size="small"
-              className={classes.searchbar}
-              placeholder="Search for videos"
-              InputProps={{ sx: { borderRadius: "1rem" } }}
-              onChange={handleSearchValueChange}
-              value={searchValue}
-              onFocus={() => setShowsuggestions(true)}
-              onBlur={() => setShowsuggestions(false)}
-            />
-
-            {showSuggestions && finalSuggestionsVideoArray?.length !== 0 && (
-              <Box className={classes.suggestions_container}>
-                <List className={classes.suggestions_list}>
-                  {finalSuggestionsVideoArray
-                    ?.slice(0, 10)
-                    ?.map((video: Video, i) => (
-                      <ListItem
-                        key={i}
-                        onMouseDown={(e) => e.preventDefault()}
-                        className={classes.suggestion_item}
-                        onClick={() =>
-                          handleSearchResultClick(video?.title, video?._id)
-                        }
-                      >
-                        <div style={{ display: "flex", gap: "0.5rem" }}>
-                          {user?.search_history?.includes(video?._id) ? (
-                            <HistoryIcon />
-                          ) : (
-                            <SearchIcon fontSize="medium" />
-                          )}
-                          <Typography sx={{ color: "#000" }} variant="body2">
-                            {video?.title?.slice(0, 30)}
-                            {video?.title?.length > 31 && "..."}
-                          </Typography>
-                        </div>
-                        {user?.search_history?.includes(video?._id) && (
-                          <Button
-                            size="small"
-                            sx={{ textAlign: "right" }}
-                            onClick={(e: any) =>
-                              handleHistoryRemoveClick(e, video?._id)
-                            }
-                          >
-                            Remove
-                          </Button>
-                        )}
-                      </ListItem>
-                    ))}
-                </List>
-              </Box>
-            )}
-          </Box>
-
-          <div className="display_flex align_center gap_05">
-            <div className={"cursor_pointer"}>
-              <Tooltip title={"Profile"}>
-                <Avatar
-                  alt="Y"
-                  className={classes.profile_icon}
-                  src="url"
-                  sx={{ width: "30px", height: "30px" }}
-                  onClick={handleMyProfile}
-                />
-              </Tooltip>
+              <Typography variant="h6" className={classes.title} color={"#000"}>
+                UTube
+              </Typography>
             </div>
-          </div>
-        </Toolbar>
-        <Divider />
-      </AppBar>
-    </Container>
+
+            <Box className={classes.searchbar_container}>
+              <TextField
+                type="search"
+                size="small"
+                className={classes.searchbar}
+                placeholder="Search for videos"
+                InputProps={{ sx: { borderRadius: "1rem" } }}
+                onChange={handleSearchValueChange}
+                value={searchValue}
+                onFocus={() => setShowsuggestions(true)}
+                onBlur={() => setShowsuggestions(false)}
+              />
+
+              {showSuggestions && finalSuggestionsVideoArray?.length !== 0 && (
+                <Box className={classes.suggestions_container}>
+                  <List className={classes.suggestions_list}>
+                    {finalSuggestionsVideoArray
+                      ?.slice(0, 10)
+                      ?.map((video: Video, i) => (
+                        <ListItem
+                          key={i}
+                          onMouseDown={(e) => e.preventDefault()}
+                          className={classes.suggestion_item}
+                          onClick={() =>
+                            handleSearchResultClick(video?.title, video?._id)
+                          }
+                        >
+                          <div style={{ display: "flex", gap: "0.5rem" }}>
+                            {user?.search_history?.includes(video?._id) ? (
+                              <HistoryIcon />
+                            ) : (
+                              <SearchIcon fontSize="medium" />
+                            )}
+                            <Typography sx={{ color: "#000" }} variant="body2">
+                              {video?.title?.slice(0, 30)}
+                              {video?.title?.length > 31 && "..."}
+                            </Typography>
+                          </div>
+                          {user?.search_history?.includes(video?._id) && (
+                            <Button
+                              size="small"
+                              sx={{ textAlign: "right" }}
+                              onClick={(e: any) =>
+                                handleHistoryRemoveClick(e, video?._id)
+                              }
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </ListItem>
+                      ))}
+                  </List>
+                </Box>
+              )}
+            </Box>
+
+            <div className="display_flex align_center gap_05">
+              <div className={"cursor_pointer"}>
+                <Tooltip title={"Profile"}>
+                  <Avatar
+                    alt="Y"
+                    className={classes.profile_icon}
+                    src="url"
+                    sx={{ width: "30px", height: "30px" }}
+                    onClick={handleMyProfile}
+                  />
+                </Tooltip>
+              </div>
+            </div>
+          </Toolbar>
+          <Divider />
+        </AppBar>
+      </Container>
+    </SnackbarProvider>
   );
 };

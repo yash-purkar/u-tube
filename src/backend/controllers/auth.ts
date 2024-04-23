@@ -2,7 +2,7 @@ const User = require("../models/user");
 const checkIsEmailValid = require("../serverHandlers/serverHandlers");
 const jwt = require("jsonwebtoken");
 import bcrypt from "bcryptjs";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { UserLoginRequest, UserRegisterRequest } from "../types";
 
 // Register user controller
@@ -54,7 +54,7 @@ export const login = async (req: UserLoginRequest, res: any) => {
     // Searching for user
     const user = await User.findOne({
       email: body.email,
-    }).select("+password");
+    }).select("+password email username");
 
     if (user) {
       // Checks password is correct or not
@@ -69,7 +69,7 @@ export const login = async (req: UserLoginRequest, res: any) => {
 
       // If password is correct generate token and add user_id in it
       const token = jwt.sign(
-        { user_id: user?._id },
+        { user_id: user?._id, email: user?.email, username: user?.username },
         process.env.JSON_TOKEN_SECERET,
         { expiresIn: "1d" }
       );
@@ -99,5 +99,44 @@ export const checkIsAuthenticated = async (req: any, res: any) => {
     return res
       .status(500)
       .send({ Success: false, message: "Internal server error" });
+  }
+};
+
+// It checks is token valid for protected routes
+export const checkIsTokenValid = async (req: Request, res: Response) => {
+  try {
+    const query = req.query;
+    console.log(query);
+
+    // decoding token to find user
+    const decoded = jwt.decode(query.token);
+
+    const user = await User.findOne({
+      _id: decoded?.user_id,
+      email: decoded?.email,
+      username: decoded?.username,
+    });
+
+    if (query.token) {
+      if (user) {
+        return res.status(200).send({ Success: true, message: "User Exist in DB" });
+      } else {
+        return res
+          .status(500)
+          .send({
+            Success: false,
+            message: "Heyy buddy, you have entered wrong information in token",
+          });
+      }
+    } else {
+      return res
+      .status(500)
+      .send({
+        Success: false,
+        message: "Please login first",
+      });
+    }
+  } catch (error) {
+    res.status(500).send({ Success: false, message: "Internal Server Error" });
   }
 };

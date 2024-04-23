@@ -31,7 +31,6 @@ const UserVideos: React.FC<UserVideosProps> = ({ user_id }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[currentPage]);
 
-  console.log(data);
   return (
     <div>
       <h2 style={{ margin: "1rem 0" }}>Videos</h2>
@@ -53,18 +52,6 @@ const UserVideos: React.FC<UserVideosProps> = ({ user_id }) => {
           onPageClick={handlePageClick}
           totalItems={data?.totalVideos}
         />
-        {/* <Grid item>
-          <VideoCard />
-        </Grid>
-        <Grid item>
-          <VideoCard />
-        </Grid>
-        <Grid item>
-          <VideoCard />
-        </Grid>
-        <Grid item>
-          <VideoCard />
-        </Grid>*/}
       </Grid>
     </div>
   );

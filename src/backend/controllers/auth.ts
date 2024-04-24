@@ -90,7 +90,7 @@ export const login = async (req: UserLoginRequest, res: any) => {
 export const checkIsAuthenticated = async (req: any, res: any) => {
   try {
     // we've set the user_id in checkAuth middleware
-    const user = await User.findOne({ _id: req?.user_id });
+    const user = await User.findOne({ _id: req?.user_id }).select("search_history firstName lastName username subscribers");
 
     if (user) {
       res.status(200).send({ Success: true, user });
@@ -106,7 +106,6 @@ export const checkIsAuthenticated = async (req: any, res: any) => {
 export const checkIsTokenValid = async (req: Request, res: Response) => {
   try {
     const query = req.query;
-    console.log(query);
 
     // decoding token to find user
     const decoded = jwt.decode(query.token);

@@ -52,7 +52,7 @@ export const SingleVideo = ({ video }: { video: Video }) => {
         alt="green iguana"
         height={170}
         image={video?.thumbnail_url}
-        sx={{ borderRadius: "1rem", width: "100%" }}
+        sx={{ borderRadius: "1rem", width: "100%",objectFit:'unset' }}
         onClick={redirectToVidDetailsPage}
       />
       <CardContent className={classes.cart_content}>

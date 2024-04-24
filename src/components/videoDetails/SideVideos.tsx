@@ -29,12 +29,19 @@ const useStyles = makeStyles({
   },
   side_single_video: {
     display: "flex",
+    flexDirection:'column',
+    margin:'1rem',
     gap: "1rem",
-    maxWidth: "22rem",
+    "@media(min-width:445px)": {
+      flexDirection: "row",
+    },
   },
   video_thumbnail: {
-    width: "29rem",
+   width:'100%',
     borderRadius: "1rem",
+    "@media(min-width:445px)": {
+      width: "29rem",
+    },
   },
 });
 

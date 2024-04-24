@@ -17,7 +17,7 @@ export const addUserSearchHistory = async (
     const data = req.body;
 
     //searching user
-    const user = await User.findById(data?.user_id);
+    const user = await User.findById(data?.user_id).select("search_history");
 
     // adding new video id in search history
     user.search_history = [...user.search_history, data?.video_id];
@@ -46,7 +46,7 @@ export const removeUserSearchHistory = async (
     const urlQuery = req.query;
 
     // Finding the user
-    const user = await User.findById(urlQuery?.user_id);
+    const user = await User.findById(urlQuery?.user_id).select("search_history");
 
     // Removing requested history from user_history array
     const updated_history_arr = user?.search_history?.filter(
@@ -126,14 +126,20 @@ export const getUserById = async (req: Request, res: Response) => {
   try {
     const params = req.params;
 
-    const user = await User.findOne({username:params?.username}).select("subscribers firstName lastName username");
+    const user = await User.findOne({ username: params?.username }).select(
+      "subscribers firstName lastName username"
+    );
 
-    if(user) {
-     return res.status(200).send({Success:true,user});
+    if (user) {
+      return res.status(200).send({ Success: true, user });
     } else {
-      return res.status(404).send({Success:false,message:"User not found."})
+      return res
+        .status(404)
+        .send({ Success: false, message: "User not found." });
     }
   } catch (error) {
-    return res.status(500).send({Success:false, message:"Internal server error"})
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal server error" });
   }
 };

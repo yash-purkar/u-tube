@@ -18,7 +18,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
-import { setIsLoggedIn} from "@/app/lib/redux/slices/authSlice";
+import { setIsLoggedIn } from "@/app/lib/redux/slices/authSlice";
 
 interface DrawerItem {
   name: string;
@@ -40,7 +40,7 @@ const sideDrawerListItems: DrawerItem[] = [
   {
     name: "Liked",
     Icon: FavoriteIcon,
-    redirectionUrl: "/liked",
+    redirectionUrl: "/liked_videos",
   },
   {
     name: "Watch Later",
@@ -60,8 +60,8 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
   const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
   const { isLoggedIn } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-
   const toggleDrawer = () => {
     setOpen((prev) => !prev);
   };
@@ -69,6 +69,10 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
 
   // It handles redirection
   const handleRedirection = (url: string) => {
+    if (url === "/liked_videos") {
+      router.push(`liked_videos?username=${user?.username}`);
+      return;
+    }
     router.push(url);
   };
 

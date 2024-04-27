@@ -60,6 +60,7 @@ export const Login = () => {
       if (data?.Success) {
         dispatch(setIsLoggedIn(true));
         dispatch(setUser(data?.user));
+        router.push("/login")
       }
     },
   });

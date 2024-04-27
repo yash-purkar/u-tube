@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 
 const Video = require("../models/video");
 const Comment = require("../models/comment");
+const User = require("../models/user");
 
 export const getAllVideos = async (req: Request, res: Response) => {
   try {
@@ -62,7 +63,7 @@ export const getVideoDetails = async (
     const videoComments = await Comment.find({ video: video?._id })
       .sort({ _id: -1 })
       .populate("user");
-
+      
     if (video)
       return res
         .status(200)
@@ -186,16 +187,44 @@ export const videosByUserId = async (req: Request, res: any) => {
 
     const videosToSend = userVideos?.slice(start, end);
 
-    return res
-      .status(200)
-      .send({
-        Success: true,
-        videos: videosToSend,
-        totalVideos: userVideos?.length,
-      });
+    return res.status(200).send({
+      Success: true,
+      videos: videosToSend,
+      totalVideos: userVideos?.length,
+    });
   } catch (err) {
     return res
       .status(500)
       .send({ Success: false, message: "Internal Server Error" });
+  }
+};
+
+// It returns logged users liked videos;
+export const usersLikedVideos = async (req: Request, res: Response) => {
+  try {
+    // getting user to find details
+    const user = await User.findOne({ username: req.query.username }).select(
+      "liked_videos"
+    );
+    if (!user) {
+      return res
+        .status(404)
+        .send({ Success: false, message: "User not found" });
+    }
+
+    const allVideos = await Video.find().populate("user");
+
+    // Getting all liked videos of user from videos collection
+    const usersLikedVideos = allVideos.filter((vid: any) => {
+      return vid.likes.some((user_id: mongoose.Types.ObjectId) =>
+        user_id.equals(user._id)
+      );
+    });
+
+    return res
+      .status(200)
+      .send({ Success: true, likedVideos: usersLikedVideos });
+  } catch (error) {
+    console.log(error);
   }
 };

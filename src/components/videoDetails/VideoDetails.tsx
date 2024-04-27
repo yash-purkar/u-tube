@@ -25,7 +25,7 @@ import { SideVideos } from "./SideVideos";
 import VideoComments from "./VideoComments";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   dislikeVideo,
   getVideoDetails,
@@ -148,7 +148,8 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
       return getVideoDetails(video_id);
     },
   });
-  const uploaded = getUploadedDate(new Date(videoData?.video?.createdAt));
+
+  const queryClient = useQueryClient();
 
   const { mutate: videoMutation } = useMutation({
     mutationKey: ["videoActions"],
@@ -174,9 +175,9 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
     },
     onSuccess: (data) => {
       if (videoData?.Success) {
-        // // revalidateTag('likedVideos');
-        // revalidateTag("videoDetails");
         refetch();
+        // Making likedVideos query stale, so it will make another api call when we go on that page
+        queryClient.invalidateQueries({ queryKey: ["likedVideos"] });
       }
     },
     onError: (error: any) => {
@@ -189,8 +190,10 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
 
   if (isLoading) return <h3>Loading</h3>;
 
+  const uploaded = getUploadedDate(new Date(videoData?.video?.createdAt));
+
   if (isError) return <h3>Failed to get video details</h3>;
-console.log("VOD",videoData);
+  console.log("VOD", videoData);
   // It handles like video
   const handleVideoLike = () => {
     videoMutation({ action: "LIKE", data: { videoId: videoData?.video?._id } });

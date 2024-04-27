@@ -27,7 +27,7 @@ app.use(
   })
 );
 
-// It parse incoming cookie data from HTTP request and make it accessable in req.cookies
+// It parse incoming cookie data from HTTP request and make it accessable in cookies
 app.use(cookieParser());
 
 // connection to mongodb

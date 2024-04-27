@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   }
 
   // if success is false refirect to homepage again
-  if (!data?.Success) {
+  if (!data?.Success && (request.url?.includes("/profile") || request.url?.includes("/liked_videos"))) {
     return NextResponse.redirect(new URL("http://localhost:3000", request.url));
   }
 
@@ -32,5 +32,5 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ["/profile", "/login", "/register"],
+  matcher: ["/profile", "/login", "/register", "/liked_videos"],
 };

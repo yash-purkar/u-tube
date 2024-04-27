@@ -261,3 +261,21 @@ export const videosByUser = async (user_id: string, currentPage: number) => {
     throw error;
   }
 };
+
+// Get user's liked video to show in liked page
+
+export const getUsersLikedVideos = async (username: string) => {
+  try {
+    // we don't need to pass userId from here, we'll take it from cookies in backend.
+    const response = await axios.get(
+      `http://localhost:3001/api/videos/liked_videos?username=${username}`
+    );
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return {
+      message: "Failed to get liked videos.",
+    };
+  }
+};

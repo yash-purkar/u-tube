@@ -25,9 +25,10 @@ import { SideVideos } from "./SideVideos";
 import VideoComments from "./VideoComments";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   dislikeVideo,
+  getVideoDetails,
   likeVideo,
   subscribeAndUnsubscribeVideo,
 } from "@/clientHandlers/userHandlers";
@@ -35,10 +36,10 @@ import { useAppSelector } from "@/app/lib/redux/hooks";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import { useRouter } from "next/router";
+import { revalidateTag } from "next/cache";
 
 interface VideoDetailsProps {
-  video: Video;
-  comments: Comment[];
+  video_id: string;
 }
 
 const useStyles = makeStyles({
@@ -132,12 +133,22 @@ const useStyles = makeStyles({
   },
 });
 
-const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
+const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
   const classes = useStyles();
-
   const { user } = useAppSelector((state) => state.user);
-  const [videoToBeShown, setVideoToBeShown] = useState(video); // bcz we need to update it after actions e.g like video
-  const uploaded = getUploadedDate(new Date(videoToBeShown?.createdAt));
+
+  const {
+    data: videoData,
+    refetch,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["videoDetails"],
+    queryFn: async () => {
+      return getVideoDetails(video_id);
+    },
+  });
+  const uploaded = getUploadedDate(new Date(videoData?.video?.createdAt));
 
   const { mutate: videoMutation } = useMutation({
     mutationKey: ["videoActions"],
@@ -156,34 +167,40 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
         case "SUBSCRIBE_OR_UNSUBSCRIBE":
           return subscribeAndUnsubscribeVideo(
             user?.username as string,
-            video?.user?.username,
-            video?._id as string
+            videoData?.video?.user?.username,
+            video_id
           );
       }
     },
     onSuccess: (data) => {
-      if (data?.Success) {
-        setVideoToBeShown(data?.video);
+      if (videoData?.Success) {
+        // // revalidateTag('likedVideos');
+        // revalidateTag("videoDetails");
+        refetch();
       }
     },
     onError: (error: any) => {
-      enqueueSnackbar(error?.response?.data?.message as string, {
+      enqueueSnackbar(error?.response?.videoData?.message as string, {
         variant: "warning",
         autoHideDuration: 1500,
       });
     },
   });
 
+  if (isLoading) return <h3>Loading</h3>;
+
+  if (isError) return <h3>Failed to get video details</h3>;
+console.log("VOD",videoData);
   // It handles like video
   const handleVideoLike = () => {
-    videoMutation({ action: "LIKE", data: { videoId: videoToBeShown?._id } });
+    videoMutation({ action: "LIKE", data: { videoId: videoData?.video?._id } });
   };
 
   // It handles dislike video
   const handleVideoDislike = () => {
     videoMutation({
       action: "DISLIKE",
-      data: { videoId: videoToBeShown?._id },
+      data: { videoId: videoData?.video?._id },
     });
   };
 
@@ -191,7 +208,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
   const subscribeOrUnsubscribe = () => {
     videoMutation({
       action: "SUBSCRIBE_OR_UNSUBSCRIBE",
-      data: { videoId: videoToBeShown?._id },
+      data: { videoId: videoData?.video?._id },
     });
   };
 
@@ -203,7 +220,8 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
       autoHideDuration: 1500,
     });
   };
-
+  console.log("Comment ", videoData?.video);
+  console.log("Comment ", videoData?.video?.comments);
   return (
     <SnackbarProvider>
       <Container
@@ -217,7 +235,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
             <Box>
               <iframe
                 className={classes.iFrame}
-                src={videoToBeShown?.embeded_url}
+                src={videoData?.video?.embeded_url}
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
@@ -225,7 +243,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
               ></iframe>
 
               <Typography variant="h6" fontWeight={"bold"}>
-                {videoToBeShown?.title || "No Title"}
+                {videoData?.video?.title || "No Title"}
               </Typography>
 
               {/* User info and some actions */}
@@ -234,26 +252,26 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
                   <Avatar />
                   <div>
                     <Typography fontWeight={"bold"}>
-                      {videoToBeShown?.user?.firstName}{" "}
-                      {videoToBeShown?.user?.lastName}
+                      {videoData?.video?.user?.firstName}{" "}
+                      {videoData?.video?.user?.lastName}
                     </Typography>
-                    {videoToBeShown?.user?.subscribers?.length} subscriber
-                    {videoToBeShown?.user?.subscribers?.length !== 1 && "s"}
+                    {videoData?.video?.user?.subscribers?.length} subscriber
+                    {videoData?.video?.user?.subscribers?.length !== 1 && "s"}
                   </div>
-                  {video?.user?.username !== user?.username && (
+                  {videoData?.video?.user?.username !== user?.username && (
                     <Stack>
                       <Chip
                         onClick={subscribeOrUnsubscribe}
                         clickable
                         label={
-                          videoToBeShown?.user?.subscribers?.includes(
+                          videoData?.video?.user?.subscribers?.includes(
                             user?.username as string
                           )
                             ? "Unsubscribe"
                             : "Subscribe"
                         }
                         className={
-                          videoToBeShown?.user?.subscribers?.includes(
+                          videoData?.video?.user?.subscribers?.includes(
                             user?.username as string
                           )
                             ? classes.unsubscribe_button
@@ -268,20 +286,22 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
                     <Chip
                       clickable
                       icon={
-                        videoToBeShown?.likes?.includes(user?._id as string) ? (
+                        videoData?.video?.likes?.includes(
+                          user?._id as string
+                        ) ? (
                           <ThumbUpIcon />
                         ) : (
                           <ThumbUpOffAltIcon />
                         )
                       }
-                      label={videoToBeShown?.likes?.length}
+                      label={videoData?.video?.likes?.length}
                       onClick={handleVideoLike}
                     />
                     <Chip
                       onClick={handleVideoDislike}
                       clickable
                       icon={
-                        videoToBeShown?.dislikes?.includes(
+                        videoData?.video?.dislikes?.includes(
                           user?._id as string
                         ) ? (
                           <ThumbDownIcon />
@@ -304,27 +324,28 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video, comments }) => {
               <Box className={classes.description}>
                 <div style={{ display: "flex", gap: "1rem" }}>
                   <Typography fontWeight="bold">
-                    {videoToBeShown?.views} Views
+                    {videoData?.video?.views} Views
                   </Typography>
                   <Typography fontWeight="bold">{uploaded}</Typography>
                 </div>
                 <Typography marginTop={"1rem"}>
-                  {videoToBeShown?.description}
+                  {videoData?.video?.description}
                 </Typography>
               </Box>
 
               {/* Comments section */}
               <VideoComments
-                comments={comments}
-                videoId={videoToBeShown?._id}
+                comments={videoData?.comments ?? []}
+                videoId={videoData?.video?._id}
+                refetchVideoDetails={refetch}
               />
             </Box>
           </Grid>
           {/* Side videos */}
           <SideVideos
-            videoTitle={videoToBeShown?.title}
-            videoDescription={videoToBeShown?.description}
-            videoAuthor={videoToBeShown?.user?.username}
+            videoTitle={videoData?.video?.title}
+            videoDescription={videoData?.video?.description}
+            videoAuthor={videoData?.video?.user?.username}
           />
         </Grid>
         <SnackbarProvider />

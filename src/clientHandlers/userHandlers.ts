@@ -95,6 +95,21 @@ export const removeUserSearchHistory = async (
   }
 };
 
+// Get video details
+export const getVideoDetails = async (video_id: string) => {
+  try {
+    const response = axios.get(
+      `http://localhost:3001/api/videos/watch?vid_id=${video_id}`
+    );
+
+    return (await response).data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.error || "Failed to remove search history"
+    );
+  }
+};
+
 // Add Comment handler
 export const addNewComment = async (
   videoId: string,

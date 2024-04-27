@@ -30,6 +30,7 @@ import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 interface VideoCommentsProps {
   comments: Comment[];
   videoId: string;
+  refetchVideoDetails: () => any;
 }
 
 const useStyles = makeStyles({
@@ -84,12 +85,15 @@ const useStyles = makeStyles({
   },
 });
 
-const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
+const VideoComments: React.FC<VideoCommentsProps> = ({
+  comments,
+  videoId,
+  refetchVideoDetails,
+}) => {
   const classes = useStyles();
   const [showSortModal, setShowSortModal] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState<"top" | "newest">("newest");
   const [commentText, setCommentText] = useState("");
-  const [videoComments, setVideoComments] = useState(comments);
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAppSelector((state) => state.user);
 
@@ -127,11 +131,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
     onSuccess: (data) => {
       if (data?.Success) {
         setCommentText("");
-        setVideoComments(data?.comments);
-        enqueueSnackbar(data?.message as string, {
-          variant: "success",
-          autoHideDuration: 3000,
-        });
+        refetchVideoDetails();
       }
     },
     onError: (error: any) => {
@@ -173,8 +173,8 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
   // Comments based on the sort order
   const sortedComments =
     sortOrder === "newest"
-      ? videoComments
-      : [...videoComments].sort((a, b) => (a.likes < b.likes ? 1 : -1));
+      ? comments
+      : [...comments].sort((a, b) => (a.likes < b.likes ? 1 : -1));
 
   return (
     <>
@@ -182,7 +182,7 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
         {/* comments header section */}
         <Box className={classes.comments_header}>
           <Typography variant="h6" fontWeight={"bold"}>
-            {videoComments?.length} Comments
+            {comments?.length} Comments
           </Typography>
           <div
             style={{
@@ -205,13 +205,17 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
             {showSortModal && (
               <Box className={classes.sort_box}>
                 <p
-                  className={`${classes.sort_option} ${sortOrder === 'newest' && classes.selected_sort_order}`}
+                  className={`${classes.sort_option} ${
+                    sortOrder === "newest" && classes.selected_sort_order
+                  }`}
                   onClick={() => handleSortOptionClick("newest")}
                 >
                   Newest First
                 </p>
                 <p
-                  className={`${classes.sort_option} ${sortOrder === 'top' && classes.selected_sort_order}`}
+                  className={`${classes.sort_option} ${
+                    sortOrder === "top" && classes.selected_sort_order
+                  }`}
                   onClick={() => handleSortOptionClick("top")}
                 >
                   Top Comments
@@ -330,5 +334,3 @@ const VideoComments: React.FC<VideoCommentsProps> = ({ comments, videoId }) => {
 };
 
 export default VideoComments;
-
-// We will set the updated comments in the videoComments because we only want to update the comments so we don't need to fetch the whole videoDetails again.

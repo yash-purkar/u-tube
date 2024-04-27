@@ -31,12 +31,13 @@ import {
   getVideoDetails,
   likeVideo,
   subscribeAndUnsubscribeVideo,
+  watchLaterHandler,
 } from "@/clientHandlers/userHandlers";
-import { useAppSelector } from "@/app/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import { useRouter } from "next/router";
-import { revalidateTag } from "next/cache";
+import { WatchLater } from "@mui/icons-material";
+import { setUserWatchLaterVideos } from "@/app/lib/redux/slices/userSlice";
 
 interface VideoDetailsProps {
   video_id: string;
@@ -136,7 +137,6 @@ const useStyles = makeStyles({
 const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
   const classes = useStyles();
   const { user } = useAppSelector((state) => state.user);
-
   const {
     data: videoData,
     refetch,
@@ -150,6 +150,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
   });
 
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
 
   const { mutate: videoMutation } = useMutation({
     mutationKey: ["videoActions"],
@@ -157,7 +158,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
       action,
       data,
     }: {
-      action: "LIKE" | "DISLIKE" | "SUBSCRIBE_OR_UNSUBSCRIBE";
+      action: "LIKE" | "DISLIKE" | "SUBSCRIBE_OR_UNSUBSCRIBE" | "WATCH_LATER";
       data: { videoId: string };
     }) => {
       switch (action) {
@@ -171,14 +172,22 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
             videoData?.video?.user?.username,
             video_id
           );
+        case "WATCH_LATER":
+          return watchLaterHandler(data?.videoId, user?._id as string);
       }
     },
-    onSuccess: (data) => {
-      if (videoData?.Success) {
+    onSuccess: (data, mutationParams, context) => {
+      if (data?.Success) {
         refetch();
         // Making likedVideos query stale, so it will make another api call when we go on that page
         queryClient.invalidateQueries({ queryKey: ["likedVideos"] });
       }
+
+      // if action is watchlater set the updated watch later data in user
+      if (mutationParams.action === "WATCH_LATER") {
+        dispatch(setUserWatchLaterVideos(data?.watch_later_videos));
+      }
+      console.log(mutationParams);
     },
     onError: (error: any) => {
       enqueueSnackbar(error?.response?.videoData?.message as string, {
@@ -193,7 +202,6 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
   const uploaded = getUploadedDate(new Date(videoData?.video?.createdAt));
 
   if (isError) return <h3>Failed to get video details</h3>;
-  console.log("VOD", videoData);
   // It handles like video
   const handleVideoLike = () => {
     videoMutation({ action: "LIKE", data: { videoId: videoData?.video?._id } });
@@ -223,8 +231,19 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
       autoHideDuration: 1500,
     });
   };
-  console.log("Comment ", videoData?.video);
-  console.log("Comment ", videoData?.video?.comments);
+
+  const handleWatchLater = () => {
+    videoMutation({
+      action: "WATCH_LATER",
+      data: { videoId: videoData?.video?._id },
+    });
+  };
+
+  // Checking is video in watch later
+  const isInWatchLater = user?.watch_later_videos?.includes(
+    videoData?.video?._id
+  );
+
   return (
     <SnackbarProvider>
       <Container
@@ -312,6 +331,23 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
                           <ThumbDownOffAltIcon />
                         )
                       }
+                    />
+                    <Chip
+                      onClick={handleWatchLater}
+                      clickable
+                      icon={
+                        <WatchLater
+                          style={{
+                            transform: "scaleX(-1)",
+                            color: isInWatchLater ? "#fff" : "#616161",
+                          }}
+                        />
+                      }
+                      label="Watch Later"
+                      style={{
+                        backgroundColor: isInWatchLater ? "#000" : "#ebebeb",
+                        color: isInWatchLater ? "#fff" : "#616161",
+                      }}
                     />
                     <Chip
                       onClick={handleShareClick}

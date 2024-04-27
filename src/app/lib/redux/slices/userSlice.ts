@@ -21,8 +21,13 @@ const userSlice = createSlice({
         state.user.search_history = action.payload;
       }
     },
+    setUserWatchLaterVideos: (state, action) => {
+      if (state.user) {
+        state.user.watch_later_videos = action.payload;
+      }
+    },
   },
 });
 
-export const { setUser, setUserSearchHistory } = userSlice.actions;
+export const { setUser, setUserSearchHistory,setUserWatchLaterVideos } = userSlice.actions;
 export default userSlice.reducer;

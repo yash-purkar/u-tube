@@ -90,7 +90,7 @@ export const login = async (req: UserLoginRequest, res: any) => {
 export const checkIsAuthenticated = async (req: any, res: any) => {
   try {
     // we've set the user_id in checkAuth middleware
-    const user = await User.findOne({ _id: req?.user_id }).select("search_history firstName lastName username subscribers");
+    const user = await User.findOne({ _id: req?.user_id }).select("search_history firstName lastName username subscribers watch_later_videos");
 
     if (user) {
       res.status(200).send({ Success: true, user });

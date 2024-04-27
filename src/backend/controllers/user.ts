@@ -46,7 +46,9 @@ export const removeUserSearchHistory = async (
     const urlQuery = req.query;
 
     // Finding the user
-    const user = await User.findById(urlQuery?.user_id).select("search_history");
+    const user = await User.findById(urlQuery?.user_id).select(
+      "search_history"
+    );
 
     // Removing requested history from user_history array
     const updated_history_arr = user?.search_history?.filter(
@@ -141,5 +143,54 @@ export const getUserById = async (req: Request, res: Response) => {
     return res
       .status(500)
       .send({ Success: false, message: "Internal server error" });
+  }
+};
+
+// It adds video to watch later
+export const addVideoToWatchLater = async (req: Request, res: Response) => {
+  try {
+    const body = req.body;
+    const user = await User.findById(body?.user_id).select(
+      "+watch_later_videos"
+    );
+    console.log(user);
+
+    if (user) {
+      // If already in watch later remove it
+      if (user?.watch_later_videos?.includes(body?.video_id)) {
+        const updated_watch_later_videos = user?.watch_later_videos?.filter(
+          (vidId: mongoose.Types.ObjectId) => !vidId.equals(body?.video_id)
+        );
+
+        user.watch_later_videos = updated_watch_later_videos;
+        await user.save();
+        return res
+          .status(200)
+          .send({
+            Success: true,
+            message: "Removed from watch later",
+            watch_later_videos: user?.watch_later_videos,
+          });
+      } else {
+        // else add it
+        user.watch_later_videos = [...user.watch_later_videos, body?.video_id];
+        await user.save();
+        return res
+          .status(200)
+          .send({
+            Success: true,
+            message: "Added to watch later",
+            watch_later_videos: user?.watch_later_videos,
+          });
+      }
+    } else {
+      return res
+        .status(404)
+        .send({ Success: false, message: "User not found" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ Status: false, message: "Internal Server Error" });
   }
 };

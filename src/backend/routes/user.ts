@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addUserSearchHistory,
+  addVideoToWatchLater,
   getUserById,
   handleSubscribeAndUnSubscribe,
   removeUserSearchHistory,
@@ -38,6 +39,11 @@ router.post("/subscribe_or_unsubscribe", checkAuth, async (req, res) => {
 // User by username
 router.get("/user_by_id/:username", async (req, res) => {
   await getUserById(req, res);
+});
+
+// Add video to watch later
+router.post("/watch_later", async (req, res) => {
+  await addVideoToWatchLater(req, res);
 });
 
 export default router;

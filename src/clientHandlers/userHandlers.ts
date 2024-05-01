@@ -280,7 +280,7 @@ export const getUsersLikedVideos = async (username: string) => {
 };
 
 // It handles watchlater video add and remove
-export const watchLaterHandler = async (video_id: string,user_id: string, ) => {
+export const watchLaterHandler = async (video_id: string, user_id: string) => {
   try {
     const response = await axios.post(
       "http://localhost:3001/api/user/watch_later",
@@ -293,6 +293,21 @@ export const watchLaterHandler = async (video_id: string,user_id: string, ) => {
   } catch (error) {
     return {
       message: "Failed to update watch later",
+    };
+  }
+};
+
+// It get user's watch later videos
+export const usersAllWatchlaterVideos = async (username: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/videos/watch_later_videos?username=${username}`
+    );
+    console.log(response)
+    return response.data;
+  } catch (error) {
+    return {
+      message: "Failed to get watch later videos",
     };
   }
 };

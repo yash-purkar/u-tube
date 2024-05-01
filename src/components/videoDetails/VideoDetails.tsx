@@ -243,7 +243,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
   const isInWatchLater = user?.watch_later_videos?.includes(
     videoData?.video?._id
   );
-
+console.log(videoData?.video.user)
   return (
     <SnackbarProvider>
       <Container

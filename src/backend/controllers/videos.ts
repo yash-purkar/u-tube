@@ -51,19 +51,17 @@ export const getVideoDetails = async (
 ) => {
   try {
     const query = req.query;
-
     // finding video
     const video = await Video.findById(query?.vid_id).populate({
       path: "user",
       select: "username firstName lastName subscribers",
     });
-
     // exclude _id and select subscribers and username
 
     const videoComments = await Comment.find({ video: video?._id })
       .sort({ _id: -1 })
       .populate("user");
-      
+
     if (video)
       return res
         .status(200)
@@ -227,4 +225,31 @@ export const usersLikedVideos = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+// It returns user's watchlater videos
+
+export const usersWatchLaterVideos = async (req: Request, res: Response) => {
+  try {
+    // user id from query
+    const username = req.query.username;
+    // Finding user to get watch later videos id
+    const user = await User.findOne({ username: username }).select("+watch_later_videos");
+
+    if (user) {
+      // All videos, we'll find watch later videos in this.
+      const allVideos = await Video.find().populate("user");
+console.log("U",user)
+      // user's watch later videos
+      const watchLaterVideos = allVideos?.filter((vid: any) =>
+        user?.watch_later_videos?.includes(vid?._id)
+      );
+
+      return res.status(200).send({ Success: true, watchLaterVideos });
+    } else {
+      return res
+        .status(404)
+        .send({ Success: false, message: "User not found" });
+    }
+  } catch (error) {}
 };

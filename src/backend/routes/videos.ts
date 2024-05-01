@@ -5,6 +5,7 @@ import {
   getVideoDetails,
   likeVideo,
   usersLikedVideos,
+  usersWatchLaterVideos,
   videosByUserId,
 } from "../controllers/videos";
 import {
@@ -39,7 +40,12 @@ router.get("/videos_by_user", async (req, res) => {
   await videosByUserId(req, res);
 });
 
-// It handles users liked videos
+// It returns users liked videos
 router.get("/liked_videos", async (req, res) => {
   await usersLikedVideos(req, res);
+});
+
+// It returns users watchlater videos
+router.get("/watch_later_videos", async (req, res) => {
+  await usersWatchLaterVideos(req, res);
 });

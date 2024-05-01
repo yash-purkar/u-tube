@@ -45,7 +45,7 @@ const sideDrawerListItems: DrawerItem[] = [
   {
     name: "Watch Later",
     Icon: WatchLaterIcon,
-    redirectionUrl: "/watchlater",
+    redirectionUrl: "/watch_later",
   },
   {
     name: "History",
@@ -69,10 +69,6 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
 
   // It handles redirection
   const handleRedirection = (url: string) => {
-    if (url === "/liked_videos") {
-      router.push(`liked_videos?username=${user?.username}`);
-      return;
-    }
     router.push(url);
   };
 

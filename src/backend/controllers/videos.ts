@@ -62,6 +62,17 @@ export const getVideoDetails = async (
       .sort({ _id: -1 })
       .populate("user");
 
+    // Here we will add the opened video to user's history.
+    const user = await User.findOne({ username: video?.user?.username }).select(
+      "history"
+    );
+    // If video is not in watch history add it
+    if (!user?.history?.includes(query?.vid_id)) {
+      user.history = [...user.history, query?.vid_id];
+    }
+
+    await user.save();
+
     if (video)
       return res
         .status(200)
@@ -234,12 +245,14 @@ export const usersWatchLaterVideos = async (req: Request, res: Response) => {
     // user id from query
     const username = req.query.username;
     // Finding user to get watch later videos id
-    const user = await User.findOne({ username: username }).select("+watch_later_videos");
+    const user = await User.findOne({ username: username }).select(
+      "+watch_later_videos"
+    );
 
     if (user) {
       // All videos, we'll find watch later videos in this.
       const allVideos = await Video.find().populate("user");
-console.log("U",user)
+      console.log("U", user);
       // user's watch later videos
       const watchLaterVideos = allVideos?.filter((vid: any) =>
         user?.watch_later_videos?.includes(vid?._id)

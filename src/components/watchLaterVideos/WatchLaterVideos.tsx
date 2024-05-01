@@ -5,18 +5,22 @@ import DisplayVideos from "@/ccl/DisplayVideos/DisplayVideos";
 import { usersAllWatchlaterVideos } from "@/clientHandlers/userHandlers";
 import { Container } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 
 export const WatchLaterVideos = () => {
   const { user } = useAppSelector((state) => state.user);
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["watch_later_videos"],
     queryFn: async () => {
       return usersAllWatchlaterVideos(user?.username as string);
     },
   });
-  console.log(user)
-console.log(data)
+
+  // Bcz initially user is empty, and after checkAuthApi we are getting user
+  useEffect(() => {
+    refetch();
+  }, [refetch, user]);
+
   return (
     <Container sx={{ marginTop: "5rem" }}>
       <h3>Watch later videos</h3>

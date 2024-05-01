@@ -2,9 +2,11 @@ import express from "express";
 import {
   addUserSearchHistory,
   addVideoToWatchLater,
+  clearUsersWatchHistory,
   getUserById,
   handleSubscribeAndUnSubscribe,
   removeUserSearchHistory,
+  usersWatchHistory,
 } from "../controllers/user";
 import {
   AddUserSearchHistoryRequest,
@@ -46,4 +48,13 @@ router.post("/watch_later", async (req, res) => {
   await addVideoToWatchLater(req, res);
 });
 
+// Get user's watch history
+router.get("/history", async (req, res) => {
+  await usersWatchHistory(req, res);
+});
+
+router.delete(
+  "/clear_watch_history",
+  async (req, res) => await clearUsersWatchHistory(req, res)
+);
 export default router;

@@ -164,24 +164,20 @@ export const addVideoToWatchLater = async (req: Request, res: Response) => {
 
         user.watch_later_videos = updated_watch_later_videos;
         await user.save();
-        return res
-          .status(200)
-          .send({
-            Success: true,
-            message: "Removed from watch later",
-            watch_later_videos: user?.watch_later_videos,
-          });
+        return res.status(200).send({
+          Success: true,
+          message: "Removed from watch later",
+          watch_later_videos: user?.watch_later_videos,
+        });
       } else {
         // else add it
         user.watch_later_videos = [...user.watch_later_videos, body?.video_id];
         await user.save();
-        return res
-          .status(200)
-          .send({
-            Success: true,
-            message: "Added to watch later",
-            watch_later_videos: user?.watch_later_videos,
-          });
+        return res.status(200).send({
+          Success: true,
+          message: "Added to watch later",
+          watch_later_videos: user?.watch_later_videos,
+        });
       }
     } else {
       return res
@@ -192,5 +188,51 @@ export const addVideoToWatchLater = async (req: Request, res: Response) => {
     return res
       .status(500)
       .send({ Status: false, message: "Internal Server Error" });
+  }
+};
+
+// We've added user's history in video details controller
+// It returns user's watch history
+export const usersWatchHistory = async (req: Request, res: Response) => {
+  try {
+    const username = req.query.username;
+
+    const user = await User.findOne({ username: username }).select("history");
+
+    // Getting all videos, we'll find history videos in this
+    const allVideos = await Video.find().populate({
+      path: "user",
+      select: "-_id",
+    });
+
+    const historyVideos = allVideos.filter((vid: any) =>
+      user?.history?.includes(vid?._id)
+    );
+
+    return res.status(200).send({ Success: true, history: historyVideos });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ Success: false, message: "Internal Server Error" });
+  }
+};
+
+// It clears user's watch history
+
+export const clearUsersWatchHistory = async (req: Request, res: Response) => {
+  try {
+    const username = req.query.username;
+
+    const user = await User.findOne({ username: username });
+
+    user.history = [];
+
+    await user.save();
+
+    return res.status(200).send({ Success: true, message: "History Cleared" });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ SuccesS: false, message: "Internal Server Error" });
   }
 };

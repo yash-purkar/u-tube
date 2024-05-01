@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   );
 
   const data = await response.json();
-console.log(data)
+
   // If user is logged in and tries to go on login or register page, it will redirect to home page
   if (data?.Success) {
     if (request.url?.includes("/login") || request.url?.includes("/register")) {
@@ -23,7 +23,7 @@ console.log(data)
   }
 
   // if success is false refirect to homepage again
-  if (!data?.Success && (request.url?.includes("/profile") || request.url?.includes("/liked_videos") || request.url?.includes("/watch_later"))) {
+  if (!data?.Success && (request.url?.includes("/profile") || request.url?.includes("/liked_videos") || request.url?.includes("/watch_later") ||  request.url?.includes("/history"))) {
     return NextResponse.redirect(new URL("http://localhost:3000", request.url));
   }
 
@@ -32,5 +32,5 @@ console.log(data)
 }
 
 export const config = {
-  matcher: ["/profile", "/login", "/register", "/liked_videos", "/watch_later"],
+  matcher: ["/profile", "/login", "/register", "/liked_videos", "/watch_later", "/history"],
 };

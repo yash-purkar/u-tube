@@ -303,11 +303,39 @@ export const usersAllWatchlaterVideos = async (username: string) => {
     const response = await axios.get(
       `http://localhost:3001/api/videos/watch_later_videos?username=${username}`
     );
-    console.log(response)
     return response.data;
   } catch (error) {
     return {
       message: "Failed to get watch later videos",
+    };
+  }
+};
+
+// It get user's watch later videos
+export const usersHistory = async (username: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/user/history?username=${username}`
+    );
+    return response.data;
+  } catch (error) {
+    return {
+      message: "Failed to get watch later videos",
+    };
+  }
+};
+
+// Clear watch history
+export const clearHistory = async (username: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3001/api/user/clear_watch_history?username=${username}`
+    );
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    return {
+      message: "Failed to clear history",
     };
   }
 };

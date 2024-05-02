@@ -181,16 +181,21 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
         refetch();
         // Making likedVideos query stale, so it will make another api call when we go on that page
         queryClient.invalidateQueries({ queryKey: ["likedVideos"] });
+      } else {
+        console.log(data);
+        enqueueSnackbar(data?.message as string, {
+          variant: "warning",
+          autoHideDuration: 1500,
+        });
       }
 
       // if action is watchlater set the updated watch later data in user
       if (mutationParams.action === "WATCH_LATER") {
         dispatch(setUserWatchLaterVideos(data?.watch_later_videos));
       }
-      console.log(mutationParams);
     },
     onError: (error: any) => {
-      enqueueSnackbar(error?.response?.videoData?.message as string, {
+      enqueueSnackbar(error?.response?.data?.message as string, {
         variant: "warning",
         autoHideDuration: 1500,
       });

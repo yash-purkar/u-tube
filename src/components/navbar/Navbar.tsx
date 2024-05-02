@@ -145,9 +145,12 @@ export const Navbar: React.FC = () => {
         variant: "warning",
         autoHideDuration: 1500,
       });
+      setTimeout(() => {
+        router.push("/login");
+      }, 800);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn,user?.username]);
+  }, [isLoggedIn, user?.username]);
 
   // It handles search value change
   const handleSearchValueChange = (e: ChangeEvent<HTMLInputElement>) => {

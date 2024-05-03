@@ -38,6 +38,7 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import { WatchLater } from "@mui/icons-material";
 import { setUserWatchLaterVideos } from "@/app/lib/redux/slices/userSlice";
+import { useRouter } from "next/navigation";
 
 interface VideoDetailsProps {
   video_id: string;
@@ -151,6 +152,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
 
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const { mutate: videoMutation } = useMutation({
     mutationKey: ["videoActions"],
@@ -249,6 +251,11 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
     videoData?.video?._id
   );
 
+  // Redirect to user profile
+  const redirectToUserProfile = () => {
+    router.push(`/profile?user=${videoData?.video?.user?.username}`);
+  };
+
   return (
     <SnackbarProvider>
       <Container
@@ -276,7 +283,7 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
               {/* User info and some actions */}
               <Box className={classes.vid_extra_info}>
                 <Box className={classes.vid_user_info}>
-                  <Avatar />
+                  <Avatar onClick={redirectToUserProfile} />
                   <div>
                     <Typography fontWeight={"bold"}>
                       {videoData?.video?.user?.firstName}{" "}
@@ -309,7 +316,12 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
                   )}
                 </Box>
                 <Box className={classes.vid_actions}>
-                  <Stack direction={"row"} spacing={2}>
+                  <Stack
+                    direction={"row"}
+                    spacing={2}
+                    gap={1}
+                    flexWrap={"wrap"}
+                  >
                     <Chip
                       clickable
                       icon={

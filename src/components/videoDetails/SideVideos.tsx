@@ -29,18 +29,24 @@ const useStyles = makeStyles({
   },
   side_single_video: {
     display: "flex",
-    flexDirection:'column',
-    margin:'1rem',
+    flexDirection: "column",
+    margin: "1rem",
     gap: "1rem",
     "@media(min-width:445px)": {
       flexDirection: "row",
     },
   },
   video_thumbnail: {
-   width:'100%',
+    width: "100%",
     borderRadius: "1rem",
+    height:'10rem',
     "@media(min-width:445px)": {
+      width: "17rem",
+      height: "8rem",
+    },
+    "@media(min-width:1200px)": {
       width: "29rem",
+      height: '7rem'
     },
   },
 });
@@ -51,7 +57,6 @@ export const SideVideos: React.FC<SideVideosProps> = ({
   videoAuthor,
 }) => {
   const classes = useStyles();
-  const { videos } = useAppSelector((state) => state.video);
 
   // We need to fetch the videos here as well because once user comes to the videodetails page we won't have video to show in sidebar
   const { data, isLoading } = useQuery({
@@ -61,7 +66,7 @@ export const SideVideos: React.FC<SideVideosProps> = ({
     },
   });
 
-  // It filtered the videos basis on the current video title and the description.F
+  // It filtered the videos basis on the current video title and the description.
   const filteredSuggestedVideos = data?.videos?.filter(
     (video: Video) =>
       video?.title?.toLowerCase().includes(videoTitle?.toLowerCase()) ||

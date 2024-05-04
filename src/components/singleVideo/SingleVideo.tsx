@@ -14,6 +14,7 @@ import styles from "./singleVideo.module.css";
 import { getUploadedDate } from "@/clientHandlers/handlers";
 import { Video } from "@/app/types";
 import { useRouter } from "next/navigation";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const useStyles: () => any = makeStyles({
   card: {
@@ -45,6 +46,8 @@ export const SingleVideo = ({ video }: { video: Video }) => {
     router.push(`/watch?vid_id=${video?._id}`);
   };
 
+  const handleOptionsClick = () => {};
+
   return (
     <Card className={classes.card} sx={{ maxWidth: 345, boxShadow: "none" }}>
       <CardMedia
@@ -52,12 +55,12 @@ export const SingleVideo = ({ video }: { video: Video }) => {
         alt="green iguana"
         height={170}
         image={video?.thumbnail_url}
-        sx={{ borderRadius: "1rem", width: "100%",objectFit:'unset' }}
+        sx={{ borderRadius: "1rem", width: "100%", objectFit: "unset" }}
         onClick={redirectToVidDetailsPage}
       />
       <CardContent className={classes.cart_content}>
         <Avatar>{video?.user?.firstName?.split("")[0]}</Avatar>
-        <Box>
+        <Box flexGrow={1}>
           <Typography
             variant="body2"
             sx={{ fontSize: "1.05rem", fontWeight: "bold" }}
@@ -65,9 +68,19 @@ export const SingleVideo = ({ video }: { video: Video }) => {
             {video?.title?.slice(0, 31)}
             {video?.title?.length > 31 && "..."}
           </Typography>
-          <Typography variant="body2" className={classes.username}>
-            {video?.user?.username}
-          </Typography>
+          <Box
+            display={"flex"}
+            justifyContent={"space-between"}
+            sx={{ width: "100%" }}
+          >
+            <Typography variant="body2" className={classes.username}>
+              {video?.user?.username}
+            </Typography>
+            <MoreVertIcon
+              sx={{ color: "gray", cursor: "pointer" }}
+              onClick={handleOptionsClick}
+            />
+          </Box>
           <div className={styles.user_extra_info}>
             <p>{video?.views} Views</p>
             <span>.</span>

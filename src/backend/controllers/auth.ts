@@ -17,7 +17,7 @@ export const register = async (req: UserRegisterRequest, res: Response) => {
 
     if (user) {
       return res.status(409).send({
-        error: "User already exist",
+        error: "User already exist with this email!",
       });
     }
 
@@ -90,7 +90,9 @@ export const login = async (req: UserLoginRequest, res: any) => {
 export const checkIsAuthenticated = async (req: any, res: any) => {
   try {
     // we've set the user_id in checkAuth middleware
-    const user = await User.findOne({ _id: req?.user_id }).select("search_history firstName lastName username subscribers watch_later_videos");
+    const user = await User.findOne({ _id: req?.user_id }).select(
+      "search_history firstName lastName username subscribers watch_later_videos"
+    );
 
     if (user) {
       res.status(200).send({ Success: true, user });
@@ -118,19 +120,17 @@ export const checkIsTokenValid = async (req: Request, res: Response) => {
 
     if (query.token) {
       if (user) {
-        return res.status(200).send({ Success: true, message: "User Exist in DB" });
-      } else {
         return res
-          .status(500)
-          .send({
-            Success: false,
-            message: "Heyy buddy, you have entered wrong information in token",
-          });
+          .status(200)
+          .send({ Success: true, message: "User Exist in DB" });
+      } else {
+        return res.status(500).send({
+          Success: false,
+          message: "Heyy buddy, you have entered wrong information in token",
+        });
       }
     } else {
-      return res
-      .status(500)
-      .send({
+      return res.status(500).send({
         Success: false,
         message: "Please login first",
       });

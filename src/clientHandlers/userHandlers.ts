@@ -331,11 +331,100 @@ export const clearHistory = async (username: string) => {
     const response = await axios.delete(
       `http://localhost:3001/api/user/clear_watch_history?username=${username}`
     );
-    console.log(response);
+
     return response.data;
   } catch (error) {
     return {
       message: "Failed to clear history",
+    };
+  }
+};
+
+// Create playlist
+export const createPlaylist = async ({
+  name,
+  user,
+}: {
+  name: string;
+  user: string;
+}) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/playlist/create",
+      {
+        name,
+        user,
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    return {
+      message: "Failed to create playlist",
+    };
+  }
+};
+
+// delete playlist
+export const deletePlaylist = async ({
+  playlist_id,
+}: {
+  playlist_id: string;
+}) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/playlist/delete",
+      {
+        playlist_id,
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    return {
+      message: "Failed to delete playlist",
+    };
+  }
+};
+
+// get all playlists
+export const getPlaylists = async ({ user }: { user: string }) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/playlist/playlists",
+      {
+        user,
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    return {
+      message: "Failed to delete playlist",
+    };
+  }
+};
+// get all playlists
+export const addVideoToPlaylist = async ({
+  playlist,
+  video,
+}: {
+  playlist: string;
+  video: string;
+}) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:3001/api/playlist/add_video",
+      {
+        playlist,
+        video,
+      }
+    );
+
+    return response.data;
+  } catch (err) {
+    return {
+      message: "Failed to add video to playlist",
     };
   }
 };

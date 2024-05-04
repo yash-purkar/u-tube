@@ -1,0 +1,26 @@
+import mongoose, { Schema, Types, model, models } from "mongoose";
+
+interface PlaylistSchema {
+  name: string;
+  user: Types.ObjectId;
+  videos: Types.ObjectId[];
+}
+
+const playlistSchema = new Schema<PlaylistSchema>({
+  name: {
+    type: String,
+    required: true,
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
+  videos: {
+    type: [Schema.Types.ObjectId],
+    required: true,
+  },
+});
+
+const PlaylistModel = models.Playlist || model("Playlist", playlistSchema);
+module.exports = PlaylistModel;

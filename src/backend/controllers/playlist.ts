@@ -14,7 +14,7 @@ export const createPlaylist = async (req: Request, res: Response) => {
 
     // Getting user's all playlist to check is plalist name already used
     const usersPlaylist = await Playlist.find({ user: body?.user }).select(
-      "user"
+      "+user"
     );
 
     // checking is playlist name already used
@@ -43,9 +43,11 @@ export const createPlaylist = async (req: Request, res: Response) => {
 // It delete playlist
 export const deletePlaylist = async (req: Request, res: Response) => {
   try {
-    const body = req.body;
+    const query = req.query;
 
-    const deletedPlaylist = await Playlist.findByIdAndDelete(body?.playlist_id);
+    const deletedPlaylist = await Playlist.findByIdAndDelete(
+      query?.playlist_id
+    );
 
     if (deletedPlaylist) {
       return res
@@ -84,20 +86,41 @@ export const addVideoToPlaylist = async (req: Request, res: Response) => {
   try {
     const body = req.body;
 
-    // Finding playlist to add video
-    const playlist = await Playlist.findById(body?.playlist);
+    // TODO: Do mutliple finding with this.
+    // We have to use $in to find multiple
+    // const query = {
+    //   _id: {
+    //     $in: body?.playlist_ids,
+    //   },
+    // };
 
-    // updating playlist
-    const updatedPlaylistVideos = [...playlist.videos, body?.video];
+    for (let id of body?.playlist_ids) {
+      const playlist = await Playlist.findById(id);
 
-    playlist.videos = updatedPlaylistVideos;
+      if (!playlist?.videos?.includes(body?.video)) {
+        playlist.videos = [...playlist?.videos, body?.video];
+        await playlist.save();
+      }
+    }
 
-    await playlist.save();
+    // delete the video from playlists if user unSelects
+    if (body?.unSelectedPlaylists?.length > 0) {
+      for (let id of body?.unSelectedPlaylists) {
+        const playlist = await Playlist?.findById(id);
+        playlist.videos = playlist?.videos?.filter(
+          (vid: Types.ObjectId) => !vid.equals(body?.video)
+        );
+
+        await playlist.save();
+      }
+    }
 
     return res
       .status(200)
       .send({ Success: true, message: "Video Added to playlist" });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // remove video from playlist
@@ -108,10 +131,24 @@ export const removeVideoFromPlaylist = async (req: Request, res: Response) => {
     // Finding playlist
     const playlist = await Playlist.findById(body?.playlist).select("videos");
 
+    if (!playlist?.videos.includes(body.video)) {
+      return res
+        .status(404)
+        .send({ Success: false, message: "Video not in any playlist" });
+    }
+
+    if (!playlist) {
+      return res
+        .status(404)
+        .send({ Success: false, message: "Playlist not found" });
+    }
+
     // removing video from playlist
     const updatedVideosInPlaylist = playlist.videos?.filter(
       (vid: Types.ObjectId) => !vid.equals(body.video)
     );
+
+    playlist.videos = updatedVideosInPlaylist;
 
     // saving playlist
     await playlist.save();
@@ -122,6 +159,6 @@ export const removeVideoFromPlaylist = async (req: Request, res: Response) => {
   } catch (error) {
     return res
       .status(500)
-      .send({ Success: false, message: "Internal Server Error"});
+      .send({ Success: false, message: "Internal Server Error" });
   }
 };

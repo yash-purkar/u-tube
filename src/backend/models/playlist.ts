@@ -1,6 +1,6 @@
-import mongoose, { Schema, Types, model, models } from "mongoose";
+import mongoose, { Document, Schema, Types, model, models } from "mongoose";
 
-interface PlaylistSchema {
+interface PlaylistSchema extends Document {
   name: string;
   user: Types.ObjectId;
   videos: Types.ObjectId[];
@@ -14,7 +14,7 @@ const playlistSchema = new Schema<PlaylistSchema>({
   user: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User'
+    ref: "User",
   },
   videos: {
     type: [Schema.Types.ObjectId],

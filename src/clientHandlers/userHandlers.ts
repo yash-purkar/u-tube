@@ -357,11 +357,13 @@ export const createPlaylist = async ({
       }
     );
 
-    return response.data;
-  } catch (err) {
-    return {
-      message: "Failed to create playlist",
-    };
+    if (response?.data?.Success) {
+      return response.data;
+    } else {
+      throw new Error(response.data);
+    }
+  } catch (err: any) {
+    throw err?.response?.data ?? { message: "Failed to create playlist" };
   }
 };
 
@@ -372,11 +374,8 @@ export const deletePlaylist = async ({
   playlist_id: string;
 }) => {
   try {
-    const response = await axios.post(
-      "http://localhost:3001/api/playlist/delete",
-      {
-        playlist_id,
-      }
+    const response = await axios.delete(
+      `http://localhost:3001/api/playlist/delete?playlist_id=${playlist_id}`
     );
 
     return response.data;
@@ -400,24 +399,28 @@ export const getPlaylists = async ({ user }: { user: string }) => {
     return response.data;
   } catch (err) {
     return {
-      message: "Failed to delete playlist",
+      message: "Failed to get playlists",
     };
   }
 };
+
 // get all playlists
 export const addVideoToPlaylist = async ({
-  playlist,
+  playlist_ids,
   video,
+  unSelectedPlaylists,
 }: {
-  playlist: string;
+  playlist_ids: string[];
   video: string;
+  unSelectedPlaylists: string[];
 }) => {
   try {
     const response = await axios.post(
       "http://localhost:3001/api/playlist/add_video",
       {
-        playlist,
+        playlist_ids,
         video,
+        unSelectedPlaylists,
       }
     );
 

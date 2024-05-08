@@ -20,7 +20,7 @@ router.delete("/delete", async (req, res) => {
 });
 
 // get all playlists of user
-router.get("/playlists", async (req, res) => {
+router.post("/playlists", async (req, res) => {
   await getAllPlaylistsOfUser(req, res);
 });
 

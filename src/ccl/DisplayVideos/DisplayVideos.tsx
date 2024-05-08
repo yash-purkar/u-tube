@@ -9,7 +9,7 @@ interface DisplayVideosProps {
 }
 
 const DisplayVideos: FC<DisplayVideosProps> = ({ videos }) => {
-  console.log(videos);
+
   return (
     <Grid container direction={'row'} gap={2} mt={5} justifyContent={'center'}>
       {videos?.map((vid: Video) => {

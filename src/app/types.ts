@@ -37,3 +37,10 @@ export interface Comment {
   likes: string[];
   dislikes: string[];
 }
+
+export interface PlaylistI {
+  name: string;
+  _id: string;
+  videos: string[];
+  user: string;
+}

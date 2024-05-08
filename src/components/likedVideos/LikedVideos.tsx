@@ -10,7 +10,6 @@ import { useAppSelector } from "@/app/lib/redux/hooks";
 
 const LikedVideos = () => {
   const { user } = useAppSelector((state) => state.user);
-  console.log(user);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["likedVideos"],
     queryFn: async () => {

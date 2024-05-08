@@ -153,7 +153,6 @@ export const addVideoToWatchLater = async (req: Request, res: Response) => {
     const user = await User.findById(body?.user_id).select(
       "+watch_later_videos"
     );
-    console.log(user);
 
     if (user) {
       // If already in watch later remove it

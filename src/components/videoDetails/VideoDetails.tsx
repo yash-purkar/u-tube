@@ -184,7 +184,6 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
         // Making likedVideos query stale, so it will make another api call when we go on that page
         queryClient.invalidateQueries({ queryKey: ["likedVideos"] });
       } else {
-        console.log(data);
         enqueueSnackbar(data?.message as string, {
           variant: "warning",
           autoHideDuration: 1500,

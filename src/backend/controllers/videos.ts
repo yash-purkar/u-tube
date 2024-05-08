@@ -252,7 +252,7 @@ export const usersWatchLaterVideos = async (req: Request, res: Response) => {
     if (user) {
       // All videos, we'll find watch later videos in this.
       const allVideos = await Video.find().populate("user");
-      console.log("U", user);
+
       // user's watch later videos
       const watchLaterVideos = allVideos?.filter((vid: any) =>
         user?.watch_later_videos?.includes(vid?._id)

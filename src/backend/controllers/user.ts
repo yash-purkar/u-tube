@@ -195,9 +195,9 @@ export const addVideoToWatchLater = async (req: Request, res: Response) => {
 export const usersWatchHistory = async (req: Request, res: Response) => {
   try {
     const username = req.query.username;
-
+    console.log(username);
     const user = await User.findOne({ username: username }).select("history");
-
+    console.log(user);
     // Getting all videos, we'll find history videos in this
     const allVideos = await Video.find().populate({
       path: "user",
@@ -236,6 +236,5 @@ export const clearUsersWatchHistory = async (req: Request, res: Response) => {
   }
 };
 
-
 // Create playlist
-// export 
+// export

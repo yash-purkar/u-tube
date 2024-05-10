@@ -4,6 +4,7 @@ import {
   LikeVideoRequest,
   VideoDetailsRequest,
 } from "../types";
+const jwt = require("jsonwebtoken");
 import mongoose from "mongoose";
 
 const Video = require("../models/video");
@@ -62,10 +63,12 @@ export const getVideoDetails = async (
       .sort({ _id: -1 })
       .populate("user");
 
+    // getting token from cookies to add video in user's history
+    const token = req.cookies.token;
+    const encodedToken = jwt.decode(token);
+
     // Here we will add the opened video to user's history.
-    const user = await User.findOne({ username: video?.user?.username }).select(
-      "history"
-    );
+    const user = await User.findById(encodedToken?.user_id).select("history");
     // If video is not in watch history add it
     if (!user?.history?.includes(query?.vid_id)) {
       user.history = [...user.history, query?.vid_id];

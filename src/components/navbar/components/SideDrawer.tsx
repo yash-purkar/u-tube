@@ -36,7 +36,7 @@ const sideDrawerListItems: DrawerItem[] = [
   {
     name: "Playlist",
     Icon: PlayCircleIcon,
-    redirectionUrl: "/playlist",
+    redirectionUrl: "/playlists",
   },
   {
     name: "Liked",

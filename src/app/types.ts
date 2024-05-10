@@ -8,7 +8,7 @@ export interface User {
   subscribers: string[];
   videos: Video[];
   liked_videos: Video[];
-  watch_later_videos: Video[];
+  watch_later_videos: string[];
   history: Video[];
   search_history: string[];
 }

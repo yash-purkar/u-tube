@@ -50,7 +50,7 @@ const History = () => {
           justifyContent={"space-between"}
           alignItems={"center"}
         >
-          <h3>User History</h3>
+          <h3>Your History</h3>
           <Button
             sx={{ textDecoration: "underline" }}
             onClick={handleClearHistory}

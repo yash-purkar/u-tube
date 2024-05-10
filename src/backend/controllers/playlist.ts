@@ -71,7 +71,9 @@ export const getAllPlaylistsOfUser = async (req: Request, res: Response) => {
     const body = req.body;
 
     // Getting all playlists to find
-    const usersPlaylists = await Playlist.find({ user: body?.user });
+    const usersPlaylists = await Playlist.find({ user: body?.user })
+      .populate("videos")
+      .exec();
 
     return res.status(200).send({ Success: true, playlists: usersPlaylists });
   } catch (error) {
@@ -160,5 +162,29 @@ export const removeVideoFromPlaylist = async (req: Request, res: Response) => {
     return res
       .status(500)
       .send({ Success: false, message: "Internal Server Error" });
+  }
+};
+
+// single playlist details
+
+export const getPlaylistById = async (req: Request, res: Response) => {
+  try {
+    const query = req.query;
+
+    const playlist = await Playlist.findById(query?.playlist_id)
+      .populate("videos")
+      .exec();
+
+    if (playlist) {
+      return res.status(200).send({ Success: true, playlist });
+    }
+
+    return res
+      .status(404)
+      .send({ Success: false, message: "Playlist Not Found" });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ Succcess: false, message: "Internal Server Error" });
   }
 };

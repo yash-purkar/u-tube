@@ -16,16 +16,19 @@ import { useRouter } from "next/navigation";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import CustomizedDialogs from "@/ccl/CustomModal/CustomizedDialogs";
 import SaveToPlaylist from "./components/SaveToPlaylist";
-import { useAppSelector } from "@/app/lib/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { enqueueSnackbar } from "notistack";
 import CreateNewPlaylist from "./components/CreateNewPlaylist";
+import { useMutation } from "@tanstack/react-query";
+import { watchLaterHandler } from "@/clientHandlers/userHandlers";
+import { setUserWatchLaterVideos } from "@/app/lib/redux/slices/userSlice";
 
 const useStyles: () => any = makeStyles({
   card: {
     minHeight: "300px",
     paddingTop: "0rem",
+    cursor: 'pointer',
     "@media(min-width:1024px)": {
       width: "18.75rem",
     },
@@ -69,6 +72,7 @@ const useStyles: () => any = makeStyles({
 
 export const SingleVideo = ({ video }: { video: Video }) => {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
   // getting uploaded video data basis on createdAt
   const { isLoggedIn } = useAppSelector((state) => state.auth);
   const { user } = useAppSelector((state) => state.user);
@@ -78,6 +82,15 @@ export const SingleVideo = ({ video }: { video: Video }) => {
   const [showAddPlaylistDialog, setShowAddPlaylistDialog] = useState(false);
   const uploaded = getUploadedDate(new Date(video?.createdAt));
   const [showSaveToDialog, setShowSaveToDialog] = useState(false);
+  const { mutate } = useMutation({
+    mutationKey: ["watch_later"],
+    mutationFn: async () => {
+      return watchLaterHandler(video?._id as string, user?._id as string);
+    },
+    onSuccess: (data) => {
+      dispatch(setUserWatchLaterVideos(data?.watch_later_videos));
+    },
+  });
 
   const redirectToVidDetailsPage = () => {
     router.push(`/watch?vid_id=${video?._id}`);
@@ -90,6 +103,7 @@ export const SingleVideo = ({ video }: { video: Video }) => {
   const handleSingleOptionClick = (field: "WATCHLATER" | "PLAYLIST") => {
     if (isLoggedIn) {
       if (field === "WATCHLATER") {
+        mutate();
         return;
       }
       if (field === "PLAYLIST") {
@@ -112,6 +126,10 @@ export const SingleVideo = ({ video }: { video: Video }) => {
     setShowAddPlaylistDialog(true);
     setShowSaveToDialog(false);
   };
+
+  const isVideoAlreadyInWatchLater = user?.watch_later_videos?.includes(
+    video?._id as string
+  );
 
   return (
     <Card
@@ -164,7 +182,10 @@ export const SingleVideo = ({ video }: { video: Video }) => {
                   }}
                   onClick={() => handleSingleOptionClick("WATCHLATER")}
                 >
-                  <WatchLaterIcon sx={{ width: "18px" }} /> Watch later
+                  <WatchLaterIcon sx={{ width: "18px" }} />{" "}
+                  {isVideoAlreadyInWatchLater
+                    ? "Remove From Watch later"
+                    : "Watch later"}
                 </p>
                 <Divider />
                 <p
@@ -205,7 +226,7 @@ export const SingleVideo = ({ video }: { video: Video }) => {
           showSaveToDialog={showSaveToDialog}
           setShowSaveToDialog={setShowSaveToDialog}
           handleCreateNewModalOpen={handleCreateNewModalOpen}
-          video_id = {video?._id}
+          video_id={video?._id}
         />
       )}
 

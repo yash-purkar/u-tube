@@ -1,4 +1,5 @@
-import { useAppSelector } from "@/app/lib/redux/hooks";
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { PlaylistI } from "@/app/types";
 import CustomizedDialogs from "@/ccl/CustomModal/CustomizedDialogs";
 import {
@@ -17,8 +18,6 @@ import {
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import React, { ChangeEvent, FC, useEffect, useState } from "react";
-
 interface SaveToPlaylistProps {
   showSaveToDialog: boolean;
   setShowSaveToDialog: (value: boolean) => void;
@@ -34,13 +33,14 @@ const SaveToPlaylist: FC<SaveToPlaylistProps> = ({
 }) => {
   const { user } = useAppSelector((state) => state.user);
   const [selectedPlaylists, setSelectedPlayLists] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
 
   const { data, refetch } = useQuery({
     queryKey: ["playlists"],
     queryFn: () => getPlaylists({ user: user?._id as string }),
   });
 
-  const { mutate: playlistMutation } = useMutation({
+  const { mutate: playlistMutation, isPending } = useMutation({
     mutationKey: ["delete_playlist"],
     mutationFn: ({
       action,
@@ -61,7 +61,17 @@ const SaveToPlaylist: FC<SaveToPlaylistProps> = ({
           });
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data?.Success && data?.message?.includes("Addex")) {
+        enqueueSnackbar("Video Added to playlist", {
+          variant: "success",
+          autoHideDuration: 1500,
+          anchorOrigin: {
+            horizontal: "right",
+            vertical: "top",
+          },
+        });
+      }
       refetch();
     },
   });
@@ -121,7 +131,9 @@ const SaveToPlaylist: FC<SaveToPlaylistProps> = ({
   useEffect(() => {
     setSelectedPlayLists(
       data?.playlists
-        ?.filter((playlist: any) => playlist?.videos?.includes(video_id))
+        ?.filter((playlist: any) =>
+          playlist?.videos?.some((vid: any) => vid?._id === video_id)
+        )
         .map((playlist: any) => playlist?._id)
     );
   }, [data, video_id]);
@@ -138,46 +150,54 @@ const SaveToPlaylist: FC<SaveToPlaylistProps> = ({
       >
         <Box>
           {data && data?.Success && Array.isArray(data?.playlists) && (
-            <FormGroup sx={{ width: "fit-content" }}>
-              {[...data?.playlists]?.reverse()?.map((playlist: PlaylistI) => (
-                <div
-                  key={playlist?._id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    gap: "1rem",
-                  }}
-                >
-                  <FormControlLabel
-                    sx={{ margin: 0 }}
-                    control={
-                      <Checkbox
-                        value={playlist?._id}
-                        onChange={handlePlaylistSelect}
-                        checked={
-                          selectedPlaylists?.includes(playlist?._id)
-                            ? true
-                            : false
-                        }
-                      />
-                    }
-                    label={playlist?.name}
-                  />
-                  <Tooltip title="Delete">
-                    <Delete
-                      onClick={() => {
-                        handlePlaylistDelete(playlist?._id);
-                      }}
-                      fontSize="small"
-                      color="action"
-                      sx={{ cursor: "pointer" }}
-                    />
-                  </Tooltip>
-                </div>
-              ))}
-            </FormGroup>
+            <>
+              {isPending ? (
+                <p>Updating...</p>
+              ) : (
+                <FormGroup sx={{ width: "fit-content" }}>
+                  {[...data?.playlists]
+                    ?.reverse()
+                    ?.map((playlist: PlaylistI) => (
+                      <div
+                        key={playlist?._id}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          width: "100%",
+                          gap: "1rem",
+                        }}
+                      >
+                        <FormControlLabel
+                          sx={{ margin: 0 }}
+                          control={
+                            <Checkbox
+                              value={playlist?._id}
+                              onChange={handlePlaylistSelect}
+                              checked={
+                                selectedPlaylists?.includes(playlist?._id)
+                                  ? true
+                                  : false
+                              }
+                            />
+                          }
+                          label={playlist?.name}
+                        />
+                        <Tooltip title="Delete">
+                          <Delete
+                            onClick={() => {
+                              handlePlaylistDelete(playlist?._id);
+                            }}
+                            fontSize="small"
+                            color="action"
+                            sx={{ cursor: "pointer" }}
+                          />
+                        </Tooltip>
+                      </div>
+                    ))}
+                </FormGroup>
+              )}
+            </>
           )}
           {data?.playlists?.length === 0 && (
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -190,7 +210,6 @@ const SaveToPlaylist: FC<SaveToPlaylistProps> = ({
               sx={{ margin: "1rem 0" }}
               variant="contained"
               size={"small"}
-              disabled={selectedPlaylists?.length === 0}
               onClick={handleSave}
             >
               Save

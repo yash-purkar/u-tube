@@ -99,7 +99,8 @@ export const removeUserSearchHistory = async (
 export const getVideoDetails = async (video_id: string) => {
   try {
     const response = axios.get(
-      `http://localhost:3001/api/videos/watch?vid_id=${video_id}`
+      `http://localhost:3001/api/videos/watch?vid_id=${video_id}`,
+      { withCredentials: true }
     );
 
     return (await response).data;
@@ -428,6 +429,21 @@ export const addVideoToPlaylist = async ({
   } catch (err) {
     return {
       message: "Failed to add video to playlist",
+    };
+  }
+};
+
+// Get playlist by id
+export const getPlaylistDetails = async (playlist_id: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/playlist/playlist?playlist_id=${playlist_id}`
+    );
+
+    return response.data;
+  } catch (error) {
+    return {
+      message: "Failed to get playlist details",
     };
   }
 };

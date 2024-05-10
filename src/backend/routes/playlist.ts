@@ -4,6 +4,7 @@ import {
   createPlaylist,
   deletePlaylist,
   getAllPlaylistsOfUser,
+  getPlaylistById,
   removeVideoFromPlaylist,
 } from "../controllers/playlist";
 
@@ -30,8 +31,12 @@ router.post("/add_video", async (req, res) => {
 });
 
 // Remove video from playlist
-
 router.delete("/remove_video", async (req, res) => {
   await removeVideoFromPlaylist(req, res);
+});
+
+// get playlist by id
+router.get("/playlist", async (req, res) => {
+  await getPlaylistById(req, res);
 });
 export default router;

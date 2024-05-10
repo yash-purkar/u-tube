@@ -46,7 +46,6 @@ const useStyles: () => any = makeStyles({
 
 export const HomeComp = () => {
   const [filterName, setFilterName] = useState<string>("All");
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const { searchQuery } = useAppSelector((state) => state.video);
 

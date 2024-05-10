@@ -32,5 +32,5 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ["/profile", "/login", "/register", "/liked_videos", "/watch_later", "/history"],
+  matcher: ["/profile", "/login", "/register", "/liked_videos", "/watch_later", "/history", "/playlists"],
 };

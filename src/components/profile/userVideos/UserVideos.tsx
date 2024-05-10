@@ -27,32 +27,39 @@ const UserVideos: React.FC<UserVideosProps> = ({ user_id }) => {
   };
 
   useEffect(() => {
-      getVideosBasisOnPagination();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[currentPage]);
+    getVideosBasisOnPagination();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
 
   return (
     <div>
       <h2 style={{ margin: "1rem 0" }}>Videos</h2>
-      <Grid
-        justifyContent={"center"}
-        container
-        wrap="wrap"
-        direction={"row"}
-        gap={3}
-        sx={{ margin: "2rem 0" }}
-        width={"auto"}
-      >
-        {data?.videos?.map((video: Video) => (
-          <Grid item key={video?._id} sx={{ paddingLeft: "0rem !important" }}>
-            <VideoCard video={video} />
-          </Grid>
-        ))}
-        <CustomPagination
-          onPageClick={handlePageClick}
-          totalItems={data?.totalVideos}
-        />
-      </Grid>
+      {data?.videos?.length > 0 ? (
+        <Grid
+          justifyContent={"center"}
+          container
+          wrap="wrap"
+          direction={"row"}
+          gap={3}
+          sx={{ margin: "2rem 0" }}
+          width={"auto"}
+        >
+          {data?.videos?.map((video: Video) => (
+            <Grid item key={video?._id} sx={{ paddingLeft: "0rem !important" }}>
+              <VideoCard video={video} />
+            </Grid>
+          ))}
+          <CustomPagination
+            onPageClick={handlePageClick}
+            totalItems={data?.totalVideos}
+          />
+        </Grid>
+      ) : (
+        <div style={{ color: "gray", textAlign: "center" }}>
+          <h3>You have not uplaoded any video yet</h3>
+          <small>(Upload video feature is in progress)</small>
+        </div>
+      )}
     </div>
   );
 };

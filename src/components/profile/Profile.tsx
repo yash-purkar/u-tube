@@ -10,7 +10,7 @@ import UserVideos from "./userVideos/UserVideos";
 
 interface ProfileProps {
   user: {
-    _id:string;
+    _id: string;
     firstName: string;
     lastName: string;
     username: string;
@@ -38,6 +38,8 @@ const useStyles: () => any = makeStyles((theme: any) => ({
 
 export const Profile: FC<ProfileProps> = ({ user }) => {
   const classes = useStyles();
+
+
   return (
     <div>
       <Container>

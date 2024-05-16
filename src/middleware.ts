@@ -23,7 +23,14 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   }
 
   // if success is false refirect to homepage again
-  if (!data?.Success && (request.url?.includes("/profile") || request.url?.includes("/liked_videos") || request.url?.includes("/watch_later") ||  request.url?.includes("/history"))) {
+  if (
+    !data?.Success &&
+    (request.url?.includes("/profile") ||
+      request.url?.includes("/liked_videos") ||
+      request.url?.includes("/watch_later") ||
+      request.url?.includes("/history") ||
+      request.url?.includes("/watch"))
+  ) {
     return NextResponse.redirect(new URL("http://localhost:3000", request.url));
   }
 
@@ -32,5 +39,13 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ["/profile", "/login", "/register", "/liked_videos", "/watch_later", "/history", "/playlists"],
+  matcher: [
+    "/profile",
+    "/login",
+    "/register",
+    "/liked_videos",
+    "/watch_later",
+    "/history",
+    "/playlists",
+  ],
 };

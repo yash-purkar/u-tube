@@ -110,7 +110,7 @@ export const HomeComp = () => {
           <>Loading...</>
         ) : (
           <>
-            {filteredData?.map((video: any) => (
+            {[...filteredData]?.reverse()?.map((video: any) => (
               <Grid
                 alignSelf={"center"}
                 key={video?._id}

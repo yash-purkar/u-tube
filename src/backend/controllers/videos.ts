@@ -65,17 +65,18 @@ export const getVideoDetails = async (
 
     // getting token from cookies to add video in user's history
     const token = req.cookies.token;
-    const encodedToken = jwt.decode(token);
+    if (token) {
+      const encodedToken = jwt.decode(token);
 
-    // Here we will add the opened video to user's history.
-    const user = await User.findById(encodedToken?.user_id).select("history");
-    // If video is not in watch history add it
-    if (!user?.history?.includes(query?.vid_id)) {
-      user.history = [...user.history, query?.vid_id];
+      // Here we will add the opened video to user's history.
+      const user = await User.findById(encodedToken?.user_id).select("history");
+      // If video is not in watch history add it
+      if (!user?.history?.includes(query?.vid_id)) {
+        user.history = [...user.history, query?.vid_id];
+      }
+
+      await user.save();
     }
-
-    await user.save();
-
     if (video)
       return res
         .status(200)

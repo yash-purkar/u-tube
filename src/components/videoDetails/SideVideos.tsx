@@ -37,16 +37,15 @@ const useStyles = makeStyles({
     },
   },
   video_thumbnail: {
-    width: "100%",
     borderRadius: "1rem",
-    height:'10rem',
+    height: "10rem",
     "@media(min-width:445px)": {
-      width: "17rem",
+      width: "17rem !important",
       height: "8rem",
     },
     "@media(min-width:1200px)": {
-      width: "29rem",
-      height: '7rem'
+      maxWidth: "13rem !important",
+      height: "7rem",
     },
   },
 });
@@ -66,15 +65,14 @@ export const SideVideos: React.FC<SideVideosProps> = ({
     },
   });
 
-  // It filtered the videos basis on the current video title and the description.
-  const filteredSuggestedVideos = data?.videos?.filter(
-    (video: Video) =>
-      video?.title?.toLowerCase().includes(videoTitle?.toLowerCase()) ||
-      video?.description
-        ?.toLowerCase()
-        .includes(videoDescription?.toLowerCase()) ||
-      video?.user?.username === videoAuthor
-  );
+  // const spliting video title to find out in videos title to fitler
+  const splitTitle = videoTitle?.split(" ");
+
+  const filteredSuggestedVideos = data?.videos?.filter((vid: Video) => {
+    return [...splitTitle]?.some((data) =>
+      vid?.description?.toLowerCase()?.includes(data?.toLocaleLowerCase())
+    );
+  });
 
   return (
     <Grid className={classes.side_videos_main_container} item xs={12} lg={4}>
@@ -94,7 +92,7 @@ export const SideVideos: React.FC<SideVideosProps> = ({
               />
               <div>
                 <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                  Test Your JavaScript Knowledge with Lydia Hallie | Preview.
+                  {video?.title}
                 </Typography>
                 <Typography
                   variant="body2"

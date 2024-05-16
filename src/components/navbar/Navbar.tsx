@@ -213,11 +213,23 @@ export const Navbar: React.FC = () => {
                 </IconButton>
               </SideDrawer>
 
-              <IconButton className={classes.brand_button}>
+              <IconButton
+                className={classes.brand_button}
+                onClick={() => {
+                  router.push("/");
+                }}
+              >
                 <YouTubeIcon className={classes.brand_icon} />
               </IconButton>
 
-              <Typography variant="h6" className={classes.title} color={"#000"}>
+              <Typography
+                variant="h6"
+                className={classes.title}
+                color={"#000"}
+                onClick={() => {
+                  router.push("/");
+                }}
+              >
                 UTube
               </Typography>
             </div>
@@ -282,7 +294,7 @@ export const Navbar: React.FC = () => {
               <div className={"cursor_pointer"}>
                 <Tooltip title={"Profile"}>
                   <Avatar
-                    alt="Y"
+                    alt=""
                     className={classes.profile_icon}
                     src="url"
                     sx={{ width: "30px", height: "30px" }}

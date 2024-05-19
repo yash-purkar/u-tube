@@ -38,6 +38,7 @@ import {
 import HistoryIcon from "@mui/icons-material/History";
 import { setUserSearchHistory } from "@/app/lib/redux/slices/userSlice";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { Login } from "@mui/icons-material";
 
 const useStyles: () => any = makeStyles({
   appbar: {
@@ -73,8 +74,10 @@ const useStyles: () => any = makeStyles({
     },
   },
   searchbar_container: {
+    display:'none',
     position: "relative",
     "@media(min-width:720px)": {
+      display:'inline-block',
       width: "50%",
     },
   },
@@ -145,9 +148,6 @@ export const Navbar: React.FC = () => {
         variant: "warning",
         autoHideDuration: 1500,
       });
-      setTimeout(() => {
-        router.push("/login");
-      }, 800);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, user?.username]);
@@ -291,6 +291,9 @@ export const Navbar: React.FC = () => {
             </Box>
 
             <div className="display_flex align_center gap_05">
+            <IconButton>
+              <Login/>
+            </IconButton>
               <div className={"cursor_pointer"}>
                 <Tooltip title={"Profile"}>
                   <Avatar
@@ -303,6 +306,7 @@ export const Navbar: React.FC = () => {
                 </Tooltip>
               </div>
             </div>
+
           </Toolbar>
           <Divider />
         </AppBar>

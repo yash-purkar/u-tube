@@ -37,10 +37,10 @@ const useStyles: () => any = makeStyles({
   },
   grid_item: {
     paddingTop: "0rem !important",
-    padding:'1rem',
-    '@media(max-width:600px)':{
-      paddingLeft:'0rem !important'
-    }
+    padding: "1rem",
+    "@media(max-width:600px)": {
+      paddingLeft: "0rem !important",
+    },
   },
 });
 
@@ -92,7 +92,7 @@ export const HomeComp = () => {
     : data?.videos;
 
   return (
-    <div style={{width:'100%'}}>
+    <div style={{ width: "100%" }}>
       <AppBar position={"fixed"} className={classes.filters_app_bar}>
         <Filters
           selectedFilter={filterName}
@@ -104,7 +104,7 @@ export const HomeComp = () => {
         container
         // spacing={4}
         wrap="wrap"
-        justifyContent={'center'}
+        justifyContent={"center"}
       >
         {isLoading ? (
           <>Loading...</>

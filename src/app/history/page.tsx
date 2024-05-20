@@ -1,8 +1,8 @@
-import { Me } from "@/components/profile/me/Me";
+import History from "@/components/history/History";
 import React from "react";
 
 const page = () => {
-  return <Me />;
+  return <History />;
 };
 
 export default page;

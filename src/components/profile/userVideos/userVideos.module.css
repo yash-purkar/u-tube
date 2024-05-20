@@ -1,0 +1,22 @@
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.item {
+  width: 15rem;
+  border: 2px solid red;
+  padding: 1rem;
+}
+
+.single_page_number{
+    padding: 0.5rem;
+    border: 1px solid skyblue;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.selected_page{
+    background-color: skyblue;
+}

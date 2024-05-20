@@ -4,7 +4,9 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 import authRoutes from "./routes/auth";
+import commentsRoutes from "./routes/comments";
 import filtersRoutes from "./routes/filters";
+import playlistRoutes from "./routes/playlist";
 import usersRoutes from "./routes/user";
 import videosRoutes from "./routes/videos";
 import { seeder } from "./seeder/seeder";
@@ -26,7 +28,7 @@ app.use(
   })
 );
 
-// It parse incoming cookie data from HTTP request and make it accessable in req.cookies
+// It parse incoming cookie data from HTTP request and make it accessable in cookies
 app.use(cookieParser());
 
 // connection to mongodb
@@ -36,6 +38,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/filters", filtersRoutes);
 app.use("/api/videos", videosRoutes);
 app.use("/api/user", usersRoutes);
+app.use("/api/comment", commentsRoutes);
+app.use("/api/playlist", playlistRoutes);
 
 // Running server on particular port
 app.listen(process.env.APP_PORT, () => {

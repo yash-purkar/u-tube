@@ -8,7 +8,7 @@ export interface User {
   subscribers: string[];
   videos: Video[];
   liked_videos: Video[];
-  watch_later_videos: Video[];
+  watch_later_videos: string[];
   history: Video[];
   search_history: string[];
 }
@@ -28,4 +28,19 @@ export interface Video {
   createdAt: Date;
 }
 
-interface Comment {}
+export interface Comment {
+  _id: string;
+  user: User;
+  content: string;
+  createdAt: Date;
+  is_deleted_by_creator: boolean;
+  likes: string[];
+  dislikes: string[];
+}
+
+export interface PlaylistI {
+  name: string;
+  _id: string;
+  videos: string[];
+  user: string;
+}

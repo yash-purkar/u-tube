@@ -18,7 +18,8 @@ import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
-import { setIsLoggedIn} from "@/app/lib/redux/slices/authSlice";
+import { setIsLoggedIn } from "@/app/lib/redux/slices/authSlice";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 interface DrawerItem {
   name: string;
@@ -35,17 +36,17 @@ const sideDrawerListItems: DrawerItem[] = [
   {
     name: "Playlist",
     Icon: PlayCircleIcon,
-    redirectionUrl: "/playlist",
+    redirectionUrl: "/playlists",
   },
   {
     name: "Liked",
     Icon: FavoriteIcon,
-    redirectionUrl: "/liked",
+    redirectionUrl: "/liked_videos",
   },
   {
     name: "Watch Later",
     Icon: WatchLaterIcon,
-    redirectionUrl: "/watchlater",
+    redirectionUrl: "/watch_later",
   },
   {
     name: "History",
@@ -61,7 +62,6 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
   const { isLoggedIn } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-
   const toggleDrawer = () => {
     setOpen((prev) => !prev);
   };
@@ -69,7 +69,14 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
 
   // It handles redirection
   const handleRedirection = (url: string) => {
-    router.push(url);
+    if (isLoggedIn || url === "/") {
+      router.push(url);
+    } else {
+      enqueueSnackbar("Please Login First", {
+        variant: "warning",
+        autoHideDuration: 1500,
+      });
+    }
   };
 
   // It handles login and logout;
@@ -117,15 +124,17 @@ export const SideDrawer: React.FC<{ children: React.ReactNode }> = ({
   );
 
   return (
-    <div>
+    <SnackbarProvider>
       <div>
-        {/* Click of this drawer will open */}
-        <div onClick={toggleDrawer}>{children}</div>
+        <div>
+          {/* Click of this drawer will open */}
+          <div onClick={toggleDrawer}>{children}</div>
+        </div>
+        {/* Content to show in drawer */}
+        <Drawer open={open} onClose={toggleDrawer}>
+          {drawerList}
+        </Drawer>
       </div>
-      {/* Content to show in drawer */}
-      <Drawer open={open} onClose={toggleDrawer}>
-        {drawerList}
-      </Drawer>
-    </div>
+    </SnackbarProvider>
   );
 };

@@ -34,3 +34,40 @@ export interface UserSearchHistoryRemoveRequest extends Request {
 export interface VideoDetailsRequest extends Request {
   vid_id: string;
 }
+
+// comment types
+export interface AddCommentRequest extends Request {
+  user: string;
+  video: string;
+  content: string;
+  user_id: string;
+}
+export interface DeleteCommentRequest extends Request {
+  comment_id: string;
+}
+
+export interface LikeCommentRequest extends Request {
+  user_id: string;
+  comment_id: string;
+  video_id: string;
+}
+export interface DislikeCommentRequest extends Request {
+  user_id: string;
+  comment_id: string;
+  video_id: string;
+}
+
+export interface LikeVideoRequest extends Request {
+  video_id: string;
+  user_id: string;
+}
+export interface DislikeVideoRequest extends Request {
+  video_id: string;
+  user_id: string;
+}
+
+// subscribe
+export interface SubscribeAndUnsubscribeVideoRequest extends Request {
+  subscribe_to: string;
+  subscriber: string;
+}

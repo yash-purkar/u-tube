@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useAppSelector } from "@/app/lib/redux/hooks";
 import { getAllVideos, getUploadedDate } from "@/clientHandlers/handlers";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 interface SideVideosProps {
   videoTitle: string;
@@ -28,13 +29,26 @@ const useStyles = makeStyles({
     gap: "1rem",
   },
   side_single_video: {
+    cursor:'pointer',
     display: "flex",
+    flexDirection: "column",
+    margin: "1rem",
     gap: "1rem",
-    maxWidth: "22rem",
+    "@media(min-width:445px)": {
+      flexDirection: "row",
+    },
   },
   video_thumbnail: {
-    width: "29rem",
     borderRadius: "1rem",
+    width: "auto",
+    "@media(min-width:445px)": {
+      width: "17rem !important",
+      height: "8rem",
+    },
+    "@media(min-width:1200px)": {
+      maxWidth: "13rem !important",
+      height: "7rem",
+    },
   },
 });
 
@@ -44,8 +58,7 @@ export const SideVideos: React.FC<SideVideosProps> = ({
   videoAuthor,
 }) => {
   const classes = useStyles();
-  const { videos } = useAppSelector((state) => state.video);
-
+  const router = useRouter(); 
   // We need to fetch the videos here as well because once user comes to the videodetails page we won't have video to show in sidebar
   const { data, isLoading } = useQuery({
     queryKey: ["videos"],
@@ -54,15 +67,19 @@ export const SideVideos: React.FC<SideVideosProps> = ({
     },
   });
 
-  // It filtered the videos basis on the current video title and the description.F
-  const filteredSuggestedVideos = data?.videos?.filter(
-    (video: Video) =>
-      video?.title?.toLowerCase().includes(videoTitle?.toLowerCase()) ||
-      video?.description
-        ?.toLowerCase()
-        .includes(videoDescription?.toLowerCase()) ||
-      video?.user?.username === videoAuthor
-  );
+  // const spliting video title to find out in videos title to fitler
+  const splitTitle = videoTitle?.split(" ");
+
+  const filteredSuggestedVideos = data?.videos?.filter((vid: Video) => {
+    return [...splitTitle]?.some((data) =>
+      vid?.description?.toLowerCase()?.includes(data?.toLocaleLowerCase())
+    );
+  });
+
+  const handleVideoClilck = (videoId: string) => {
+    router.push(`/watch?vid_id=${videoId}`);
+    router.refresh()
+  };
 
   return (
     <Grid className={classes.side_videos_main_container} item xs={12} lg={4}>
@@ -71,7 +88,11 @@ export const SideVideos: React.FC<SideVideosProps> = ({
         {filteredSuggestedVideos?.map((video: Video) => {
           const uploaded = getUploadedDate(new Date(video?.createdAt));
           return (
-            <Box className={classes.side_single_video} key={video?._id}>
+            <Box
+              className={classes.side_single_video}
+              onClick={() => handleVideoClilck(video?._id)}
+              key={video?._id}
+            >
               <Image
                 className={classes.video_thumbnail}
                 width={50}
@@ -82,7 +103,7 @@ export const SideVideos: React.FC<SideVideosProps> = ({
               />
               <div>
                 <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                  Test Your JavaScript Knowledge with Lydia Hallie | Preview.
+                  {video?.title}
                 </Typography>
                 <Typography
                   variant="body2"

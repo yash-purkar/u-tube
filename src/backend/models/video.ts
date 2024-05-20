@@ -8,9 +8,9 @@ interface VideoSchema extends Document {
   embeded_url: string;
   views: number;
   category: string;
+  yt_url: string;
   likes: Types.ObjectId[];
   dislikes: Types.ObjectId[];
-  comments: Types.ObjectId[];
 }
 
 const videoSchema = new Schema<VideoSchema>(
@@ -54,15 +54,7 @@ const videoSchema = new Schema<VideoSchema>(
       default: [],
       ref: "User",
     },
-    comments: {
-      type: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Comment",
-        },
-      ],
-      default: [],
-    },
+    yt_url: String,
   },
   { timestamps: true }
 );

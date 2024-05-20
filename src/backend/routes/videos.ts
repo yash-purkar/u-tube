@@ -1,6 +1,19 @@
 import express from "express";
-import { getAllVideos, getVideoDetails } from "../controllers/videos";
-import { VideoDetailsRequest } from "../types";
+import {
+  dislikeVideo,
+  getAllVideos,
+  getVideoDetails,
+  likeVideo,
+  usersLikedVideos,
+  usersWatchLaterVideos,
+  videosByUserId,
+} from "../controllers/videos";
+import {
+  DislikeVideoRequest,
+  LikeVideoRequest,
+  VideoDetailsRequest,
+} from "../types";
+import { checkAuth } from "../middlewares/middlewares";
 const router = express.Router();
 
 // all videos route
@@ -11,4 +24,28 @@ router.get("/watch", async (req, res) => {
   await getVideoDetails(req as VideoDetailsRequest, res);
 });
 
+// like video
+router.post("/like", checkAuth, async (req, res) => {
+  await likeVideo(req as LikeVideoRequest, res);
+});
+
+// dislike video
+router.post("/dislike", checkAuth, async (req, res) => {
+  await dislikeVideo(req as DislikeVideoRequest, res);
+});
 export default router;
+
+// Videos by user id
+router.get("/videos_by_user", async (req, res) => {
+  await videosByUserId(req, res);
+});
+
+// It returns users liked videos
+router.get("/liked_videos", async (req, res) => {
+  await usersLikedVideos(req, res);
+});
+
+// It returns users watchlater videos
+router.get("/watch_later_videos", async (req, res) => {
+  await usersWatchLaterVideos(req, res);
+});

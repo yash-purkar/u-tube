@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import {
   Button,
   Card,
@@ -7,36 +7,60 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import videoImg from "../../../../../public/assets/delete_later.jpg";
 import { makeStyles } from "@mui/styles";
+import { Video } from "@/app/types";
+import { useRouter } from "next/navigation";
+
+interface VideoCardProps {
+  video: Video;
+}
 
 const useStyles: () => any = makeStyles({
   card: {
-    // display:'flex'
+    width: "100%",
+    height: "17rem",
+    display: "flex",
+    margin: 0,
+    flexDirection: "column",
+    padding: "0rem !important",
   },
 });
-export const VideoCard = () => {
+
+export const VideoCard: FC<VideoCardProps> = ({ video }) => {
+  const router = useRouter();
   const classes = useStyles();
+
+  const handleWatchNow = (video_id: string): void => {
+    router.push(`/watch?vid_id=${video_id}`);
+  };
+
   return (
     <Card className={classes.card} sx={{ maxWidth: 345 }}>
       <CardMedia
         component="img"
         alt="green iguana"
         height={140}
-        image={videoImg.src}
+        width={"100%"}
+        image={video?.thumbnail_url}
       />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          Lizard
+      <CardContent sx={{ paddingBottom: "0rem" }}>
+        <Typography
+          gutterBottom
+          variant="h5"
+          fontSize={"1.3rem"}
+          component="div"
+        >
+          {video?.title?.slice(0, 30)} {video?.title?.length > 30 && "..."}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Lizards are a widespread group of squamate reptiles, with over 6,000
-          species, ranging across all continents except Antarctica
+          {video?.description.slice(0, 80)}{" "}
+          {video?.description?.length > 80 && "..."}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Share</Button>
-        <Button size="small">Learn More</Button>
+        <Button onClick={() => handleWatchNow(video?._id)} size="small">
+          Watch Now
+        </Button>
       </CardActions>
     </Card>
   );

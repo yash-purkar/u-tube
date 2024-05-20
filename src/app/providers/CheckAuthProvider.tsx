@@ -25,9 +25,9 @@ export const CheckAuthProvider = ({
   }, [user, dispatch]);
 
   //   If user is not logged in redirect to login page.
-  useEffect(() => {
-    status === "success" && isLoggedIn === false && router.replace("/login");
-  }, [isLoggedIn, router, status]);
+  // useEffect(() => {
+  //   status === "success" && isLoggedIn === false && router.replace("/login");
+  // }, [isLoggedIn, router, status]);
 
   return <>{children}</>;
 };

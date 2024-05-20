@@ -50,7 +50,6 @@ export const Login = () => {
   });
   const classes = useStyles();
   const router = useRouter();
-  const { isLoggedIn } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   // mutation for login user
@@ -61,6 +60,7 @@ export const Login = () => {
       if (data?.Success) {
         dispatch(setIsLoggedIn(true));
         dispatch(setUser(data?.user));
+        router.push("/login")
       }
     },
   });
@@ -83,11 +83,6 @@ export const Login = () => {
 
   //   button disabled condition
   const isButtonDisabled = userDetails.email && userDetails.password;
-
-  // It navigates to the home page if user is logged in.
-  useEffect(() => {
-    isLoggedIn && router.replace("/");
-  }, [isLoggedIn, router]);
 
   return (
     <Container maxWidth="sm" sx={{ marginTop: "6rem" }}>

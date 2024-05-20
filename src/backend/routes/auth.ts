@@ -1,5 +1,10 @@
-import express, { Router} from "express";
-import { checkIsAuthenticated, login, register } from "../controllers/auth";
+import express, { Request, Router } from "express";
+import {
+  checkIsAuthenticated,
+  checkIsTokenValid,
+  login,
+  register,
+} from "../controllers/auth";
 import { checkAuth } from "../middlewares/middlewares";
 import { UserLoginRequest, UserRegisterRequest } from "../types";
 
@@ -11,11 +16,16 @@ router.post("/register", async (req, res) => {
 });
 
 // login user
-router.post("/login", async (req,res) => {
-    await login(req as UserLoginRequest, res);
+router.post("/login", async (req, res) => {
+  await login(req as UserLoginRequest, res);
 });
 
 // check auth
 router.get("/checkAuth", checkAuth, checkIsAuthenticated);
+
+// It checks is token valid or not for frontend protected routes
+router.get("/is_token_valid", async (req, res) => {
+  await checkIsTokenValid(req as any, res);
+});
 
 export default router;

@@ -38,7 +38,8 @@ import {
 import HistoryIcon from "@mui/icons-material/History";
 import { setUserSearchHistory } from "@/app/lib/redux/slices/userSlice";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import { Login } from "@mui/icons-material";
+import { Login, Logout } from "@mui/icons-material";
+import { setIsLoggedIn } from "@/app/lib/redux/slices/authSlice";
 
 const useStyles: () => any = makeStyles({
   appbar: {
@@ -74,10 +75,10 @@ const useStyles: () => any = makeStyles({
     },
   },
   searchbar_container: {
-    display:'none',
+    display: "none",
     position: "relative",
     "@media(min-width:720px)": {
-      display:'inline-block',
+      display: "inline-block",
       width: "50%",
     },
   },
@@ -291,9 +292,25 @@ export const Navbar: React.FC = () => {
             </Box>
 
             <div className="display_flex align_center gap_05">
-            <IconButton>
-              <Login/>
-            </IconButton>
+              {isLoggedIn ? (
+                <Tooltip title="Logout">
+                  <IconButton
+                  onClick={() => {
+                    document.cookie =
+                      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    dispatch(setIsLoggedIn(false));
+                  }}
+                >
+                  <Logout />
+                </IconButton>
+                </Tooltip>
+              ) : (
+                <Tooltip title="Login">
+                  <IconButton onClick={() => router.push("/login")}>
+                  <Login />
+                </IconButton>
+                </Tooltip>
+              )}
               <div className={"cursor_pointer"}>
                 <Tooltip title={"Profile"}>
                   <Avatar
@@ -306,7 +323,6 @@ export const Navbar: React.FC = () => {
                 </Tooltip>
               </div>
             </div>
-
           </Toolbar>
           <Divider />
         </AppBar>

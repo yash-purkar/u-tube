@@ -1,4 +1,5 @@
 import axios from "axios";
+const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 
 interface RegisterProps {
   firstName: string;
@@ -18,7 +19,7 @@ export const register = async (params: RegisterProps) => {
 
   try {
     const { data } = await axios.post(
-      "http://localhost:3001/api/auth/register",
+      `${API_BASE_URL}auth/register`,
       {
         firstName,
         lastName,
@@ -43,7 +44,7 @@ export const login = async (params: LoginProps) => {
   const { email, password } = params;
   try {
     const { data } = await axios.post(
-      "http://localhost:3001/api/auth/login",
+      `${API_BASE_URL}auth/login`,
       { email, password },
       {
         headers: {
@@ -63,10 +64,10 @@ export const addUserSearchHistory = async (
   video_id: string
 ) => {
   try {
-    const { data } = await axios.post(
-      "http://localhost:3001/api/user/search_history",
-      { user_id, video_id }
-    );
+    const { data } = await axios.post(`${API_BASE_URL}user/search_history`, {
+      user_id,
+      video_id,
+    });
     return data;
   } catch (err: any) {
     throw new Error(
@@ -82,7 +83,7 @@ export const removeUserSearchHistory = async (
 ) => {
   try {
     const { data } = await axios.delete(
-      `http://localhost:3001/api/user/search_history?user_id=${user_id}&video_id=${video_id}`,
+      `${API_BASE_URL}user/search_history?user_id=${user_id}&video_id=${video_id}`,
       {
         withCredentials: true,
       }
@@ -99,14 +100,13 @@ export const removeUserSearchHistory = async (
 export const getVideoDetails = async (video_id: string) => {
   try {
     const response = axios.get(
-      `http://localhost:3001/api/videos/watch?vid_id=${video_id}`,
+      `${API_BASE_URL}videos/watch?vid_id=${video_id}`,
       { withCredentials: true }
     );
-
     return (await response).data;
   } catch (error: any) {
     throw new Error(
-      error?.response?.data?.error || "Failed to remove search history"
+      error?.response?.data?.error || "Failed to get video details"
     );
   }
 };
@@ -119,7 +119,7 @@ export const addNewComment = async (
 ) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/comment/add_comment",
+      `${API_BASE_URL}comment/add_comment`,
       { user: userId, video: videoId, content },
       { withCredentials: true }
     );
@@ -134,7 +134,7 @@ export const addNewComment = async (
 export const getComments = async (videoId: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/comment/get_comments/${videoId}`
+      `${API_BASE_URL}comment/get_comments/${videoId}`
     );
     return response.data;
   } catch (error: any) {
@@ -146,7 +146,7 @@ export const getComments = async (videoId: string) => {
 export const deleteComment = async (comment_id: string) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3001/api/comment/delete_comment?comment_id=${comment_id}`,
+      `${API_BASE_URL}comment/delete_comment?comment_id=${comment_id}`,
       { withCredentials: true }
     );
 
@@ -164,7 +164,7 @@ export const likeComment = async (
 ) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/comment/like_comment",
+      `${API_BASE_URL}comment/like_comment`,
       { comment_id, user_id, video_id },
       { withCredentials: true }
     );
@@ -182,7 +182,7 @@ export const dislikeComment = async (
 ) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/comment/dislike_comment",
+      `${API_BASE_URL}comment/dislike_comment`,
       { comment_id, user_id, video_id },
       { withCredentials: true }
     );
@@ -197,7 +197,7 @@ export const dislikeComment = async (
 export const likeVideo = async (video_id: string, user_id: string) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/videos/like",
+      `${API_BASE_URL}videos/like`,
       {
         video_id,
         user_id,
@@ -214,7 +214,7 @@ export const likeVideo = async (video_id: string, user_id: string) => {
 export const dislikeVideo = async (video_id: string, user_id: string) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/videos/dislike",
+      `${API_BASE_URL}videos/dislike`,
       {
         video_id,
         user_id,
@@ -236,7 +236,7 @@ export const subscribeAndUnsubscribeVideo = async (
 ) => {
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/user/subscribe_or_unsubscribe",
+      `${API_BASE_URL}user/subscribe_or_unsubscribe`,
       {
         subscriber,
         subscribe_to,
@@ -255,7 +255,7 @@ export const subscribeAndUnsubscribeVideo = async (
 export const videosByUser = async (user_id: string, currentPage: number) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/videos/videos_by_user?limit=${3}&currentPage=${currentPage}&user_id=${user_id}`
+      `${API_BASE_URL}videos/videos_by_user?limit=${3}&currentPage=${currentPage}&user_id=${user_id}`
     );
     return response.data;
   } catch (error) {
@@ -269,7 +269,7 @@ export const getUsersLikedVideos = async (username: string) => {
   try {
     // we don't need to pass userId from here, we'll take it from cookies in backend.
     const response = await axios.get(
-      `http://localhost:3001/api/videos/liked_videos?username=${username}`
+      `${API_BASE_URL}videos/liked_videos?username=${username}`
     );
     return response.data;
   } catch (error) {
@@ -283,13 +283,10 @@ export const getUsersLikedVideos = async (username: string) => {
 // It handles watchlater video add and remove
 export const watchLaterHandler = async (video_id: string, user_id: string) => {
   try {
-    const response = await axios.post(
-      "http://localhost:3001/api/user/watch_later",
-      {
-        user_id,
-        video_id,
-      }
-    );
+    const response = await axios.post(`${API_BASE_URL}user/watch_later`, {
+      user_id,
+      video_id,
+    });
     return response.data;
   } catch (error) {
     return {
@@ -302,7 +299,7 @@ export const watchLaterHandler = async (video_id: string, user_id: string) => {
 export const usersAllWatchlaterVideos = async (username: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/videos/watch_later_videos?username=${username}`
+      `${API_BASE_URL}videos/watch_later_videos?username=${username}`
     );
     return response.data;
   } catch (error) {
@@ -316,7 +313,7 @@ export const usersAllWatchlaterVideos = async (username: string) => {
 export const usersHistory = async (username: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/user/history?username=${username}`
+      `${API_BASE_URL}user/history?username=${username}`
     );
     return response.data;
   } catch (error) {
@@ -330,7 +327,7 @@ export const usersHistory = async (username: string) => {
 export const clearHistory = async (username: string) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3001/api/user/clear_watch_history?username=${username}`
+      `${API_BASE_URL}user/clear_watch_history?username=${username}`
     );
 
     return response.data;
@@ -350,13 +347,10 @@ export const createPlaylist = async ({
   user: string;
 }) => {
   try {
-    const response = await axios.post(
-      "http://localhost:3001/api/playlist/create",
-      {
-        name,
-        user,
-      }
-    );
+    const response = await axios.post(`${API_BASE_URL}playlist/create`, {
+      name,
+      user,
+    });
 
     if (response?.data?.Success) {
       return response.data;
@@ -376,7 +370,7 @@ export const deletePlaylist = async ({
 }) => {
   try {
     const response = await axios.delete(
-      `http://localhost:3001/api/playlist/delete?playlist_id=${playlist_id}`
+      `${API_BASE_URL}playlist/delete?playlist_id=${playlist_id}`
     );
 
     return response.data;
@@ -390,12 +384,9 @@ export const deletePlaylist = async ({
 // get all playlists
 export const getPlaylists = async ({ user }: { user: string }) => {
   try {
-    const response = await axios.post(
-      "http://localhost:3001/api/playlist/playlists",
-      {
-        user,
-      }
-    );
+    const response = await axios.post(`${API_BASE_URL}playlist/playlists`, {
+      user,
+    });
 
     return response.data;
   } catch (err) {
@@ -416,14 +407,11 @@ export const addVideoToPlaylist = async ({
   unSelectedPlaylists: string[];
 }) => {
   try {
-    const response = await axios.post(
-      "http://localhost:3001/api/playlist/add_video",
-      {
-        playlist_ids,
-        video,
-        unSelectedPlaylists,
-      }
-    );
+    const response = await axios.post(`${API_BASE_URL}playlist/add_video`, {
+      playlist_ids,
+      video,
+      unSelectedPlaylists,
+    });
 
     return response.data;
   } catch (err) {
@@ -435,9 +423,10 @@ export const addVideoToPlaylist = async ({
 
 // Get playlist by id
 export const getPlaylistDetails = async (playlist_id: string) => {
+  console.log(process.env.NEXT_PUBLIC_LOCAL_API_URL);
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/playlist/playlist?playlist_id=${playlist_id}`
+      `${API_BASE_URL}playlist/playlist?playlist_id=${playlist_id}`
     );
 
     return response.data;

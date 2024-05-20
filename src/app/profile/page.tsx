@@ -4,7 +4,7 @@ import axios from "axios";
 const getUserDetails = async (user: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/user/user_by_id/${user}`
+      `${process.env.NEXT_PUBLIC_LOCAL_API_URL}user/user_by_id/${user}`
     );
     return response.data;
   } catch (error) {

@@ -1,11 +1,10 @@
 import axios from "axios";
+const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 
 // Fetches filters
 export const getFilters = async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:3001/api/filters/all_filters"
-    );
+    const response = await axios.get(`${API_BASE_URL}filters/all_filters`);
     return response;
   } catch (error) {
     throw new Error("Failed to get filters.");
@@ -16,7 +15,7 @@ export const getFilters = async () => {
 export const getAllVideos = async (filterName: string) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/videos/all_videos?filter=${filterName}`
+      `${API_BASE_URL}videos/all_videos?filter=${filterName}`
     );
     return response.data;
   } catch (err: any) {
@@ -31,7 +30,7 @@ export const getUploadedDate = (uploadedDate: Date) => {
 
   const yearDiff = currentDate?.getFullYear() - uploadedDate?.getFullYear();
   const monthDiff = currentDate?.getMonth() - uploadedDate?.getMonth();
-  const daysDiff = currentDate?.getDay() - uploadedDate?.getDay();
+  const daysDiff = currentDate?.getDate() - uploadedDate?.getDate();
 
   if (yearDiff > 0) {
     if (yearDiff === 1) {

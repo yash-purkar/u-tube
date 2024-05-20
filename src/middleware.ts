@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const token = request.cookies.get("token")?.value;
 
   const response = await fetch(
-    `http://localhost:3001/api/auth/is_token_valid?token=${token}`
+    `${process.env.NEXT_PUBLIC_LOCAL_API_URL}auth/is_token_valid?token=${token}`
   );
 
   const data = await response.json();

@@ -2,7 +2,8 @@ import SinglePlaylistDetails from "@/components/playlists/SinglePlaylistDetails/
 import React from "react";
 
 const page = ({ params }: { params: any; searchParams: any }) => {
-  return <SinglePlaylistDetails playlist_id={params?.id}/>;
+  console.log(process.env.NEXT_PUBLIC_LOCAL_API_URL);
+  return <SinglePlaylistDetails playlist_id={params?.id} />;
 };
 
 export default page;

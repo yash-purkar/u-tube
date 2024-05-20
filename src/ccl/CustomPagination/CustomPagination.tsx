@@ -35,35 +35,39 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   };
 
   return (
-    <div className={styles.pages_container}>
-      <Button
-        onClick={() => handlePageClick(currentPage - 1)}
-        disabled={currentPage === 1}
-        size="small"
-      >
-        Previous
-      </Button>
-      <Stack direction={"row"} gap={1} flexWrap={"wrap"}>
-        {Array.from({ length: totalItems / resultsPerPage }).map((_, i) => (
-          <Chip
-            onClick={() => handlePageClick(i + 1)}
-            className={
-              currentPage === i + 1 ? classes.current_page : classes.page
-            }
-            clickable
-            key={i + 1}
-            label={i + 1}
-          />
-        ))}
-      </Stack>
-      <Button
-        onClick={() => handlePageClick(currentPage + 1)}
-        disabled={currentPage === totalItems / resultsPerPage}
-        size="small"
-      >
-        Next
-      </Button>
-    </div>
+    <>
+      {totalItems > resultsPerPage && (
+        <div className={styles.pages_container}>
+          <Button
+            onClick={() => handlePageClick(currentPage - 1)}
+            disabled={currentPage === 1}
+            size="small"
+          >
+            Previous
+          </Button>
+          <Stack direction={"row"} gap={1} flexWrap={"wrap"}>
+            {Array.from({ length: totalItems / resultsPerPage }).map((_, i) => (
+              <Chip
+                onClick={() => handlePageClick(i + 1)}
+                className={
+                  currentPage === i + 1 ? classes.current_page : classes.page
+                }
+                clickable
+                key={i + 1}
+                label={i + 1}
+              />
+            ))}
+          </Stack>
+          <Button
+            onClick={() => handlePageClick(currentPage + 1)}
+            disabled={currentPage === totalItems / resultsPerPage}
+            size="small"
+          >
+            Next
+          </Button>
+        </div>
+      )}
+    </>
   );
 };
 

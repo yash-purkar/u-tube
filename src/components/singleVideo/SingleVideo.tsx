@@ -93,7 +93,6 @@ export const SingleVideo = ({ video }: { video: Video }) => {
   });
 
   const redirectToVidDetailsPage = () => {
-    console.log("hi")
     router.push(`/watch?vid_id=${video?._id}`);
   };
 

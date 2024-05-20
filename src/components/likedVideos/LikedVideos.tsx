@@ -28,7 +28,13 @@ const LikedVideos = () => {
   return (
     <Container sx={{ marginTop: "5rem" }}>
       <h3>Liked videos</h3>
-      <DisplayVideos videos={data?.likedVideos} />
+      {data?.likedVideos?.length > 0 ? (
+        <DisplayVideos videos={data?.likedVideos} />
+      ) : (
+        <h4 style={{ textAlign: "center", color: "gray" }}>
+          You did not like any video yet
+        </h4>
+      )}
     </Container>
   );
 };

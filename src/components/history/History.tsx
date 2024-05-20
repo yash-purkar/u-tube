@@ -59,7 +59,9 @@ const History = () => {
             Clear History
           </Button>
         </Box>
-        <DisplayVideos videos={data?.history} />
+        {data?.history ? <DisplayVideos videos={data?.history} />  : <h4 style={{ textAlign: "center", color: "gray" }}>
+          History empty
+        </h4>}
       </Container>
     </SnackbarProvider>
   );

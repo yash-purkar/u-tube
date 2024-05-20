@@ -423,7 +423,7 @@ export const addVideoToPlaylist = async ({
 
 // Get playlist by id
 export const getPlaylistDetails = async (playlist_id: string) => {
-  console.log(process.env.NEXT_PUBLIC_LOCAL_API_URL);
+
   try {
     const response = await axios.get(
       `${API_BASE_URL}playlist/playlist?playlist_id=${playlist_id}`

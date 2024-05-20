@@ -24,7 +24,13 @@ export const WatchLaterVideos = () => {
   return (
     <Container sx={{ marginTop: "5rem" }}>
       <h3>Watch later videos</h3>
-      <DisplayVideos videos={data?.watchLaterVideos ?? []} />
+      {data?.watchLaterVideos?.length > 0 ? (
+        <DisplayVideos videos={data?.watchLaterVideos ?? []} />
+      ) : (
+        <h4 style={{ textAlign: "center", color: "gray" }}>
+          You did not added any video in watch later.
+        </h4>
+      )}
     </Container>
   );
 };

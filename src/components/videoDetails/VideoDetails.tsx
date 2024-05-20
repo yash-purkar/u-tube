@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Comment, User, Video } from "@/app/types";
 import {
   Avatar,
@@ -202,6 +202,11 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
       });
     },
   });
+
+  // When url id change call an api, the url is changing on cilcking on side videos.
+  useEffect(() => {
+    refetch();
+  }, [refetch, video_id]);
 
   if (isLoading) return <h3>Loading</h3>;
 

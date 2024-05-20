@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useAppSelector } from "@/app/lib/redux/hooks";
 import { getAllVideos, getUploadedDate } from "@/clientHandlers/handlers";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 interface SideVideosProps {
   videoTitle: string;
@@ -28,6 +29,7 @@ const useStyles = makeStyles({
     gap: "1rem",
   },
   side_single_video: {
+    cursor:'pointer',
     display: "flex",
     flexDirection: "column",
     margin: "1rem",
@@ -38,7 +40,7 @@ const useStyles = makeStyles({
   },
   video_thumbnail: {
     borderRadius: "1rem",
-    width:'auto',
+    width: "auto",
     "@media(min-width:445px)": {
       width: "17rem !important",
       height: "8rem",
@@ -56,7 +58,7 @@ export const SideVideos: React.FC<SideVideosProps> = ({
   videoAuthor,
 }) => {
   const classes = useStyles();
-
+  const router = useRouter(); 
   // We need to fetch the videos here as well because once user comes to the videodetails page we won't have video to show in sidebar
   const { data, isLoading } = useQuery({
     queryKey: ["videos"],
@@ -74,6 +76,11 @@ export const SideVideos: React.FC<SideVideosProps> = ({
     );
   });
 
+  const handleVideoClilck = (videoId: string) => {
+    router.push(`/watch?vid_id=${videoId}`);
+    router.refresh()
+  };
+
   return (
     <Grid className={classes.side_videos_main_container} item xs={12} lg={4}>
       {/* Videos */}
@@ -81,7 +88,11 @@ export const SideVideos: React.FC<SideVideosProps> = ({
         {filteredSuggestedVideos?.map((video: Video) => {
           const uploaded = getUploadedDate(new Date(video?.createdAt));
           return (
-            <Box className={classes.side_single_video} key={video?._id}>
+            <Box
+              className={classes.side_single_video}
+              onClick={() => handleVideoClilck(video?._id)}
+              key={video?._id}
+            >
               <Image
                 className={classes.video_thumbnail}
                 width={50}

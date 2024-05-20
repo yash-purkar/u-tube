@@ -40,7 +40,9 @@ export const register = async (req: UserRegisterRequest, res: Response) => {
     //   saving user in DB
     const addedUser = await newUser.save();
 
-    return res.status(201).send({ message: "Success", user: addedUser });
+    return res
+      .status(201)
+      .send({ Success: true, message: "Registered Succesfully" });
   } catch (error) {
     return res.status(500).send({ message: "Internal Server Error" });
   }
@@ -75,8 +77,15 @@ export const login = async (req: UserLoginRequest, res: any) => {
       );
       res.cookie("token", token);
 
-      return res.status(201).json({ Success: true, user });
+      //Convert mongoose document to plain javaScript object.
+      const userObj = user?.toObject();
+
+      // Removing password field from user object, bcz we don't wanna send it to the browser
+      const { password, ...userFieldsWithoutPassword } = userObj;
+
+      return res.status(201).json({ Success: true, user:userFieldsWithoutPassword });
     }
+
     //   Else return message user not found
     return res.status(404).json({ Success: false, error: "User not found🙁" });
   } catch (error) {

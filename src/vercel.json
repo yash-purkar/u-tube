@@ -1,0 +1,21 @@
+
+{
+    "version":2,
+    "builds":[
+      {
+        "src":"layout.tsx",
+        "use":"@vercel/node"
+      }
+    ],
+    "routes":[
+      {
+        "src": "/(.*)",
+        "dest": "/layout.tsx"
+      }
+    ],
+    "env": {
+      "NEXT_PUBLIC_LOCAL_API_URL":"https://u-tube2.vercel.app/api/"
+     }
+  }
+  
+  

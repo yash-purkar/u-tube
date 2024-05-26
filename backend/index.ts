@@ -21,7 +21,7 @@ dotenv.config();
 // Middleware: Allow requests from specified origin
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://u-tubev2.vercel.app"],
     methods: ["GET", "POST", "DELETE"],
     credentials: true,
   })
@@ -31,7 +31,7 @@ app.use(
 app.use(cookieParser());
 
 // Connect to MongoDB
-mongoose.connect(process.env.ATLAS_URI  as string);
+mongoose.connect(process.env.ATLAS_URI as string);
 
 // Routes
 app.use("/api/auth", authRoutes);

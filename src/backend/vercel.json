@@ -7,10 +7,10 @@
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/" }
+    { "src": "/(.*)", "dest": "/index.ts" }
   ],
   "env": {
-    "DB_URI": "mongodb+srv://yashpurkar7079:6fLv7F4wqdg03Ifz@personalprojects.xzcaoft.mongodb.net/UTube",
-    "JWT_SECRET_KEY": "THIS_TOKEN_IS_GENERATED_BY_YASH"
+    "ATLAS_URI": "mongodb+srv://yashpurkar7079:6fLv7F4wqdg03Ifz@personalprojects.xzcaoft.mongodb.net/UTube",
+    "JSON_TOKEN_SECERET": "THIS_TOKEN_IS_GENERATED_BY_YASH"
   }
 }

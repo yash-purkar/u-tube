@@ -2,14 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "layout.tsx",
+      "src": "src/app/layout.tsx",
       "use": "@vercel/node"
+    },
+    {
+      "src": "next.config.js",
+      "use": "@vercel/next"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/layout.tsx"
+      "dest": "/src/app/layout.tsx"
     }
   ],
   "env": {

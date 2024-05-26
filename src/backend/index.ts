@@ -1,8 +1,8 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser");
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth";
 import commentsRoutes from "./routes/comments";
 import filtersRoutes from "./routes/filters";
@@ -10,16 +10,15 @@ import playlistRoutes from "./routes/playlist";
 import usersRoutes from "./routes/user";
 import videosRoutes from "./routes/videos";
 import { seeder } from "./seeder/seeder";
-dotenv.config();
-//use this to seed data
-// seeder()
 
 const app = express();
 
-// Convert incoming request to json, and make it available in req.body
+// Middleware: Parse incoming JSON data
 app.use(express.json());
 
-// Allows requests from anywhere
+dotenv.config();
+
+// Middleware: Allow requests from specified origin
 app.use(
   cors({
     origin: ["http://localhost:3000"],
@@ -28,12 +27,13 @@ app.use(
   })
 );
 
-// It parse incoming cookie data from HTTP request and make it accessable in cookies
+// Middleware: Parse incoming cookie data
 app.use(cookieParser());
 
-// connection to mongodb
-mongoose.connect(process.env.MONGODB_URI);
+// Connect to MongoDB
+mongoose.connect(process.env.ATLAS_URI  as string);
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/filters", filtersRoutes);
 app.use("/api/videos", videosRoutes);
@@ -41,7 +41,9 @@ app.use("/api/user", usersRoutes);
 app.use("/api/comment", commentsRoutes);
 app.use("/api/playlist", playlistRoutes);
 
-// Running server on particular port
+// Start server
 app.listen(process.env.APP_PORT, () => {
   console.log(`SERVER STARTED ON PORT ${process.env.APP_PORT}`);
 });
+
+export default app;

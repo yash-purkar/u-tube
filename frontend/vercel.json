@@ -3,7 +3,7 @@
   "version":2,
   "builds":[
     {
-      "src":"layout.tsx",
+      "src":"app/layout.tsx",
       "use":"@vercel/next"
     }
   ],

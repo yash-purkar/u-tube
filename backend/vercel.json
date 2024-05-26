@@ -6,10 +6,5 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [{ "src": "/(.*)", "dest": "/index.ts" }],
-  "env": {
-    "ATLAS_URI": "mongodb+srv://yashpurkar7079:6fLv7F4wqdg03Ifz@personalprojects.xzcaoft.mongodb.net/UTube",
-    "JSON_TOKEN_SECERET": "THIS_TOKEN_IS_GENERATED_BY_YASH",
-    "APP_PORT": "3001"
-  }
+  "routes": [{ "src": "/(.*)", "dest": "/index.ts" }]
 }

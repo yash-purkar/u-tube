@@ -1,6 +1,20 @@
+
 {
-  "version": 2,
+  "version":2,
+  "builds":[
+    {
+      "src":"layout.tsx",
+      "use":"@vercel/next"
+    }
+  ],
+  "routes":[
+    {
+      "src": "/(.*)",
+      "dest": "src/app/layout.tsx"
+    }
+  ],
   "env": {
-    "NEXT_PUBLIC_LOCAL_API_URL": "https://u-tube-apis.vercel.app/api/"
-  }
+    "NEXT_PUBLIC_LOCAL_API_URL":"https://u-tube-apis.vercel.app/api/"
+   }
 }
+

@@ -7,7 +7,7 @@
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/index.ts" }
+    { "src": "/(.*)", "dest": "/" }
   ],
   "env": {
     "DB_URI": "mongodb+srv://yashpurkar7079:6fLv7F4wqdg03Ifz@personalprojects.xzcaoft.mongodb.net/UTube",

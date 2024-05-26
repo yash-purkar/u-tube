@@ -10,7 +10,7 @@
     { "src": "/(.*)", "dest": "/index.ts" }
   ],
   "env": {
-    "DB_URI": "your_mongodb_connection_string",
-    "JWT_SECRET_KEY": "your_secret_key"
+    "DB_URI": "mongodb+srv://yashpurkar7079:6fLv7F4wqdg03Ifz@personalprojects.xzcaoft.mongodb.net/UTube",
+    "JWT_SECRET_KEY": "THIS_TOKEN_IS_GENERATED_BY_YASH"
   }
 }

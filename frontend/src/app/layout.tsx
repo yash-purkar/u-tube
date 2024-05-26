@@ -8,16 +8,11 @@ import { Navbar } from "@/components/navbar/Navbar";
 import { ReactQueryProvider } from "./providers/ReactQueryProvider";
 import { ReduxStoreProvider } from "./providers/ReduxStoreProvider";
 import { CheckAuthProvider } from "./providers/CheckAuthProvider";
-import createEmotionCache from "./createEmotionCache";
+// import createEmotionCache from "./createEmotionCache";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const cache = createCache({ key: "css", prepend: true });
-
-const clientSideEmotionCache = createEmotionCache();
-const theme = createTheme({
-  // Customize your theme here
-});
+// const clientSideEmotionCache = createEmotionCache();
 
 export const metadata: Metadata = {
   title: "U-TUBE",
@@ -36,15 +31,13 @@ export default function RootLayout({
           <CheckAuthProvider>
             <ReactQueryProvider>
               {/*to manage the caching of styles */}
-              <CacheProvider value={clientSideEmotionCache}>
+              {/* <CacheProvider value={clientSideEmotionCache}> */}
                 {/* to inject a custom theme into your application. */}
-                <ThemeProvider theme={theme}>
                   <Navbar />
                   {/* It provides a set of baseline CSS styles that are consistent across browsers. */}
                   <CssBaseline />
                   {children}
-                </ThemeProvider>
-              </CacheProvider>
+              {/* </CacheProvider> */}
             </ReactQueryProvider>
           </CheckAuthProvider>
         </ReduxStoreProvider>

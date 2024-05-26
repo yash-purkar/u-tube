@@ -13,6 +13,6 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_LOCAL_API_URL": "https://u-tube2.vercel.app/api/"
+    "NEXT_PUBLIC_LOCAL_API_URL": "https://u-tube-apis.vercel.app/api/"
   }
 }

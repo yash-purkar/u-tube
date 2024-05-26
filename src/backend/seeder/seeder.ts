@@ -6,7 +6,7 @@ const Video = require('../models/video.ts')
 
 export const seeder = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI as string);
+    await mongoose.connect(process.env.ATLAS_URI  as string);
 
     //deleting old data
     await Video.deleteMany();

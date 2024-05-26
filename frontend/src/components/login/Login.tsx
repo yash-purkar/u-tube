@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -60,7 +61,7 @@ export const Login = () => {
       if (data?.Success) {
         dispatch(setIsLoggedIn(true));
         dispatch(setUser(data?.user));
-        router.push("/login")
+        router.push("/")
       }
     },
   });

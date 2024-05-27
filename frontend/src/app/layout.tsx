@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { CacheProvider } from "@emotion/react";
-import createCache from "@emotion/cache";
+import createEmotionCache from "./createEmotionCache";
 import "./globals.css";
 import { Navbar } from "@/components/navbar/Navbar";
 import { ReactQueryProvider } from "./providers/ReactQueryProvider";
 import { ReduxStoreProvider } from "./providers/ReduxStoreProvider";
 import { CheckAuthProvider } from "./providers/CheckAuthProvider";
-// import createEmotionCache from "./createEmotionCache";
+import theme from "./theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// const clientSideEmotionCache = createEmotionCache();
+const clientSideEmotionCache = createEmotionCache();
 
 export const metadata: Metadata = {
   title: "U-TUBE",
@@ -27,20 +27,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReduxStoreProvider>
-          <CheckAuthProvider>
-            <ReactQueryProvider>
-              {/*to manage the caching of styles */}
-              {/* <CacheProvider value={clientSideEmotionCache}> */}
-                {/* to inject a custom theme into your application. */}
+        <CacheProvider value={clientSideEmotionCache}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <ReduxStoreProvider>
+              <CheckAuthProvider>
+                <ReactQueryProvider>
                   <Navbar />
-                  {/* It provides a set of baseline CSS styles that are consistent across browsers. */}
-                  <CssBaseline />
                   {children}
-              {/* </CacheProvider> */}
-            </ReactQueryProvider>
-          </CheckAuthProvider>
-        </ReduxStoreProvider>
+                </ReactQueryProvider>
+              </CheckAuthProvider>
+            </ReduxStoreProvider>
+          </ThemeProvider>
+        </CacheProvider>
       </body>
     </html>
   );

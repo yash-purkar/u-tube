@@ -1,3 +1,5 @@
+"use client"
+
 import { getFilters } from "@/clientHandlers/handlers";
 import { Box, Chip, Stack } from "@mui/material";
 import { makeStyles } from "@mui/styles";

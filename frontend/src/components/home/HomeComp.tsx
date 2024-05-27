@@ -8,10 +8,10 @@ import { makeStyles } from "@mui/styles";
 import { SingleVideo } from "../singleVideo/SingleVideo";
 import { useQuery } from "@tanstack/react-query";
 import { getAllVideos } from "@/clientHandlers/handlers";
-import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { setVideos } from "@/app/lib/redux/slices/videoSlice";
 import { Video } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 const useStyles: () => any = makeStyles({
   videos_container: {
@@ -56,6 +56,7 @@ export const HomeComp = () => {
     },
   });
   const classes = useStyles();
+  const router = useRouter();
 
   // It will call the videos api again with the query filter
   const handleFilterClick = async (value: string) => {
@@ -90,6 +91,10 @@ export const HomeComp = () => {
         vid?.title?.toLowerCase().includes(searchQuery?.toLowerCase())
       )
     : data?.videos;
+
+  useEffect(() => {
+    router.push("/");
+  }, []);
 
   return (
     <div style={{ width: "100%" }}>

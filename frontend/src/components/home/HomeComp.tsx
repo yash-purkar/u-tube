@@ -49,6 +49,12 @@ export const HomeComp = () => {
   const dispatch = useAppDispatch();
   const { searchQuery } = useAppSelector((state) => state.video);
 
+  const [waitFor1Sec, setWaitFor1Sec] = useState(true);
+
+  setTimeout(() => {
+    setWaitFor1Sec(false);
+  }, 1000);
+
   const { data, isSuccess, error, isError, isLoading, refetch } = useQuery({
     queryKey: ["videos"],
     queryFn: async () => {
@@ -97,40 +103,44 @@ export const HomeComp = () => {
   }, []);
 
   return (
-    <div style={{ width: "100%" }}>
-      <AppBar position={"fixed"} className={classes.filters_app_bar}>
-        <Filters
-          selectedFilter={filterName}
-          handleFilterClick={handleFilterClick}
-        />
-      </AppBar>
-      <Grid
-        className={classes.videos_container}
-        container
-        // spacing={4}
-        wrap="wrap"
-        justifyContent={"center"}
-      >
-        {isLoading ? (
-          <>Loading...</>
-        ) : (
-          <>
-            {[...filteredData]?.reverse()?.map((video: any) => (
-              <Grid
-                alignSelf={"center"}
-                key={video?._id}
-                item
-                className={classes.grid_item}
-                sm={6}
-                md={4}
-                xl={3}
-              >
-                <SingleVideo video={video} />
-              </Grid>
-            ))}
-          </>
-        )}
-      </Grid>
-    </div>
+    <>
+      {!waitFor1Sec && (
+        <div style={{ width: "100%" }}>
+          <AppBar position={"fixed"} className={classes.filters_app_bar}>
+            <Filters
+              selectedFilter={filterName}
+              handleFilterClick={handleFilterClick}
+            />
+          </AppBar>
+          <Grid
+            className={classes.videos_container}
+            container
+            // spacing={4}
+            wrap="wrap"
+            justifyContent={"center"}
+          >
+            {isLoading ? (
+              <>Loading...</>
+            ) : (
+              <>
+                {[...filteredData]?.reverse()?.map((video: any) => (
+                  <Grid
+                    alignSelf={"center"}
+                    key={video?._id}
+                    item
+                    className={classes.grid_item}
+                    sm={6}
+                    md={4}
+                    xl={3}
+                  >
+                    <SingleVideo video={video} />
+                  </Grid>
+                ))}
+              </>
+            )}
+          </Grid>
+        </div>
+      )}
+    </>
   );
 };

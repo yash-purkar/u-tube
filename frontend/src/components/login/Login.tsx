@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -59,9 +58,10 @@ export const Login = () => {
     mutationFn: login,
     onSuccess: (data, variable, context) => {
       if (data?.Success) {
+        document.cookie = `token=${data?.token}`;
         dispatch(setIsLoggedIn(true));
         dispatch(setUser(data?.user));
-        router.push("/")
+        router.push("/");
       }
     },
   });

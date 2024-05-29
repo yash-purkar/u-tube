@@ -295,20 +295,20 @@ export const Navbar: React.FC = () => {
               {isLoggedIn ? (
                 <Tooltip title="Logout">
                   <IconButton
-                  onClick={() => {
-                    document.cookie =
-                      "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    dispatch(setIsLoggedIn(false));
-                  }}
-                >
-                  <Logout />
-                </IconButton>
+                    onClick={() => {
+                      document.cookie =
+                        "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                      dispatch(setIsLoggedIn(false));
+                    }}
+                  >
+                    <Logout />
+                  </IconButton>
                 </Tooltip>
               ) : (
                 <Tooltip title="Login">
                   <IconButton onClick={() => router.push("/login")}>
-                  <Login />
-                </IconButton>
+                    <Login />
+                  </IconButton>
                 </Tooltip>
               )}
               <div className={"cursor_pointer"}>

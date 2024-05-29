@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../lib/redux/hooks";
 import { useRouter } from "next/navigation";
 import { checkIsLoggedIn } from "../lib/redux/slices/authSlice";
@@ -13,6 +13,12 @@ export const CheckAuthProvider = ({
   const { isLoggedIn, status, user } = useAppSelector((state) => state.auth);
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const [waitFor1Sec, setWaitFor1Sec] = useState(true);
+
+  setTimeout(() => {
+    setWaitFor1Sec(false);
+  }, 1000);
 
   // It checks is userLoggedInOrNot
   useEffect(() => {
@@ -29,5 +35,5 @@ export const CheckAuthProvider = ({
   //   status === "success" && isLoggedIn === false && router.replace("/login");
   // }, [isLoggedIn, router, status]);
 
-  return <>{children}</>;
+  return <>{!waitFor1Sec && <>{children}</>}</>;
 };

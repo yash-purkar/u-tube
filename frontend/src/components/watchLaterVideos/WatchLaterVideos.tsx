@@ -9,7 +9,11 @@ import React, { useEffect } from "react";
 
 export const WatchLaterVideos = () => {
   const { user } = useAppSelector((state) => state.user);
-  const { data, refetch } = useQuery({
+  const {
+    data,
+    refetch,
+    isLoading: watchLaterLoading,
+  } = useQuery({
     queryKey: ["watch_later_videos"],
     queryFn: async () => {
       return usersAllWatchlaterVideos(user?.username as string);
@@ -23,13 +27,19 @@ export const WatchLaterVideos = () => {
 
   return (
     <Container sx={{ marginTop: "5rem" }}>
-      <h3>Watch later videos</h3>
-      {data?.watchLaterVideos?.length > 0 ? (
-        <DisplayVideos videos={data?.watchLaterVideos ?? []} />
+      {watchLaterLoading ? (
+        <p>Loading...</p>
       ) : (
-        <h4 style={{ textAlign: "center", color: "gray" }}>
-          You did not added any video in watch later.
-        </h4>
+        <>
+          <h3>Watch later videos</h3>
+          {data?.watchLaterVideos?.length > 0 ? (
+            <DisplayVideos videos={data?.watchLaterVideos ?? []} />
+          ) : (
+            <h4 style={{ textAlign: "center", color: "gray" }}>
+              You did not added any video in watch later.
+            </h4>
+          )}
+        </>
       )}
     </Container>
   );

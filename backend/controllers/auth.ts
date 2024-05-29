@@ -75,7 +75,7 @@ export const login = async (req: UserLoginRequest, res: any) => {
         process.env.JSON_TOKEN_SECERET,
         { expiresIn: "1d" }
       );
-      res.cookie("token", token);
+      // res.cookie("token", token);
 
       //Convert mongoose document to plain javaScript object.
       const userObj = user?.toObject();
@@ -83,7 +83,9 @@ export const login = async (req: UserLoginRequest, res: any) => {
       // Removing password field from user object, bcz we don't wanna send it to the browser
       const { password, ...userFieldsWithoutPassword } = userObj;
 
-      return res.status(201).json({ Success: true, user:userFieldsWithoutPassword });
+      return res
+        .status(201)
+        .json({ Success: true, user: userFieldsWithoutPassword, token });
     }
 
     //   Else return message user not found

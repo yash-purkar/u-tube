@@ -22,21 +22,24 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
       ) {
         return NextResponse.redirect(
           new URL("http://localhost:3000", request.url)
+          // new URL("https://u-tubev2.vercel.app", request.url)
         );
       }
     }
 
     // if success is false refirect to homepage again
     if (
-      !data?.Success &&
-      (request.url?.includes("/profile") ||
-        request.url?.includes("/liked_videos") ||
-        request.url?.includes("/watch_later") ||
-        request.url?.includes("/history") ||
-        request.url?.includes("/watch"))
+      (!data?.Success &&
+        (request.url?.includes("/profile") ||
+          request.url?.includes("/liked_videos") ||
+          request.url?.includes("/watch_later") ||
+          request.url?.includes("/history") ||
+          request.url?.includes("/watch"))) ||
+      request.url?.includes("/playlists")
     ) {
       return NextResponse.redirect(
         new URL("http://localhost:3000", request.url)
+        // new URL("https://u-tubev2.vercel.app", request.url)
       );
     }
   } catch (error) {

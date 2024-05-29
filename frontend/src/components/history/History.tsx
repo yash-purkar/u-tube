@@ -10,7 +10,11 @@ import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 const History = () => {
   const { user } = useAppSelector((state) => state.user);
-  const { data, refetch } = useQuery({
+  const {
+    data,
+    refetch,
+    isLoading: historyLoading,
+  } = useQuery({
     queryKey: ["history"],
     queryFn: async () => {
       return usersHistory(user?.username as string);
@@ -45,23 +49,33 @@ const History = () => {
   return (
     <SnackbarProvider>
       <Container sx={{ marginTop: "5rem" }}>
-        <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
-          <h3>Your History</h3>
-          <Button
-            sx={{ textDecoration: "underline" }}
-            onClick={handleClearHistory}
-            disabled={data?.history?.length === 0}
-          >
-            Clear History
-          </Button>
-        </Box>
-        {data?.history ? <DisplayVideos videos={data?.history} />  : <h4 style={{ textAlign: "center", color: "gray" }}>
-          History empty
-        </h4>}
+        {historyLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <h3>Your History</h3>
+              <Button
+                sx={{ textDecoration: "underline" }}
+                onClick={handleClearHistory}
+                disabled={data?.history?.length === 0}
+              >
+                Clear History
+              </Button>
+            </Box>
+            {data?.history ? (
+              <DisplayVideos videos={data?.history} />
+            ) : (
+              <h4 style={{ textAlign: "center", color: "gray" }}>
+                History empty
+              </h4>
+            )}
+          </>
+        )}
       </Container>
     </SnackbarProvider>
   );

@@ -32,16 +32,14 @@ export default function RootLayout({
         {/* <ThemeProvider theme={theme}> */}
         <CssBaseline />
         <ReduxStoreProvider>
-          <CheckAuthProvider>
-            <ReactQueryProvider>
-              <MainLayout>
-                <>
-                  <Navbar />
-                  {children}
-                </>
-              </MainLayout>
-            </ReactQueryProvider>
-          </CheckAuthProvider>
+          <ReactQueryProvider>
+            <MainLayout>
+              <Navbar />
+              <CheckAuthProvider>
+                <>{children}</>
+              </CheckAuthProvider>
+            </MainLayout>
+          </ReactQueryProvider>
         </ReduxStoreProvider>
         {/* </ThemeProvider> */}
         {/* </CacheProvider> */}

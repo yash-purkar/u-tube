@@ -90,7 +90,7 @@ export const HomeComp = () => {
     ? data?.videos?.filter((vid: Video) =>
         vid?.title?.toLowerCase().includes(searchQuery?.toLowerCase())
       )
-    : data?.videos;
+    : data?.videos ?? [];
 
   useEffect(() => {
     router.push("/");

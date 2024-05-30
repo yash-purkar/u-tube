@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 export const checkAuth = async (req: any, res: any, next: () => any) => {
   try {
     const token = req?.cookies?.token;
-
+    console.log("T_",token)
     if (token) {
       //decoding token
       const decodedToken = jwt.decode(token);

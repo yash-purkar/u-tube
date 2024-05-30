@@ -13,11 +13,9 @@ const User = require("../models/user");
 
 export const getAllVideos = async (req: Request, res: Response) => {
   try {
-    console.log("All Videos")
     // getting filtername from query to return the filtered data
     const filterInQuery = req.query?.filter;
     // This will find the filter in title and in the description
-    console.log(filterInQuery)
     const filter =
       filterInQuery === "All"
         ? {}
@@ -38,9 +36,8 @@ export const getAllVideos = async (req: Request, res: Response) => {
             ],
           };
     // We've to use regex to find it in title, so it will search in title is filterQuery present in that, if we don't use regex it will try to finx exact match to the query, means title should be same as queryFilter. And same with description. We've used $or so it will return the video if at title or description any one contains the filterQuery
-    console.log("_filter", filter)
     const videos = await Video.find({ ...filter }).populate("user");
-    console.log("_videows", videos)
+    
     return res.status(200).send({ Success: true, videos });
   } catch (err) {
     return res

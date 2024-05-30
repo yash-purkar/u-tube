@@ -44,12 +44,12 @@ router.get("/user_by_id/:username", async (req, res) => {
 });
 
 // Add video to watch later
-router.post("/watch_later", async (req, res) => {
+router.post("/watch_later", checkAuth, async (req, res) => {
   await addVideoToWatchLater(req, res);
 });
 
 // Get user's watch history
-router.get("/history", async (req, res) => {
+router.get("/history", checkAuth, async (req, res) => {
   await usersWatchHistory(req, res);
 });
 

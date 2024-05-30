@@ -208,8 +208,6 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
     refetch();
   }, [refetch, video_id]);
 
-  if (isLoading) return <h3>Loading</h3>;
-
   const uploaded = getUploadedDate(new Date(videoData?.video?.createdAt));
 
   if (isError) return <h3>Failed to get video details</h3>;
@@ -268,147 +266,158 @@ const VideoDetails: React.FC<VideoDetailsProps> = ({ video_id }) => {
         maxWidth={false}
         fixed={false}
       >
-        <Grid container spacing={5}>
-          <Grid item xs={12} lg={8}>
-            <Box>
-              <iframe
-                className={classes.iFrame}
-                src={videoData?.video?.embeded_url}
-                title="YouTube video player"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              ></iframe>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <Grid container spacing={5}>
+              <Grid item xs={12} lg={8}>
+                <Box>
+                  <iframe
+                    className={classes.iFrame}
+                    src={videoData?.video?.embeded_url}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  ></iframe>
 
-              <Typography variant="h6" fontWeight={"bold"}>
-                {videoData?.video?.title || "No Title"}
-              </Typography>
+                  <Typography variant="h6" fontWeight={"bold"}>
+                    {videoData?.video?.title || "No Title"}
+                  </Typography>
 
-              {/* User info and some actions */}
-              <Box className={classes.vid_extra_info}>
-                <Box className={classes.vid_user_info}>
-                  <Avatar onClick={redirectToUserProfile} />
-                  <div>
-                    <Typography fontWeight={"bold"}>
-                      {videoData?.video?.user?.firstName}{" "}
-                      {videoData?.video?.user?.lastName}
-                    </Typography>
-                    {videoData?.video?.user?.subscribers?.length} subscriber
-                    {videoData?.video?.user?.subscribers?.length !== 1 && "s"}
-                  </div>
-                  {videoData?.video?.user?.username !== user?.username && (
-                    <Stack>
-                      <Chip
-                        onClick={subscribeOrUnsubscribe}
-                        clickable
-                        label={
-                          videoData?.video?.user?.subscribers?.includes(
-                            user?.username as string
-                          )
-                            ? "Unsubscribe"
-                            : "Subscribe"
-                        }
-                        className={
-                          videoData?.video?.user?.subscribers?.includes(
-                            user?.username as string
-                          )
-                            ? classes.unsubscribe_button
-                            : classes.subscribe_button
-                        }
-                      />
-                    </Stack>
-                  )}
-                </Box>
-                <Box className={classes.vid_actions}>
-                  <Stack
-                    direction={"row"}
-                    spacing={2}
-                    gap={1}
-                    flexWrap={"wrap"}
-                  >
-                    <Chip
-                      clickable
-                      icon={
-                        videoData?.video?.likes?.includes(
-                          user?._id as string
-                        ) ? (
-                          <ThumbUpIcon />
-                        ) : (
-                          <ThumbUpOffAltIcon />
-                        )
-                      }
-                      label={videoData?.video?.likes?.length}
-                      onClick={handleVideoLike}
-                    />
-                    <Chip
-                      onClick={handleVideoDislike}
-                      clickable
-                      icon={
-                        videoData?.video?.dislikes?.includes(
-                          user?._id as string
-                        ) ? (
-                          <ThumbDownIcon />
-                        ) : (
-                          <ThumbDownOffAltIcon />
-                        )
-                      }
-                    />
-                    <Chip
-                      onClick={handleWatchLater}
-                      clickable
-                      icon={
-                        <WatchLater
+                  {/* User info and some actions */}
+                  <Box className={classes.vid_extra_info}>
+                    <Box className={classes.vid_user_info}>
+                      <Avatar onClick={redirectToUserProfile} />
+                      <div>
+                        <Typography fontWeight={"bold"}>
+                          {videoData?.video?.user?.firstName}{" "}
+                          {videoData?.video?.user?.lastName}
+                        </Typography>
+                        {videoData?.video?.user?.subscribers?.length} subscriber
+                        {videoData?.video?.user?.subscribers?.length !== 1 &&
+                          "s"}
+                      </div>
+                      {videoData?.video?.user?.username !== user?.username && (
+                        <Stack>
+                          <Chip
+                            onClick={subscribeOrUnsubscribe}
+                            clickable
+                            label={
+                              videoData?.video?.user?.subscribers?.includes(
+                                user?.username as string
+                              )
+                                ? "Unsubscribe"
+                                : "Subscribe"
+                            }
+                            className={
+                              videoData?.video?.user?.subscribers?.includes(
+                                user?.username as string
+                              )
+                                ? classes.unsubscribe_button
+                                : classes.subscribe_button
+                            }
+                          />
+                        </Stack>
+                      )}
+                    </Box>
+                    <Box className={classes.vid_actions}>
+                      <Stack
+                        direction={"row"}
+                        spacing={2}
+                        gap={1}
+                        flexWrap={"wrap"}
+                      >
+                        <Chip
+                          clickable
+                          icon={
+                            videoData?.video?.likes?.includes(
+                              user?._id as string
+                            ) ? (
+                              <ThumbUpIcon />
+                            ) : (
+                              <ThumbUpOffAltIcon />
+                            )
+                          }
+                          label={videoData?.video?.likes?.length}
+                          onClick={handleVideoLike}
+                        />
+                        <Chip
+                          onClick={handleVideoDislike}
+                          clickable
+                          icon={
+                            videoData?.video?.dislikes?.includes(
+                              user?._id as string
+                            ) ? (
+                              <ThumbDownIcon />
+                            ) : (
+                              <ThumbDownOffAltIcon />
+                            )
+                          }
+                        />
+                        <Chip
+                          onClick={handleWatchLater}
+                          clickable
+                          icon={
+                            <WatchLater
+                              style={{
+                                transform: "scaleX(-1)",
+                                color: isInWatchLater ? "#fff" : "#616161",
+                              }}
+                            />
+                          }
+                          label="Watch Later"
                           style={{
-                            transform: "scaleX(-1)",
+                            backgroundColor: isInWatchLater
+                              ? "#000"
+                              : "#ebebeb",
                             color: isInWatchLater ? "#fff" : "#616161",
                           }}
                         />
-                      }
-                      label="Watch Later"
-                      style={{
-                        backgroundColor: isInWatchLater ? "#000" : "#ebebeb",
-                        color: isInWatchLater ? "#fff" : "#616161",
-                      }}
-                    />
-                    <Chip
-                      onClick={handleShareClick}
-                      clickable
-                      icon={<ReplyIcon style={{ transform: "scaleX(-1)" }} />}
-                      label={"Share"}
-                    />
-                  </Stack>
+                        <Chip
+                          onClick={handleShareClick}
+                          clickable
+                          icon={
+                            <ReplyIcon style={{ transform: "scaleX(-1)" }} />
+                          }
+                          label={"Share"}
+                        />
+                      </Stack>
+                    </Box>
+                  </Box>
+
+                  {/* Description */}
+                  <Box className={classes.description}>
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                      <Typography fontWeight="bold">
+                        {videoData?.video?.views} Views
+                      </Typography>
+                      <Typography fontWeight="bold">{uploaded}</Typography>
+                    </div>
+                    <Typography marginTop={"1rem"}>
+                      {videoData?.video?.description}
+                    </Typography>
+                  </Box>
+
+                  {/* Comments section */}
+                  <VideoComments
+                    comments={videoData?.comments ?? []}
+                    videoId={videoData?.video?._id}
+                    refetchVideoDetails={refetch}
+                  />
                 </Box>
-              </Box>
-
-              {/* Description */}
-              <Box className={classes.description}>
-                <div style={{ display: "flex", gap: "1rem" }}>
-                  <Typography fontWeight="bold">
-                    {videoData?.video?.views} Views
-                  </Typography>
-                  <Typography fontWeight="bold">{uploaded}</Typography>
-                </div>
-                <Typography marginTop={"1rem"}>
-                  {videoData?.video?.description}
-                </Typography>
-              </Box>
-
-              {/* Comments section */}
-              <VideoComments
-                comments={videoData?.comments ?? []}
-                videoId={videoData?.video?._id}
-                refetchVideoDetails={refetch}
+              </Grid>
+              {/* Side videos */}
+              <SideVideos
+                videoTitle={videoData?.video?.title}
+                videoDescription={videoData?.video?.description}
+                videoAuthor={videoData?.video?.user?.username}
               />
-            </Box>
-          </Grid>
-          {/* Side videos */}
-          <SideVideos
-            videoTitle={videoData?.video?.title}
-            videoDescription={videoData?.video?.description}
-            videoAuthor={videoData?.video?.user?.username}
-          />
-        </Grid>
-        <SnackbarProvider />
+            </Grid>
+            <SnackbarProvider />
+          </>
+        )}
       </Container>
     </SnackbarProvider>
   );

@@ -46,7 +46,7 @@ export const Profile: FC<ProfileProps> = ({ user }) => {
         <Paper className={classes.inner_container}>
           <Box>
             <Image
-              src={delete_this_image_later}
+              src={"https://static.vecteezy.com/system/resources/previews/005/129/844/large_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"}
               width={150}
               height={150}
               alt="img"

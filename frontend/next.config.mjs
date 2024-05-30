@@ -15,6 +15,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "i1.ytimg.com",
       },
+      {
+        protocol: "https",
+        hostname: "static.vecteezy.com",
+      },
     ],
   },
 };

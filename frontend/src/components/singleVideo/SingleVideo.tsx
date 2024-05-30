@@ -115,8 +115,8 @@ export const SingleVideo = ({ video }: { video: Video }) => {
         variant: "warning",
         autoHideDuration: 1500,
         anchorOrigin: {
-          horizontal: "right",
-          vertical: "top",
+          horizontal: "left",
+          vertical: "bottom",
         },
       });
     }

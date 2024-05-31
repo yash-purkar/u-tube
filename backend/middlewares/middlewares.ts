@@ -4,7 +4,9 @@ const jwt = require("jsonwebtoken");
 export const checkAuth = async (req: any, res: any, next: () => any) => {
   try {
     const token = req?.cookies?.token;
-    console.log("T_",token)
+    console.log("req", req);
+    console.log("cookies", req.cookies);
+    console.log("T_", token);
     if (token) {
       //decoding token
       const decodedToken = jwt.decode(token);
@@ -13,9 +15,11 @@ export const checkAuth = async (req: any, res: any, next: () => any) => {
       const user = await User.findById(decodedToken?.user_id);
 
       if (!user) {
-        return res
-          .status(401)
-          .send({ Success: false, message: "Heyy man, You have entered wrong token, can you follow login process?" });
+        return res.status(401).send({
+          Success: false,
+          message:
+            "Heyy man, You have entered wrong token, can you follow login process?",
+        });
       }
 
       //   setting user_id in request to find the user in callback of /checkAuth endpoint or anywhere else.

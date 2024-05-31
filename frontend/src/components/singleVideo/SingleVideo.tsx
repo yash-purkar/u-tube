@@ -28,7 +28,7 @@ const useStyles: () => any = makeStyles({
   card: {
     minHeight: "300px",
     paddingTop: "0rem",
-    cursor: 'pointer',
+    cursor: "pointer",
     "@media(min-width:1024px)": {
       width: "18.75rem",
     },

@@ -18,6 +18,9 @@ app.use(express.json());
 
 dotenv.config();
 
+// Middleware: Parse incoming cookie data
+app.use(cookieParser());
+
 // Middleware: Allow requests from specified origin
 app.use(
   cors({
@@ -26,9 +29,6 @@ app.use(
     credentials: true,
   })
 );
-
-// Middleware: Parse incoming cookie data
-app.use(cookieParser());
 
 // Connect to MongoDB
 mongoose.connect(process.env.ATLAS_URI as string);

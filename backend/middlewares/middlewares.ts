@@ -3,12 +3,8 @@ const jwt = require("jsonwebtoken");
 
 export const checkAuth = async (req: any, res: any, next: () => any) => {
   try {
-    const token = req?.headers?.cookie
-      ?.split(";")
-      ?.find((item: string) => item?.startsWith("token"))
-      ?.split("=")[1];
+    const token = req?.cookies?.token;
     console.log("_token", token);
-    console.log("_headers", req?.headers);
     if (token) {
       //decoding token
       const decodedToken = jwt.decode(token);

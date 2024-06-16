@@ -71,7 +71,6 @@ export const Login = () => {
         ${isProduction ? "Secure;" : ""}
         sameSite=None`;
 
-        document.cookie = `token=${data?.token}`;
         dispatch(setIsLoggedIn(true));
         dispatch(setUser(data?.user));
         router.push("/");

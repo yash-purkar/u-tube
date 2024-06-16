@@ -58,18 +58,11 @@ export const Login = () => {
     mutationFn: login,
     onSuccess: (data, variable, context) => {
       if (data?.Success) {
-    const token = data?.token;
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString(); // 1 day expiry
-    const isProduction = window.location.protocol === "https:";
-
-    // Set the cookie with appropriate attributes
-    document.cookie = `token=${token}; expires=${expires}; path=/; ${isProduction ? "Secure; " : ""}SameSite=None;`;
-
-    // Update application state
-    dispatch(setIsLoggedIn(true));
-    dispatch(setUser(data?.user));
-    router.push("/");
-}
+        document.cookie = `token=${data?.token}`;
+        dispatch(setIsLoggedIn(true));
+        dispatch(setUser(data?.user));
+        router.push("/");
+      }
     },
   });
 

@@ -57,12 +57,13 @@ export const Login = () => {
     mutationKey: ["login"],
     mutationFn: login,
     onSuccess: (data, variable, context) => {
-      if (data?.Success) {
-        document.cookie = `token=${data?.token}`;
-        dispatch(setIsLoggedIn(true));
-        dispatch(setUser(data?.user));
-        router.push("/");
-      }
+     if (data?.Success) {
+    // Set the cookie with SameSite and Secure attributes
+    document.cookie = `token=${data?.token}; SameSite=Lax; Secure`;
+    dispatch(setIsLoggedIn(true));
+    dispatch(setUser(data?.user));
+    router.push("/");
+}
     },
   });
 

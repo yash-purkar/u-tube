@@ -304,8 +304,13 @@ export const watchLaterHandler = async (video_id: string, user_id: string) => {
         user_id,
         video_id,
       },
+
       {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer hii`,
+          "Content-Type": "application/json",
+        },
       }
     );
     return response.data;

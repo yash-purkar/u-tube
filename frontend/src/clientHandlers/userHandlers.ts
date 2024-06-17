@@ -1,3 +1,4 @@
+import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
 const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 
@@ -18,8 +19,8 @@ export const register = async (params: RegisterProps) => {
   const { firstName, lastName, email, password } = params;
 
   try {
-    const { data } = await axios.post(
-      `${API_BASE_URL}auth/register`,
+    const { data } = await axiosInstance.post(
+      `auth/register`,
       {
         firstName,
         lastName,
@@ -44,8 +45,8 @@ export const register = async (params: RegisterProps) => {
 export const login = async (params: LoginProps) => {
   const { email, password } = params;
   try {
-    const { data } = await axios.post(
-      `${API_BASE_URL}auth/login`,
+    const { data } = await axiosInstance.post(
+      `auth/login`,
       { email, password },
       {
         headers: {
@@ -66,8 +67,8 @@ export const addUserSearchHistory = async (
   video_id: string
 ) => {
   try {
-    const { data } = await axios.post(
-      `${API_BASE_URL}user/search_history`,
+    const { data } = await axiosInstance.post(
+      `user/search_history`,
       {
         user_id,
         video_id,
@@ -88,8 +89,8 @@ export const removeUserSearchHistory = async (
   video_id: string
 ) => {
   try {
-    const { data } = await axios.delete(
-      `${API_BASE_URL}user/search_history?user_id=${user_id}&video_id=${video_id}`,
+    const { data } = await axiosInstance.delete(
+      `user/search_history?user_id=${user_id}&video_id=${video_id}`,
       {
         withCredentials: true,
       }
@@ -105,8 +106,8 @@ export const removeUserSearchHistory = async (
 // Get video details
 export const getVideoDetails = async (video_id: string) => {
   try {
-    const response = axios.get(
-      `${API_BASE_URL}videos/watch?vid_id=${video_id}`,
+    const response = axiosInstance.get(
+      `videos/watch?vid_id=${video_id}`,
       { withCredentials: true }
     );
     return (await response).data;
@@ -124,8 +125,8 @@ export const addNewComment = async (
   userId: string
 ) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}comment/add_comment`,
+    const response = await axiosInstance.post(
+      `comment/add_comment`,
       { user: userId, video: videoId, content },
       { withCredentials: true }
     );
@@ -139,8 +140,8 @@ export const addNewComment = async (
 // get all comments of a particular video
 export const getComments = async (videoId: string) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}comment/get_comments/${videoId}`,
+    const response = await axiosInstance.get(
+      `comment/get_comments/${videoId}`,
       {
         withCredentials: true,
       }
@@ -154,8 +155,8 @@ export const getComments = async (videoId: string) => {
 // delete comment
 export const deleteComment = async (comment_id: string) => {
   try {
-    const response = await axios.delete(
-      `${API_BASE_URL}comment/delete_comment?comment_id=${comment_id}`,
+    const response = await axiosInstance.delete(
+      `comment/delete_comment?comment_id=${comment_id}`,
       { withCredentials: true }
     );
 
@@ -172,8 +173,8 @@ export const likeComment = async (
   video_id: string
 ) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}comment/like_comment`,
+    const response = await axiosInstance.post(
+      `comment/like_comment`,
       { comment_id, user_id, video_id },
       { withCredentials: true }
     );
@@ -190,8 +191,8 @@ export const dislikeComment = async (
   video_id: string
 ) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}comment/dislike_comment`,
+    const response = await axiosInstance.post(
+      `comment/dislike_comment`,
       { comment_id, user_id, video_id },
       { withCredentials: true }
     );
@@ -205,8 +206,8 @@ export const dislikeComment = async (
 // like video
 export const likeVideo = async (video_id: string, user_id: string) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}videos/like`,
+    const response = await axiosInstance.post(
+      `videos/like`,
       {
         video_id,
         user_id,
@@ -222,8 +223,8 @@ export const likeVideo = async (video_id: string, user_id: string) => {
 // dislike video
 export const dislikeVideo = async (video_id: string, user_id: string) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}videos/dislike`,
+    const response = await axiosInstance.post(
+      `videos/dislike`,
       {
         video_id,
         user_id,
@@ -244,8 +245,8 @@ export const subscribeAndUnsubscribeVideo = async (
   video_id: string
 ) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}user/subscribe_or_unsubscribe`,
+    const response = await axiosInstance.post(
+      `user/subscribe_or_unsubscribe`,
       {
         subscriber,
         subscribe_to,
@@ -263,8 +264,8 @@ export const subscribeAndUnsubscribeVideo = async (
 // It fetched videos by user id
 export const videosByUser = async (user_id: string, currentPage: number) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}videos/videos_by_user?limit=${3}&currentPage=${currentPage}&user_id=${user_id}`,
+    const response = await axiosInstance.get(
+      `videos/videos_by_user?limit=${3}&currentPage=${currentPage}&user_id=${user_id}`,
       {
         withCredentials: true,
       }
@@ -280,8 +281,8 @@ export const videosByUser = async (user_id: string, currentPage: number) => {
 export const getUsersLikedVideos = async (username: string) => {
   try {
     // we don't need to pass userId from here, we'll take it from cookies in backend.
-    const response = await axios.get(
-      `${API_BASE_URL}videos/liked_videos?username=${username}`,
+    const response = await axiosInstance.get(
+      `videos/liked_videos?username=${username}`,
       {
         withCredentials: true,
       }
@@ -298,8 +299,8 @@ export const getUsersLikedVideos = async (username: string) => {
 // It handles watchlater video add and remove
 export const watchLaterHandler = async (video_id: string, user_id: string) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}user/watch_later`,
+    const response = await axiosInstance.post(
+      `user/watch_later`,
       {
         user_id,
         video_id,
@@ -324,8 +325,8 @@ export const watchLaterHandler = async (video_id: string, user_id: string) => {
 // It get user's watch later videos
 export const usersAllWatchlaterVideos = async (username: string) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}videos/watch_later_videos?username=${username}`,
+    const response = await axiosInstance.get(
+      `videos/watch_later_videos?username=${username}`,
       {
         withCredentials: true,
       }
@@ -341,8 +342,8 @@ export const usersAllWatchlaterVideos = async (username: string) => {
 // It get user's watch later videos
 export const usersHistory = async (username: string) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}user/history?username=${username}`,
+    const response = await axiosInstance.get(
+      `user/history?username=${username}`,
       {
         withCredentials: true,
       }
@@ -358,8 +359,8 @@ export const usersHistory = async (username: string) => {
 // Clear watch history
 export const clearHistory = async (username: string) => {
   try {
-    const response = await axios.delete(
-      `${API_BASE_URL}user/clear_watch_history?username=${username}`,
+    const response = await axiosInstance.delete(
+      `user/clear_watch_history?username=${username}`,
       {
         withCredentials: true,
       }
@@ -382,8 +383,8 @@ export const createPlaylist = async ({
   user: string;
 }) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}playlist/create`,
+    const response = await axiosInstance.post(
+      `playlist/create`,
       {
         name,
         user,
@@ -410,8 +411,8 @@ export const deletePlaylist = async ({
   playlist_id: string;
 }) => {
   try {
-    const response = await axios.delete(
-      `${API_BASE_URL}playlist/delete?playlist_id=${playlist_id}`,
+    const response = await axiosInstance.delete(
+      `playlist/delete?playlist_id=${playlist_id}`,
       {
         withCredentials: true,
       }
@@ -428,8 +429,8 @@ export const deletePlaylist = async ({
 // get all playlists
 export const getPlaylists = async ({ user }: { user: string }) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}playlist/playlists`,
+    const response = await axiosInstance.post(
+      `playlist/playlists`,
       {
         user,
       },
@@ -457,8 +458,8 @@ export const addVideoToPlaylist = async ({
   unSelectedPlaylists: string[];
 }) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}playlist/add_video`,
+    const response = await axiosInstance.post(
+      `playlist/add_video`,
       {
         playlist_ids,
         video,
@@ -480,8 +481,8 @@ export const addVideoToPlaylist = async ({
 // Get playlist by id
 export const getPlaylistDetails = async (playlist_id: string) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}playlist/playlist?playlist_id=${playlist_id}`,
+    const response = await axiosInstance.get(
+      `playlist/playlist?playlist_id=${playlist_id}`,
       {
         withCredentials: true,
       }

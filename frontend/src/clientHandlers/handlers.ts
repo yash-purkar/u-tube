@@ -1,10 +1,11 @@
+import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
 const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 
 // Fetches filters
 export const getFilters = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}filters/all_filters`);
+    const response = await axiosInstance.get(`filters/all_filters`);
     return response;
   } catch (error) {
     throw new Error("Failed to get filters.");
@@ -14,8 +15,8 @@ export const getFilters = async () => {
 // Fetches all videos
 export const getAllVideos = async (filterName: string) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}videos/all_videos?filter=${filterName}`
+    const response = await axiosInstance.get(
+      `videos/all_videos?filter=${filterName}`
     );
     return response.data;
   } catch (err: any) {

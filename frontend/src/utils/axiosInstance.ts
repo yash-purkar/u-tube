@@ -4,7 +4,7 @@ import axios from "axios";
 import { getCookie, setCookie } from "cookies-next";
 
 const axiosInstance = axios.create({
-  baseURL: "https://u-tube-apis.vercel.app/api/",
+  baseURL: process.env.NEXT_PUBLIC_LOCAL_API_URL,
 });
 
 // context of request for server side rendering requests, for e.g from getServerSideprops fn

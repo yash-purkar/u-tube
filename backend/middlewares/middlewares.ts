@@ -3,17 +3,15 @@ const jwt = require("jsonwebtoken");
 
 export const checkAuth = async (req: any, res: any, next: () => any) => {
   try {
-    // const token = req?.cookies?.token;
-    // console.log("req", req);
-    const token = req.headers.authorization;
-    console.log("_token00", token); // Log Authorization header
+    const token = req.headers.authorization?.split(" ")[1];
+
     if (token) {
       //decoding token
       const decodedToken = jwt.decode(token);
-
+      console.log(decodedToken);
       // finding user to verify is token correct or not,
       const user = await User.findById(decodedToken?.user_id);
-
+console.log(user)
       if (!user) {
         return res.status(401).send({
           Success: false,

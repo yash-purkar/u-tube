@@ -3,8 +3,10 @@ const jwt = require("jsonwebtoken");
 
 export const checkAuth = async (req: any, res: any, next: () => any) => {
   try {
-    const token = req?.cookies?.token;
-    console.log("_token", token);
+    // const token = req?.cookies?.token;
+    // console.log("req", req);
+    const token = req.headers.authorization;
+    console.log("_token00", token); // Log Authorization header
     if (token) {
       //decoding token
       const decodedToken = jwt.decode(token);
@@ -26,7 +28,7 @@ export const checkAuth = async (req: any, res: any, next: () => any) => {
     } else {
       return res
         .status(401)
-        .send({ Success: false, message: "Please login first." });
+        .send({ Success: false, message: "Please login first" });
     }
   } catch (error) {
     return res.status(500).send({ error: "Internal Server Error" });

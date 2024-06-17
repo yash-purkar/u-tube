@@ -225,6 +225,7 @@ export const Navbar: React.FC = () => {
                 variant="h6"
                 className={classes.title}
                 color={"#000"}
+                sx={{cursor:'pointer'}}
                 onClick={() => {
                   router.push("/");
                 }}

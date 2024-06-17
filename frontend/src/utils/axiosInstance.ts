@@ -35,7 +35,6 @@ axiosInstance.interceptors.request.use(
       config.headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "Access-Control-Allow-Origin": "*",
       };
     } catch (error) {
       console.log("Axios Request intercepter error", error);

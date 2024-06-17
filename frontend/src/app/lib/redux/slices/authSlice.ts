@@ -23,7 +23,7 @@ export const checkIsLoggedIn = createAsyncThunk(
   async function () {
     try {
       const { data } = await axiosInstance.get(
-        `${process.env.NEXT_PUBLIC_LOCAL_API_URL}auth/checkAuth`,
+        `auth/checkAuth`,
         {
           withCredentials: true,
         }

@@ -1,4 +1,5 @@
 import { User } from "@/app/types";
+import axiosInstance from "@/utils/axiosInstance";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -21,7 +22,7 @@ export const checkIsLoggedIn = createAsyncThunk(
   "auth/checkAuth",
   async function () {
     try {
-      const { data } = await axios.get(
+      const { data } = await axiosInstance.get(
         `${process.env.NEXT_PUBLIC_LOCAL_API_URL}auth/checkAuth`,
         {
           withCredentials: true,

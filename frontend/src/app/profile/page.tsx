@@ -1,9 +1,10 @@
 import { Profile } from "@/components/profile/Profile";
+import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
 
 const getUserDetails = async (user: string) => {
   try {
-    const response = await axios.get(
+    const response = await axiosInstance.get(
       `${process.env.NEXT_PUBLIC_LOCAL_API_URL}user/user_by_id/${user}`
     );
     return response.data;

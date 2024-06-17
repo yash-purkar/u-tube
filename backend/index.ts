@@ -27,6 +27,7 @@ app.use(
     origin: ["http://localhost:3000", "https://u-tubev2.vercel.app"],
     methods: ["GET", "POST", "DELETE"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 

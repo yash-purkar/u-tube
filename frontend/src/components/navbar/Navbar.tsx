@@ -1,9 +1,5 @@
 "use client";
-import React, {
-  ChangeEvent,
-  useCallback,
-  useState,
-} from "react";
+import React, { ChangeEvent, useCallback, useState } from "react";
 import {
   AppBar,
   Avatar,
@@ -23,7 +19,7 @@ import { makeStyles } from "@mui/styles";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MenuIcon from "@mui/icons-material/Menu";
 import { SideDrawer } from "./components/SideDrawer";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAppDispatch, useAppSelector } from "@/app/lib/redux/hooks";
 import { Video } from "@/app/types";
@@ -118,6 +114,7 @@ export const Navbar: React.FC = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const dispatch = useAppDispatch();
   const [showSuggestions, setShowsuggestions] = useState<boolean>(false);
+  const path = usePathname();
 
   const { mutate } = useMutation({
     mutationKey: ["SearchHistory"],
@@ -153,6 +150,10 @@ export const Navbar: React.FC = () => {
 
   // It handles search value change
   const handleSearchValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // If user is writing in searchbar from any another page, e.g liked, or etc
+    if(path !== "/") {
+      router.push("/")
+    }
     setSearchValue(e.target.value);
     if (!e.target.value) {
       dispatch(setSearchQuery(null));
@@ -225,7 +226,7 @@ export const Navbar: React.FC = () => {
                 variant="h6"
                 className={classes.title}
                 color={"#000"}
-                sx={{cursor:'pointer'}}
+                sx={{ cursor: "pointer" }}
                 onClick={() => {
                   router.push("/");
                 }}

@@ -29,7 +29,6 @@ const setCookieValue = (name: string, value: string) =>
 // Use call an api -> intercepter will run -> request will go to server
 axiosInstance.interceptors.request.use(
   async (config: any) => {
-    console.log("_config", config);
     try {
       const token = getCookieValue("token");
 

@@ -41,9 +41,9 @@ const useStyles = makeStyles({
   video_thumbnail: {
     borderRadius: "1rem",
     width: "auto",
+    minHeight: "8rem",
     "@media(min-width:445px)": {
-      width: "17rem !important",
-      height: "8rem",
+      minWidth: "15rem !important",
     },
     "@media(min-width:1200px)": {
       maxWidth: "13rem !important",

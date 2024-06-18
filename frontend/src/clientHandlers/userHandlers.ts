@@ -495,3 +495,16 @@ export const getPlaylistDetails = async (playlist_id: string) => {
     };
   }
 };
+
+export const getUserDetails = async (username: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `user/user_by_id/${username}`
+    );
+    return response.data;
+  } catch (error) {
+    return {
+      message: "Failed to get user details"
+    }
+  }
+};

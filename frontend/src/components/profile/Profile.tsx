@@ -7,15 +7,11 @@ import delete_this_image_later from "../../../public/assets/delete_later.jpg";
 import { makeStyles } from "@mui/styles";
 import styles from "./profile.module.css";
 import UserVideos from "./userVideos/UserVideos";
+import { useQuery } from "@tanstack/react-query";
+import { getUserDetails } from "@/clientHandlers/userHandlers";
 
 interface ProfileProps {
-  user: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    username: string;
-    subscribers: string[];
-  };
+  username: string;
 }
 
 const useStyles: () => any = makeStyles((theme: any) => ({
@@ -36,17 +32,25 @@ const useStyles: () => any = makeStyles((theme: any) => ({
   },
 }));
 
-export const Profile: FC<ProfileProps> = ({ user }) => {
+export const Profile: FC<ProfileProps> = ({ username }) => {
   const classes = useStyles();
 
-console.log(user)
+  const { data } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: () => {
+      return getUserDetails(username);
+    },
+  });
+
   return (
     <div>
       <Container>
         <Paper className={classes.inner_container}>
           <Box>
             <Image
-              src={"https://static.vecteezy.com/system/resources/previews/005/129/844/large_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"}
+              src={
+                "https://static.vecteezy.com/system/resources/previews/005/129/844/large_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg"
+              }
               width={150}
               height={150}
               alt="img"
@@ -55,19 +59,19 @@ console.log(user)
           </Box>
           <Box>
             <h2>
-              {user?.firstName} {user?.lastName}
+              {data?.user?.firstName} {data?.user?.lastName}
             </h2>
             <div className={styles.user_extra_info}>
-              <p>{user?.username}</p>
+              <p>{data?.user?.username}</p>
               <span>.</span>
               <p>
-                {user?.subscribers?.length} subscriber
-                {user?.subscribers?.length !== 1 && <span>s</span>}
+                {data?.user?.subscribers?.length} subscriber
+                {data?.user?.subscribers?.length !== 1 && <span>s</span>}
               </p>
             </div>
           </Box>
         </Paper>
-        <UserVideos user_id={user?._id as string} />
+        <UserVideos user_id={data?.user?._id as string} />
       </Container>
     </div>
   );

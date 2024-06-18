@@ -1,6 +1,5 @@
 import { Profile } from "@/components/profile/Profile";
 import axiosInstance, { setContext } from "@/utils/axiosInstance";
-import axios from "axios";
 import { headers } from "next/headers";
 
 const getUserDetails = async (user: string) => {
@@ -25,13 +24,11 @@ const getUserDetails = async (user: string) => {
 const UserProfilePage = async ({
   params,
   searchParams,
-  request,
 }: {
   params: any;
   searchParams: { user: string };
   request: any;
 }) => {
-  console.log({ request });
   const response = await getUserDetails(searchParams.user);
 
   return <Profile user={response.user} />;

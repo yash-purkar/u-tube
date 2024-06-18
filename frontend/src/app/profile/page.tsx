@@ -5,7 +5,7 @@ import axios from "axios";
 const getUserDetails = async (user: string) => {
   try {
     const response = await axiosInstance.get(
-      `${process.env.NEXT_PUBLIC_LOCAL_API_URL}user/user_by_id/${user}`
+      `user/user_by_id/${user}`
     );
     return response.data;
   } catch (error) {
@@ -22,6 +22,7 @@ const UserProfilePage = async ({
   params: any;
   searchParams: { user: string };
 }) => {
+  console.log({searchParams})
   const response = await getUserDetails(searchParams.user);
 
   return < Profile user={response.user}/>;

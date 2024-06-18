@@ -39,7 +39,7 @@ const useStyles: () => any = makeStyles((theme: any) => ({
 export const Profile: FC<ProfileProps> = ({ user }) => {
   const classes = useStyles();
 
-
+console.log(user)
   return (
     <div>
       <Container>
